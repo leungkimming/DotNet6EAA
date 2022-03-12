@@ -35,8 +35,8 @@ namespace Service.Users
 
         public async Task<AddPayslipResponse> AddUserPayslipAsync(AddPayslipRequest model)
         {
-            var repository = UnitOfWork.AsyncRepository<User>();
-            var user = await repository.GetAsync(_ => _.Id == model.UserId);
+            var repository = UnitOfWork.UserRepository();
+            var user = await repository.GetAsyncWithPayslip(_ => _.Id == model.UserId);
             if (user != null)
             {
                 var payslip = user.AddPayslip(model.Date.Value
@@ -50,7 +50,9 @@ namespace Service.Users
                 return new AddPayslipResponse()
                 {
                     UserId = user.Id,
-                    TotalSalary = payslip.TotalSalary
+                    TotalSalary = payslip.TotalSalary,
+                    LetterSentDate = payslip.LetterSentDate,
+                    Letter = payslip.Letter
                 };
             }
 

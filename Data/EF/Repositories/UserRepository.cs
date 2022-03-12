@@ -19,5 +19,11 @@ namespace Data.EF.Repositories
                 .Include(User => User.Department)
                 .ToListAsync();
         }
+        public Task<User?> GetAsyncWithPayslip(Expression<Func<User, bool>> expression)
+        {
+            return _dbSet
+                .Include(User => User.PaySlips)
+                .FirstOrDefaultAsync(expression);
+        }
     }
 }

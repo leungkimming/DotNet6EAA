@@ -15,9 +15,26 @@ Scenario: CallAPIAddNew
   "lastName": "Michael",
   "address": "Kwong Chiu Terrace",
   "birthDate": "1961-03-04T00:00:00.000Z",
-  "departmentId": 1
+  "departmentId": 1,
+  "CoefficientsSalary": 7500
 }
   """
+  And InitDB
   When I post this request to the "users" operation
   Then the result is a 200 ("OK") response
   And the response contains username ("Micl") and ID (1) and Department ("IT")
+
+Scenario: CallAPIAddPayslip
+  Given I have the following request body:
+  """
+{
+  "date": "2022-03-11T12:21:09.256Z",
+  "userId": 1,
+  "workingDays": 10,
+  "bonus": 100,
+  "isPaid": true
+}
+  """
+  When I post this request to the "users/payslips" operation
+  Then the result is a 200 ("OK") response
+  And the response contains UserId (1) and TotalSalary (75100) and lettersentdate ("today") and letter start with ("To: Kwong Chiu Terrace\nDear Micl\nYour Salary")

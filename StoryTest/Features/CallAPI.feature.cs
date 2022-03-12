@@ -128,16 +128,65 @@ this.ScenarioInitialize(scenarioInfo);
 #line 10
   testRunner.Given("I have the following request body:", "{\r\n\"userName\": \"Micl\",\r\n\"firstName\": \"Leung\",\r\n\"lastName\": \"Michael\",\r\n\"address\":" +
                         " \"Kwong Chiu Terrace\",\r\n\"birthDate\": \"1961-03-04T00:00:00.000Z\",\r\n\"departmentId\"" +
-                        ": 1\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-#line 21
-  testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+                        ": 1,\r\n\"CoefficientsSalary\": 7500\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 22
-  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+  testRunner.And("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 23
+  testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 24
+  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 25
   testRunner.And("the response contains username (\"Micl\") and ID (1) and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("CallAPIAddPayslip")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CallAPI")]
+        public virtual void CallAPIAddPayslip()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 27
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 28
+  testRunner.Given("I have the following request body:", "{\r\n\"date\": \"2022-03-11T12:21:09.256Z\",\r\n\"userId\": 1,\r\n\"workingDays\": 10,\r\n\"bonus\"" +
+                        ": 100,\r\n\"isPaid\": true\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 38
+  testRunner.When("I post this request to the \"users/payslips\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 39
+  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 40
+  testRunner.And("the response contains UserId (1) and TotalSalary (75100) and lettersentdate (\"tod" +
+                        "ay\") and letter start with (\"To: Kwong Chiu Terrace\\nDear Micl\\nYour Salary\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
