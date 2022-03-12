@@ -24,7 +24,8 @@ namespace Business.Users
         public int UserId { get; private set; }
         public decimal TotalSalary { get; private set; }
         public decimal Bonus { get; private set; }
-
+        public DateTime? LetterSentDate { get; private set; }
+        public string? Letter { get; private set; }
         public virtual User User { get; private set; }
 
         public void Pay(
@@ -38,6 +39,11 @@ namespace Business.Users
             Value = new PayslipValueObject(WorkingDays, coefficientsSalary, Bonus);
             TotalSalary = Value.TotalSalary;
             PaymentDate = DateTime.Now;
+        }
+        public void UpdateLetterSent(string letter)
+        {
+            LetterSentDate = DateTime.Now;
+            Letter = letter;
         }
     }
 }

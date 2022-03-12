@@ -28,7 +28,8 @@ builder.Services.AddCors(option => option.AddPolicy(
 ));
 // Autofac
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration)));
+builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder 
+    => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
 
 // Moved to Autofac
 // Add services to the container.

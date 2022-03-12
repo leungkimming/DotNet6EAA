@@ -20,6 +20,11 @@ namespace Business.Base
         {
             _events.Remove(@event);
         }
+
+        public void ClearAllEvents()
+        {
+            _events = new List<BaseDomainEvent>();
+        }
     }
 
     public abstract class BaseEntity<TKey> : RootEntity

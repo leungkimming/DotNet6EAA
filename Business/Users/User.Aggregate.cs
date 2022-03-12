@@ -11,7 +11,8 @@ namespace Business.Users
             , string lastName
             , string address
             , DateTime? birthDate
-            , int departmentId)
+            , int departmentId
+            , float CoefficientsSalary)
         {
             UserName = userName;
 
@@ -21,6 +22,7 @@ namespace Business.Users
                 , address
                 , birthDate
                 , departmentId
+                , CoefficientsSalary
             );
         }
 
@@ -28,13 +30,15 @@ namespace Business.Users
             , string lastName
             , string address
             , DateTime? birthDate
-            , int departmentId)
+            , int departmentId
+            , float coefficientsSalary)
         {
             FirstName = firstName;
             LastName = lastName;
             Address = address;
             BirthDate = birthDate;
             DepartmentId = departmentId;
+            CoefficientsSalary = coefficientsSalary;
         }
 
         public void AddDepartment(Department department)
@@ -70,6 +74,15 @@ namespace Business.Users
             AddEvent(addEvent);
 
             return payslip;
+        }
+
+        public void SendPayslipLetter(Payslip payslip, string letter)
+        {
+            Payslip? ps = PaySlips.FirstOrDefault(_ => _.Date == payslip.Date);
+            if (ps!=null)
+            {
+                ps.UpdateLetterSent(letter);
+            }
         }
     }
 }
