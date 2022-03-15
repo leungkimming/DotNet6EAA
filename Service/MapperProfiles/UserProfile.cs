@@ -11,6 +11,7 @@ namespace Service.MapperProfiles
             CreateMap<AddUserRequest, User>();
             CreateMap<User, AddUserResponse>();
             CreateMap<User, UserInfoDTO>();
+            CreateMap<Payslip, PayslipDTO>();
         }
     }
 }

@@ -1,0 +1,125 @@
+﻿@page "/searchuser"
+@using Common.DTOs.Users
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Search User</PageTitle>
+
+<EditForm OnValidSubmit="@Send"
+          Model = "@_getUser">
+    <DataAnnotationsValidator />
+    <h1>Search User</h1>
+    <hr />
+    <ValidationSummary />
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>User name contains:</td>
+                <td colspan="2"><input @bind="_getUser.Search" /></td>
+                <td colspan="3"><button type="submit">Search</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+</EditForm>
+@if (users != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Address</th>
+                <th>Birthday</th>
+                <th>Department</th>
+                <th>Daily Rate</th>
+                <th>Payslip</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Address</td>
+                    <td>@((@user.BirthDate == null)?"":@user.BirthDate.Value.ToString("dd/MM/yyyy"))</td>
+                    <td>@user.DepartmentName</td>
+                    <td>@user.CoefficientsSalary</td>
+                    <td>
+                        <a style="cursor:pointer" @onclick="@(() => Payslip(user))"><u>view</u></a>&nbsp;&nbsp;
+                        <NavLink class=".btn-link" href=@("addpayslip/" + user.Id)>add</NavLink>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@if (payslips != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>WorkingDays</th>
+                <th>IsPaid</th>
+                <th>PaymentDate</th>
+                <th>TotalSalary</th>
+                <th>Bonus</th>
+                <th>LetterSentDate</th>
+            </tr>
+        </thead>
+        @if (payslips.Count() == 0)
+        {
+            <tr>
+                 <td colspan=7>No Records Found!</td>
+            </tr>
+        }
+        <tbody>
+            @foreach (var payslip in payslips)
+            {
+                <tr>
+                    <td>@payslip.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@payslip.WorkingDays</td>
+                    <td>@payslip.IsPaid</td>
+                    <td>@((@payslip.PaymentDate == null)?"":@payslip.PaymentDate.Value.ToString("dd/MM/yyyy"))</td>
+                    <td>@payslip.TotalSalary</td>
+                    <td>@payslip.Bonus</td>
+                    <td>@((@payslip.LetterSentDate == null)?"":@payslip.LetterSentDate.Value.ToString("dd/MM/yyyy"))</td>
+                </tr>
+@if(payslip.Letter != "")
+{
+                <tr>
+                    <td></td>
+                    <td colspan=6>@payslip.Letter</td>
+                </tr>
+                    
+}
+            }
+        </tbody>
+    </table>
+}
+
+
+<div class="spinner" hidden=@_notspinning ></div>
+@code {
+    private UserInfoDTO[]? users;
+    private bool _notspinning = true;
+    private PayslipDTO[]? payslips;
+    private GetUserRequest _getUser = new GetUserRequest();
+
+    async Task Send()
+    {
+        _notspinning = false;
+        users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
+        _notspinning = true;
+    }
+    async Task Payslip(UserInfoDTO user)
+    {
+        payslips = await Http.GetFromJsonAsync<PayslipDTO[]>("users/GetPayslip?userId=" + user.Id);
+    }
+}

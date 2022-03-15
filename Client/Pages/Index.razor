@@ -1,0 +1,85 @@
+﻿@page "/"
+@using Common.DTOs
+@inject HttpClient Http
+@using System.Runtime.InteropServices
+
+<PageTitle>Index</PageTitle>
+@if (_RuntimeInfo == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <td colspan="2"><h2>DotNet 6 EAA Template</h2></td>
+            </tr>
+            <tr>
+                <td colspan="2"><u><h3>dotnet versions running on Windows Server /w NTLM</h3></u></td>
+            </tr>
+            <tr>
+                <td style="width:30%;">Environment</td>
+                <td>@_RuntimeInfo.Environment</td>
+            </tr>
+            <tr>
+                <td>OS Architecture</td>
+                <td>@_RuntimeInfo.OSArchitecture</td>
+            </tr>
+            <tr>
+                <td>Build RUNTIME_IDENTIFIER</td>
+                <td>@_RuntimeInfo.ProcessArchitecture</td>
+            </tr>
+            <tr>
+                <td>dotnet Framework Description</td>
+                <td>@_RuntimeInfo.FrameworkDescription</td>
+            </tr>
+            <tr>
+                <td>IIS Pool Account</td>
+                <td>@_RuntimeInfo.SystemVersion</td>
+            </tr>
+            <tr>
+                <td>dotnet Runtime install Directory</td>
+                <td>@_RuntimeInfo.RuntimeDirectory</td>
+            </tr>
+            <tr>
+                <td>AD User</td>
+                <td>@_RuntimeInfo.User</td>
+            </tr>
+            <tr>
+                <td>SQL Connection String</td>
+                <td>@_RuntimeInfo.SQLConnection</td>
+            </tr>
+            <tr>
+                <td colspan="2"><u><h3>dotnet versions running on Browser webassembly</h3></u></td>
+            </tr>
+            <tr>
+                <td>OS Architecture</td>
+                <td>@RuntimeInformation.OSDescription</td>
+            </tr>
+            <tr>
+                <td>Process Architecture</td>
+                <td>@RuntimeInformation.ProcessArchitecture</td>
+            </tr>
+            <tr>
+                <td>dotnet Framework Description</td>
+                <td>@RuntimeInformation.FrameworkDescription</td>
+            </tr>
+            <tr>
+                <td>RUNTIME_IDENTIFIER</td>
+                <td>@RuntimeInformation.RuntimeIdentifier</td>
+            </tr>
+        </tbody>
+    </table>
+}
+@code {
+    private RuntimeInfo _RuntimeInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        if (_RuntimeInfo.SQLConnection == null) {_RuntimeInfo.SQLConnection = "N/A";}
+        if (_RuntimeInfo.User == null) {_RuntimeInfo.User = "N/A";}
+    }
+
+}

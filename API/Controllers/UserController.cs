@@ -1,4 +1,5 @@
 ﻿using Common.DTOs.Users;
+using Common.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Service.Users;
 
@@ -28,15 +29,35 @@ namespace API.Controllers
         [HttpPost(Name = "AddNewUser")]
         public async Task<IActionResult> Add([FromBody] AddUserRequest request)
         {
-            var users = await _service.AddNewAsync(request);
-            return Ok(users);
+            AddUserResponse response;
+            try
+            {
+                response = await _service.AddNewAsync(request);
+            } catch (UserAlreadyExistException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok(response);
         }
 
-        [HttpPost("payslips")]
+        [HttpPost("Addpayslip")]
         public async Task<IActionResult> AddPayslip([FromBody] AddPayslipRequest request)
         {
-            var users = await _service.AddUserPayslipAsync(request);
-            return Ok(users);
+            AddPayslipResponse _response;
+            try
+            {
+                _response = await _service.AddUserPayslipAsync(request);
+            } catch (PayslipMonthAlreadyExistException ex) {
+                return BadRequest(ex.Message);
+            }
+            return Ok(_response);
+        }
+
+        [HttpGet("GetPayslip")]
+        public async Task<IActionResult> GetPayslip([FromQuery] GetPayslipRequest request)
+        {
+            var payslips = await _service.SearchAsync(request);
+            return Ok(payslips);
         }
     }
 }

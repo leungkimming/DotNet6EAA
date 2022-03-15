@@ -3,6 +3,7 @@ using Data.EF.Interfaces;
 using Business.Users;
 using Business.Departments;
 using AutoMapper;
+using Common.Shared;
 
 namespace Service.Users
 {
@@ -16,6 +17,13 @@ namespace Service.Users
 
         public async Task<AddUserResponse> AddNewAsync(AddUserRequest model)
         {
+            var repository = UnitOfWork.AsyncRepository<User>();
+            var checkuser = await repository.GetAsync(x => x.UserName == model.UserName);
+            if (checkuser != null)
+            {
+                throw new UserAlreadyExistException(model.UserName);
+            }
+
             var deptRepos = UnitOfWork.AsyncRepository<Department>();
             var dept = await deptRepos.GetAsync(_ => _.Id == model.DepartmentId);
             var user = _mapper.Map<User>(model);
@@ -24,7 +32,6 @@ namespace Service.Users
                 user.AddDepartment(dept);
             }
 
-            var repository = UnitOfWork.AsyncRepository<User>();
             await repository.AddAsync(user);
             await UnitOfWork.SaveChangesAsync();
 
@@ -58,7 +65,6 @@ namespace Service.Users
 
             throw new Exception("User not found.");
         }
-
         public async Task<List<UserInfoDTO>> SearchAsync(GetUserRequest request)
         {
 //          var repository = UnitOfWork.AsyncRepository<User>();
@@ -70,5 +76,15 @@ namespace Service.Users
             var userDTOs = users.Select(_user => _mapper.Map<UserInfoDTO>(_user)).ToList();
             return userDTOs;
         }
+        public async Task<List<PayslipDTO>> SearchAsync(GetPayslipRequest request)
+        {
+            var repository = UnitOfWork.AsyncRepository<Payslip>();
+            var payslips = await repository
+                 .ListAsync(x => x.UserId == request.userId);
+
+            var payslipDTOs = payslips.Select(x => _mapper.Map<PayslipDTO>(x)).ToList();
+            return payslipDTOs;
+        }
+
     }
 }

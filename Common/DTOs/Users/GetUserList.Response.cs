@@ -15,5 +15,6 @@ namespace Common.DTOs.Users
 
         public int? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
+        public float CoefficientsSalary { get; set; }
     }
 }

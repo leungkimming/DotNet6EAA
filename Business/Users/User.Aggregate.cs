@@ -1,6 +1,7 @@
 ﻿using Business.Base;
 using Business.Departments;
 using Business.Users.Events;
+using Common.Shared;
 
 namespace Business.Users
 {
@@ -56,7 +57,7 @@ namespace Business.Users
             // Make sure there's only one payslip  per month
             var exist = PaySlips.Any(_ => _.Date.Month == date.Month && _.Date.Year == date.Year);
             if (exist)
-                throw new Exception("Payslip for this month already exist.");
+                throw new PayslipMonthAlreadyExistException(date.Month);
 
             var payslip = new Payslip(this.Id, date, workingDays, bonus);
             if (isPaid)
@@ -66,12 +67,15 @@ namespace Business.Users
 
             PaySlips.Add(payslip);
 
-            var addEvent = new OnPayslipAddedDomainEvent()
+            if (isPaid && Address != null && payslip.TotalSalary > 0)
             {
-                Payslip = payslip
-            };
+                var addEvent = new OnPayslipAddedDomainEvent()
+                {
+                    Payslip = payslip
+                };
+                AddEvent(addEvent);
 
-            AddEvent(addEvent);
+            }
 
             return payslip;
         }
