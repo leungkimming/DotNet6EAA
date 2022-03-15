@@ -55,7 +55,9 @@ RepositoryBase<T>(_dbContext);
       .ToListAsync();
 ```
 ## Use of Autofac DI & AutoMapper
-
+## Blazor Client WebAssembly Added
 ## More EF Migration commmands
 * dotnet ef migrations remove --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj
 * dotnet ef migrations script --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj --output Migrations\script.sql
+
+# Please visit wiki pages for more topics
