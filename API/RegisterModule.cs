@@ -7,6 +7,8 @@ using Service.Users;
 using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Service;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API
 {
@@ -31,7 +33,11 @@ namespace API
             builder.RegisterType<EFContext>()
                   .AsSelf()
                   .InstancePerLifetimeScope();
+            builder.RegisterType<GridCommonService>().As<IGridCommonService>();
             builder.RegisterType<UserService>().AsSelf();
+
+            builder.RegisterHandlers();
+
         }
 
         public RegisterModule(ConfigurationManager conf)
