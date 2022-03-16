@@ -4,14 +4,11 @@ using Data.EF.Interfaces;
 using Data.EF.Repositories;
 using Data.EF;
 using Service.Users;
-using Microsoft.OpenApi.Models;
-using Autofac.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using Service;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
+using Service.DomainEventHandlers;
 
-namespace API
-{
+namespace API {
     public class RegisterModule : Module
     {
         public string _dbconstr { get; }
@@ -38,6 +35,7 @@ namespace API
                   .InstancePerLifetimeScope();
             builder.RegisterType<GridCommonService>().As<IGridCommonService>();
             builder.RegisterType<UserService>().AsSelf();
+            builder.RegisterHandlers();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
                 .AsImplementedInterfaces();
