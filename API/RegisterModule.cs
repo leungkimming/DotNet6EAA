@@ -14,11 +14,14 @@ namespace API
 {
     public class RegisterModule : Module
     {
-        ConfigurationManager _conf;
+        public string _dbconstr { get; }
+
+        public RegisterModule(string dbconstr)
+        {
+            this._dbconstr = dbconstr;
+        }
         protected override void Load(ContainerBuilder builder)
         {
-            var temp = _conf.GetConnectionString("DDDConnectionString");
-
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DepartmentRepository>().As<IDepartmentRepository>().InstancePerLifetimeScope();
@@ -27,7 +30,7 @@ namespace API
             builder.Register(c => {
                 var options = new DbContextOptionsBuilder<EFContext>();
                 options.UseLoggerFactory(c.Resolve<ILoggerFactory>()).EnableSensitiveDataLogging();
-                options.UseSqlServer(_conf.GetConnectionString("DDDConnectionString"), b => b.MigrationsAssembly("P3.Data"));
+                options.UseSqlServer(_dbconstr, b => b.MigrationsAssembly("P3.Data"));
                 return options.Options;
             }).InstancePerLifetimeScope();
             builder.RegisterType<EFContext>()
@@ -36,13 +39,16 @@ namespace API
             builder.RegisterType<GridCommonService>().As<IGridCommonService>();
             builder.RegisterType<UserService>().AsSelf();
 
-            builder.RegisterHandlers();
+            builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
+                .AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(OnPayslipAddedDomainEventHandler).Assembly)
+                .AsClosedTypesOf(typeof(INotificationHandler<>));
 
-        }
-
-        public RegisterModule(ConfigurationManager conf)
-        {
-            this._conf = conf;
+            builder.Register<ServiceFactory>(context =>
+            {
+                var componentContext = context.Resolve<IComponentContext>();
+                return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
+            });
         }
     }
 

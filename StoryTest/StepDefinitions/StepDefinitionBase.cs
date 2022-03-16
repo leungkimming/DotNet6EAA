@@ -14,10 +14,8 @@ namespace P6.StoryTest.StepDefinitions
         private string projectDir;
         private string configPath;
         public HttpClient client;
-        IConfigurationRoot config;
-        public StepDefinitionBase(
-          ScenarioContext context,
-          WebApplicationFactory<Program> webApplicationFactory)
+        public IConfigurationRoot config;
+        public StepDefinitionBase(ScenarioContext context)
         {
             // Inject auto test connection string to application under test
             projectDir = Directory.GetCurrentDirectory();
@@ -36,26 +34,6 @@ namespace P6.StoryTest.StepDefinitions
 
             // create an http client of the application under test
             client = this.webApplicationFactory.CreateClient();
-
-            // prepare an empty database for auto test
-            using var provider = new ServiceCollection()
-                .AddDbContext<Data.EF.EFContext>(options =>
-                     options.UseSqlServer(config.GetConnectionString("DDDConnectionString")))
-                .AddScoped<Data.EF.EFContext>()
-                .BuildServiceProvider();
-
-            using (var scope = provider.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<Data.EF.EFContext>();
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Payslips");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Users");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Departments");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists __EFMigrationsHistory");
-                db.Database.Migrate();
-                DbSet<Department> _dbSet = db.Set<Department>();
-                _dbSet.Add(new Department("IT", "Information Technology"));
-                db.SaveChanges();
-            }
         }
         public class MyWebApplicationFactory<T> : WebApplicationFactory<T> where T : class
         {

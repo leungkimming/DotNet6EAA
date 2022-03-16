@@ -13,8 +13,7 @@ namespace P6.StoryTest.StepDefinitions
     public class CallAPIStepDefinitions : StepDefinitionBase
     {
         public CallAPIStepDefinitions(
-          ScenarioContext context,
-          WebApplicationFactory<Program> webApplicationFactory) : base(context, webApplicationFactory)
+          ScenarioContext context) : base(context)
         {
         }
 
@@ -70,7 +69,14 @@ namespace P6.StoryTest.StepDefinitions
             Assert.AreEqual(result.DepartmentName, iT);
         }
 
-
-
+        [Then(@"the response contains UserId \((.*)\) and TotalSalary \((.*)\) and lettersentdate \(""([^""]*)""\) and letter start with \(""([^""]*)""\)")]
+        public void ThenTheResponseContainsUserIdAndTotalSalaryAndLettersentdateAndLetterStartWith(int p0, int p1, string today, string p3)
+        {
+            AddPayslipResponse result = JsonConvert.DeserializeObject<AddPayslipResponse>(context.Get<string>("ResponseBody"));
+            Assert.AreEqual(result.UserId, p0);
+            Assert.AreEqual(result.TotalSalary, p1);
+            Assert.AreEqual(result.LetterSentDate.Value.Date.ToString(), DateTime.Now.Date.ToString());
+            Assert.IsTrue(result.Letter.StartsWith(p3.Replace("\\n","\n")));
+        }
     }
 }

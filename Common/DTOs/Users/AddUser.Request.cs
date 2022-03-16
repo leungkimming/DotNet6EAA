@@ -23,5 +23,8 @@ namespace Common.DTOs.Users
 
         [Required]
         public int? DepartmentId { get; set; }
+
+        [Required]
+        public float CoefficientsSalary { get; set; }
     }
 }

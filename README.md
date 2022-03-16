@@ -14,7 +14,7 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 
 ## Changes to made EF Migration work
 * convert Program.cs to .NET webApplication builder
-* retain MediatR for future CQRS
+* rename RootEntity for MediatR (created a Payslip Domain event example)
 * Separate the RootEntity
 ```
 public abstract class RootEntity {
