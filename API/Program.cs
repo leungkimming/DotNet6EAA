@@ -1,8 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Data.EF.Interfaces;
-using Data.EF.Repositories;
-using Data.EF;
-using Service.Users;
 using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
@@ -74,6 +70,7 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 });
 
 // Add other features
+builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -98,17 +95,30 @@ if (app.Environment.IsDevelopment()) {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+    // for Blazor wasm hosting
+    app.UseWebAssemblyDebugging();
+} else { // for Blazor wasm hosting
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseCors(AllowCors);
 
-// UseHttpsRedirection will lead to preflight failed CORS issues
-//app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+
+app.UseHttpsRedirection();
 
 app.MapControllers();
 
-//app.Urls.Add("http://localhost:3000");
+// for Blazor wasm hosting
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapRazorPages();
+app.MapControllers();
+app.MapFallbackToFile("index.html");
+
 app.Run();
 public partial class Program { }
