@@ -30,13 +30,15 @@ namespace API.Controllers
         public async Task<IActionResult> Add([FromBody] AddUserRequest request)
         {
             AddUserResponse response;
-            try
-            {
-                response = await _service.AddNewAsync(request);
-            } catch (UserAlreadyExistException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            response = await _service.AddNewAsync(request);
+            //try
+            //{
+            //    response = await _service.AddNewAsync(request);
+            //}
+            //catch (UserAlreadyExistException ex)
+            //{
+            //    return BadRequest(ex.Message);
+            //}
             return Ok(response);
         }
 
@@ -44,12 +46,13 @@ namespace API.Controllers
         public async Task<IActionResult> AddPayslip([FromBody] AddPayslipRequest request)
         {
             AddPayslipResponse _response;
-            try
-            {
-                _response = await _service.AddUserPayslipAsync(request);
-            } catch (PayslipMonthAlreadyExistException ex) {
-                return BadRequest(ex.Message);
-            }
+            _response = await _service.AddUserPayslipAsync(request);
+            //try
+            //{
+            //    _response = await _service.AddUserPayslipAsync(request);
+            //} catch (PayslipMonthAlreadyExistException ex) {
+            //    return BadRequest(ex.Message);
+            //}
             return Ok(_response);
         }
 

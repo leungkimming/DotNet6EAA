@@ -1,5 +1,7 @@
 ﻿@page "/searchuser"
 @using Common.DTOs.Users
+@using System.Net.Http
+@using System.Text.Json
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -103,6 +105,7 @@
         </tbody>
     </table>
 }
+<p hidden=@(_message == "") style="white-space: pre-line" >@_message</p>
 
 
 <div class="spinner" hidden=@_notspinning ></div>
@@ -111,11 +114,23 @@
     private bool _notspinning = true;
     private PayslipDTO[]? payslips;
     private GetUserRequest _getUser = new GetUserRequest();
+    private string _message;
 
     async Task Send()
     {
         _notspinning = false;
-        users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
+        _message = "";
+        var response = await Http.GetAsync("users?Search=" + _getUser.Search);
+        var content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            _message = content;
+        }
+        else
+        {
+            users = JsonSerializer.Deserialize<UserInfoDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+     // users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
         _notspinning = true;
     }
     async Task Payslip(UserInfoDTO user)

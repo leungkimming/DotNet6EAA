@@ -2,21 +2,23 @@
 using Data.EF.Interfaces;
 using Business.Users;
 using Business.Departments;
-using AutoMapper;
 using Common.Shared;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace Service.Users
 {
     public class UserService : BaseService
     {
-        private readonly IMapper _mapper;
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
+        public UserService(IUnitOfWork unitOfWork,
+            ILogger<UserService> logger,
+            IMapper mapper) : base(unitOfWork, logger, mapper)
         {
-            _mapper = mapper;
         }
 
         public async Task<AddUserResponse> AddNewAsync(AddUserRequest model)
         {
+            _logger.LogWarning(2000, "Add " + model.UserName);
             var repository = UnitOfWork.AsyncRepository<User>();
             var checkuser = await repository.GetAsync(x => x.UserName == model.UserName);
             if (checkuser != null)
@@ -67,7 +69,7 @@ namespace Service.Users
         }
         public async Task<List<UserInfoDTO>> SearchAsync(GetUserRequest request)
         {
-//          var repository = UnitOfWork.AsyncRepository<User>();
+            //          var repository = UnitOfWork.AsyncRepository<User>();
             var repository = UnitOfWork.UserRepository();
             var users = await repository
                 .ListAsyncwithDept(_ => _.UserName.Contains(request.Search));
