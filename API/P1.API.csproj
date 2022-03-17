@@ -44,8 +44,4 @@
   <ItemGroup>
 	<InternalsVisibleTo Include="P6.StoryTest" />
   </ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="Filters\" />
-  </ItemGroup>
 </Project>
