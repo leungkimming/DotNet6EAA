@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Service;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.AspNetCore.Builder;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
