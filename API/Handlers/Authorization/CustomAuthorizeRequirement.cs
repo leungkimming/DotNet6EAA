@@ -2,6 +2,8 @@
 using Common.Shared;
 using Common.Utilities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Service;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -16,12 +18,12 @@ namespace API {
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public virtual bool AuthorizeRequest(AuthorizationHandlerContext context, IGridCommonService gridCommonService) {
+        public virtual bool AuthorizeRequest(AuthorizationHandlerContext context, IHttpContextAccessor contextAccessor, IGridCommonService gridCommonService) {
             IIdentity? currentUser = context.User.Identity;
 
             if (currentUser is not null && currentUser.IsAuthenticated) {
 
-                if (!TryGetAuthenticatedUserPrincipal(currentUser, gridCommonService, out var userIdentity)) {
+                if (!TryGetAuthenticatedUserPrincipal(contextAccessor, currentUser, gridCommonService, out var userIdentity)) {
                     throw new CustomException(ErrorRegistry.E1001, "Not authorized user");
                 }
 
@@ -38,11 +40,14 @@ namespace API {
         }
 
         private bool TryGetAuthenticatedUserPrincipal(
+            IHttpContextAccessor contextAccessor,
             IIdentity currentUser,
             IGridCommonService userService,
             out UserIdentity? userIdentity) {
 
             userIdentity = null;
+
+            var options = contextAccessor?.HttpContext?.RequestServices.GetService<IOptions<JsonOptions>>();
 
             var loginID = currentUser.Name is not null ? currentUser.Name : string.Empty;
             UserProfileDTO? userProfile = null;
@@ -60,7 +65,7 @@ namespace API {
                 new UserClaims(
                     userProfile.AccessCodes.ToHashSet(),
                     userProfile.UserRoles.Select(r => r.Description).ToHashSet()),
-                JsonOptions.SerializerOptions);
+                options?.Value.JsonSerializerOptions);
             string userDataClaimString = userDataClaimValue is not null ? userDataClaimValue.ToString() : string.Empty;
 
             var claims = new List<Claim>() {

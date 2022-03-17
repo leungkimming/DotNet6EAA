@@ -67,8 +67,11 @@ builder.Services.AddControllers().AddJsonOptions(options => {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
     options.JsonSerializerOptions.Converters.AddDTOConverters();
-    JsonOptions.SerializerOptions = options.JsonSerializerOptions;
 });
+
+// Add the HttpContextAccessor for the middlewares and handlers that
+// have no HttpContext to get the JsonOptions from the AddJsonOptions
+builder.Services.AddHttpContextAccessor();
 
 // Add other features
 builder.Services.AddControllersWithViews();
