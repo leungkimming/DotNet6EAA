@@ -18,6 +18,12 @@ namespace API {
         /// </summary>
         public UserClaims? CustomClaims { get; private set; }
 
+        public UserIdentity() : base() {
+            LoginID = string.Empty;
+            VendorNo = string.Empty;
+            CustomClaims = GetCustomClaim();
+        }
+
         /// <summary>
         /// The constructor of TrenchWorkContractorIdentity, 
         /// and to construct the base ClaimsIdentity using custom

@@ -12,7 +12,7 @@ namespace Common.Utilities {
                     }
                 }
 
-                return AppConstants.TrenchWork_SystemName;
+                return AppConstants.SYSTEM_NAME;
             }
         }
 
@@ -24,8 +24,7 @@ namespace Common.Utilities {
                     }
                 }
 
-                return "CMS";
-                //return AppConstants.TrenchWork_SystemCode;
+                return string.Empty;
             }
         }
 
@@ -55,16 +54,16 @@ namespace Common.Utilities {
         }
 
 
-        public static string CSMTA_ConnectionString {
+        public static string System_ConnectionString {
             get {
                 if (Environment != EnvironmentType.Development) {
-                    if (ConfigurationManager.ConnectionStrings[nameof(CSMTA_ConnectionString)] != null) {
-                        return ConfigurationManager.ConnectionStrings[nameof(CSMTA_ConnectionString)].ConnectionString;
+                    if (ConfigurationManager.ConnectionStrings[nameof(System_ConnectionString)] != null) {
+                        return ConfigurationManager.ConnectionStrings[nameof(System_ConnectionString)].ConnectionString;
                     }
                 }
 
 
-                return @"Data Source=.\SQLEXPRESS;Initial Catalog=CSMTADD;Integrated Security=True";
+                return @"Data Source=.\SQLEXPRESS;Initial Catalog=;Integrated Security=True";
             }
         }
 

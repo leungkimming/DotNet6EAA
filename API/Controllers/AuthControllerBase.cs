@@ -20,10 +20,11 @@ namespace API {
         /// </summary>
         protected UserClaims? AuthenticatedUserClaims {
             get {
-                return (ControllerContext.HttpContext.User.Identities
-                    .SingleOrDefault(i => i.GetType() == typeof(UserIdentity))
+                var customClaims = (ControllerContext.HttpContext.User.Identities
+                    .SingleOrDefault(i => i.GetType() == typeof(UserIdentity), new UserIdentity())
                     as UserIdentity)
                     ?.CustomClaims;
+                return customClaims;
             }
         }
 
@@ -33,7 +34,7 @@ namespace API {
         protected UserIdentity? AuthenticatedUserIdentity {
             get {
                 var customIdentity = ControllerContext.HttpContext.User.Identities
-                    .SingleOrDefault(i => i.GetType() == typeof(UserIdentity))
+                    .SingleOrDefault(i => i.GetType() == typeof(UserIdentity), new UserIdentity())
                     as UserIdentity;
                 return customIdentity;
             }

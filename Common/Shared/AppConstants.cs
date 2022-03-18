@@ -15,30 +15,7 @@ namespace Common.Shared {
         public const string SYSTEM_ID_EMAIL = "SYSTEM";
         public const string DummySN = "Dummy SN";
 
-        public const string CSMTA_SystemCode = "CSMTA";
-
-        public const string TrenchWork_SystemName = "TrenchWork";
-        public const string TrenchWork_SystemCode = "TrenchWork";
-    }
-
-    public static class CSMWorkFlowActions {
-        #region SES
-        public const string CSM_SES_AgreeSES_Agree = "SES_AgreeSES_Agree";
-        public const string CSM_SES_AgreeSES_Disagree = "SES_AgreeSES_Disagree";
-        #endregion
-
-        #region WorksOrder
-        public const string CSM_WorksOrder_WorkOrderAcknowledgement_Acknowledged = "WO_Ack_Acknowledged";
-        public const string CSM_WorksOrder_WorksOrderAdjustment_Issued = "WO_Adjust_Issued";
-        public const string CSM_WorksOrder_CreateSES_Create = "WO_CreateSES_Create";
-        public const string CSM_WorksOrder_DeleteWOItem_Delete = "WO_DeleteWOItem_Delete";
-
-        #endregion
-        #region Complaint
-        public const string CSM_Complaint_ExplainComplaint_Declare = "Complaint_ExplainComplaint_Declare";
-
-        #endregion
-
+        public const string SYSTEM_NAME = "";
     }
 
     public static class DBNullConstants {

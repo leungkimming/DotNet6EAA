@@ -26,9 +26,9 @@ namespace API {
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(IDTO).IsAssignableFrom(t)).ToList();
             types.ForEach(t => {
                 var makeGeneric = typeof(CustomGenericConverter<>).MakeGenericType(t);
-                var instance = Activator.CreateInstance(makeGeneric) as JsonConverter;
+                var instance = Activator.CreateInstance(makeGeneric);
                 if (instance is not null) {
-                    converters.Add(instance);
+                    converters.Add((JsonConverter)instance);
                 }
             });
         }

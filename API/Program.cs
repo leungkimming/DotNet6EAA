@@ -17,6 +17,10 @@ const string CORS_ORIGINS = "CorsOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+// If system use Http.Sys, it can support NTLM and Negotiate, this will be compatible with old systems
+// running on NTLM. But if use Kestrel, the WebApi will only support Negotiate, NTLM will be incompatible.
+// Http.Sys is only supported on Windows.
+// *Don't use IIS Express for debugging*
 builder.WebHost.UseHttpSys(options => {
     options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
     options.Authentication.AllowAnonymous = false;
@@ -86,6 +90,13 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization(options =>
     // By default, all incoming requests will be authorized according to the default policy.
+
+    // This will not use any antuhorization requirements, and not use GridCommon2 to authorize
+    //options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+    // This will use the specific authorization requirements to process the authorize, 
+    // can be replaced with any requirements actually needed,
+    // GridCommon2 is still not the unique choice
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .AddRequirements(new CustomAuthorizeRequirement())

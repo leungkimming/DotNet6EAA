@@ -16,8 +16,8 @@
         /// <param name="accessCodes"></param>
         /// <param name="roles"></param>
         public UserClaims(HashSet<string> accessCodes, HashSet<string> roles) {
-            AccessCodes = accessCodes;
-            Roles = roles;
+            AccessCodes = accessCodes ?? new HashSet<string>();
+            Roles = roles ?? new HashSet<string>();
         }
 
         /// <summary>
