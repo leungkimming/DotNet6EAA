@@ -108,4 +108,6 @@ app.UseMiddleware<ErrorHandler>();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();
+
+// Define class name 'Program' for Specflow to work
 public partial class Program { }
