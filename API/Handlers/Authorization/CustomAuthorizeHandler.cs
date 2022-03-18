@@ -7,6 +7,11 @@ namespace API {
         private readonly IGridCommonService _gridCommonService;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="gridCommonService">Injected GridCommon2 service</param>
+        /// <param name="contextAccessor">Injected context to get services from HttpContext</param>
         public CustomAuthorizeHandler(IGridCommonService gridCommonService, IHttpContextAccessor contextAccessor) {
             _gridCommonService = gridCommonService;
             _contextAccessor = contextAccessor;

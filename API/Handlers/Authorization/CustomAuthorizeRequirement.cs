@@ -61,6 +61,7 @@ namespace API {
                 return false;
             }
 
+            // Serialize the AccessCodes and UserRoles into Json string and set into claims
             JsonNode? userDataClaimValue = JsonSerializer.SerializeToNode(
                 new UserClaims(
                     userProfile.AccessCodes.ToHashSet(),

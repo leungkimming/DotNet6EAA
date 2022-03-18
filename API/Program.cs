@@ -120,7 +120,7 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseCors(AllowCors);
 
-
+// Use Https redirection will maybe lead to preflight failed and get CORS issues
 app.UseHttpsRedirection();
 
 app.MapControllers();
