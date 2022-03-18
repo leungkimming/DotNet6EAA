@@ -24,15 +24,9 @@ namespace Service.DomainEventHandlers
                 + notification.Payslip.User.Address + "\n"
                 + "Dear " + notification.Payslip.User.UserName + "\n"
                 + "Your Salary, amount to "
-                + notification.Payslip.TotalSalary.ToString();
-            if (notification.Payslip.IsPaid)
-            {
-                letter += ", was debited to your bank on "
-                    + notification.Payslip.PaymentDate.ToString() + ".\n";
-            } else
-            {
-                letter += ", will be debited to your bank." + "\n";
-            }
+                + notification.Payslip.TotalSalary.ToString()
+                + ", was debited to your bank on "
+                + notification.Payslip.PaymentDate.ToString() + ".\n";
             //await sendLetterService(letter);
 
             var repository = _unitOfWork.UserRepository();
@@ -42,7 +36,6 @@ namespace Service.DomainEventHandlers
                 user.SendPayslipLetter(notification.Payslip, letter);
 
                 await repository.UpdateAsync(user);
-                await _unitOfWork.SaveChangesAsync();
             }
         }
     }
