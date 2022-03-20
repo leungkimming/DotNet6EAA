@@ -5,19 +5,14 @@ using Common.Shared;
 
 namespace API
 {
-    public static class CustomUserExceptionHandler
+    public  class CustomUserExceptionHandler
     {
-        private static ILogger<CustomUserException> _logger { get; set; }
-        public static void Init(ILogger<CustomUserException> logger)
+        private  ILogger<CustomUserExceptionHandler> _logger { get; set; }
+        public CustomUserExceptionHandler(ILogger<CustomUserExceptionHandler> logger)
         {
             _logger = logger;
         }
-        public static void UseCustomExceptions(this IApplicationBuilder app)
-        {
-            app.Use(HandleExceptionResponse);
-        }
-
-        private static Task HandleExceptionResponse(HttpContext httpContext, Func<Task> next)
+        public Task HandleExceptionResponse(HttpContext httpContext, Func<Task> next)
         {
             // Exception handler middleware has everything already set up for us
             var exceptionDetails = httpContext.Features.Get<IExceptionHandlerFeature>();
