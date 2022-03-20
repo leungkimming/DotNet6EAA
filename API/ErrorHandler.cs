@@ -25,6 +25,9 @@ namespace API
             }
             catch (Exception error)
             {
+                //int bug = 0;
+                //int bug1 = 2 / bug; // generate an exception in exception handler itself
+
                 var response = context.Response;
                 response.ContentType = "application/json";
                 string _message = "";
@@ -42,7 +45,7 @@ namespace API
                         _message = ex.Message;
                         break;
                     default:
-                        _logger.LogError(9999, error.Message + "\n" + error.StackTrace);
+                        _logger.LogError(9998, error.Message + "\n" + error.StackTrace);
                         _statusCode = (int)HttpStatusCode.InternalServerError;
                         _message = "Error:" + _statusCode + ", Service temporarily interrupted. Please retry. If the error persists, please call IT Help Desk";
                         break;

@@ -18,11 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 //"TypesSupported" = dword:00000007
 
 builder.Logging.ClearProviders();
-//builder.Logging.AddEventLog();
 builder.Logging.AddEventLog(eventLogSettings =>
 {
     eventLogSettings.SourceName = ".NET Runtime";
-//    eventLogSettings.LogName = "Application";
 });
 
 // allow CORS
@@ -51,6 +49,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
 //    .AddScoped<IDepartmentRepository, DepartmentRepository>();
 //builder.Services
 //    .AddScoped<UserService>();
+builder.Services.AddSingleton<CustomUserException>();
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assembly);
@@ -79,19 +78,21 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    //app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
     // for Blazor wasm hosting
     app.UseWebAssemblyDebugging();
-} else { // for Blazor wasm hosting
-    app.UseExceptionHandler("/Error");
+} else {
+    //app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.Services.GetService<CustomUserException>(); // initialize the CustomUserException static class
+app.UseExceptionHandler(err => err.UseCustomExceptions());
+app.UseMiddleware<ErrorHandler>();
 
 app.UseCors(AllowCors);
-
 
 app.UseHttpsRedirection();
 
@@ -104,7 +105,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-app.UseMiddleware<ErrorHandler>();
+//app.UseMiddleware<ErrorHandler>();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();
