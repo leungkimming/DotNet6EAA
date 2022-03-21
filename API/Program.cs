@@ -11,12 +11,6 @@ const string CORS_ORIGINS = "CorsOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 // Windows Event logging
-//ONE TIME SETUP: save below as *.reg and run as admin
-//Windows Registry Editor Version 5.00
-//[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\Application\dotnetEAA]
-//"EventMessageFile" = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\EventLogMessages.dll"
-//"TypesSupported" = dword:00000007
-
 builder.Logging.ClearProviders();
 builder.Logging.AddEventLog(eventLogSettings =>
 {
@@ -33,23 +27,6 @@ builder.Services.AddCors(option => option.AddPolicy(
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder 
     => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
-
-// Below all Moved to Autofac
-// Add services to the container.
-//var temp = builder.Configuration.GetConnectionString("DDDConnectionString");
-//builder.Services.AddDbContext<EFContext>(options =>
-//         options
-//         //                     .UseLazyLoadingProxies()
-//         .UseSqlServer(builder.Configuration.GetConnectionString("DDDConnectionString"), b => b.MigrationsAssembly("P3.Data")));
-//builder.Services
-//    .AddScoped<IUnitOfWork, UnitOfWork>();
-//builder.Services
-//    .AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBase<>))
-//    .AddScoped<IUserRepository, UserRepository>()
-//    .AddScoped<IDepartmentRepository, DepartmentRepository>();
-//builder.Services
-//    .AddScoped<UserService>();
-builder.Services.AddSingleton<CustomUserExceptionHandler>();
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assembly);
@@ -88,10 +65,8 @@ if (app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseExceptionHandler(err => {
-    var handler = err.ApplicationServices.GetRequiredService<CustomUserExceptionHandler>();
-    err.Use(handler.HandleExceptionResponse);
-});
+
+app.UseExceptionHandler("/Error");
 app.UseMiddleware<ErrorHandler>();
 
 app.UseCors(AllowCors);
@@ -107,7 +82,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-//app.UseMiddleware<ErrorHandler>();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();

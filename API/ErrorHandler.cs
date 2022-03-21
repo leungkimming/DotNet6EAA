@@ -2,6 +2,9 @@
 using System.Text.Json;
 using Common.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace API
 {
@@ -9,6 +12,7 @@ namespace API
     {
         private readonly RequestDelegate _next;
         public readonly ILogger<ErrorHandler> _logger;
+        public string? RequestId { get; set; }
         public ErrorHandler(RequestDelegate next, ILogger<ErrorHandler> logger)
         {
             _next = next;
@@ -45,9 +49,11 @@ namespace API
                         _message = ex.Message;
                         break;
                     default:
+                        RequestId = Activity.Current?.Id ?? context.TraceIdentifier;
                         _logger.LogError(9998, error.Message + "\n" + error.StackTrace);
                         _statusCode = (int)HttpStatusCode.InternalServerError;
-                        _message = "Error:" + _statusCode + ", Service temporarily interrupted. Please retry. If the error persists, please call IT Help Desk";
+                        _message = String.Format(@"Service temporarily interrupted.Please report the problem to IT Help Desk with Trace Id ""{0}""", 
+                            RequestId);
                         break;
                 }
                 response.StatusCode = _statusCode;
