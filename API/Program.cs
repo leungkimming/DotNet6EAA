@@ -88,8 +88,10 @@ if (app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-CustomUserExceptionHandler handler = app.Services.GetService<CustomUserExceptionHandler>(); 
-app.UseExceptionHandler(err => err.Use(handler.HandleExceptionResponse));
+app.UseExceptionHandler(err => {
+    var handler = err.ApplicationServices.GetRequiredService<CustomUserExceptionHandler>();
+    err.Use(handler.HandleExceptionResponse);
+});
 app.UseMiddleware<ErrorHandler>();
 
 app.UseCors(AllowCors);
