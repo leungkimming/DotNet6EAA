@@ -2,14 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using AutoMapper;
-using Service.MapperProfiles;
 using API;
-using Common.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.Negotiate;
-using Microsoft.Extensions.Logging.EventLog;
-using API;
+using Microsoft.AspNetCore.Server.HttpSys;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
@@ -21,6 +16,18 @@ builder.Logging.AddEventLog(eventLogSettings =>
 {
     eventLogSettings.SourceName = ".NET Runtime";
 });
+
+// If system use Http.Sys, it can support NTLM and Negotiate, this will be compatible with old systems
+// running on NTLM. But if use Kestrel, the WebApi will only support Negotiate, NTLM will be incompatible.
+// Http.Sys is only supported on Windows.
+// *When use debugging, don't select IIS Express to startup, select startup-project instead (Command startup)*
+builder.WebHost.UseHttpSys(options => {
+    options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
+    options.Authentication.AllowAnonymous = false;
+});
+
+// Add antifogery middleware to replace the dotnet 4.8 custom one
+builder.Services.AddAntiforgery();
 
 // allow CORS
 builder.Services.AddCors(option => option.AddPolicy(
@@ -43,12 +50,14 @@ builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assemb
 builder.Services.AddControllers().AddJsonOptions(options => {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.MaxDepth = 64;
     options.JsonSerializerOptions.Converters.AddDTOConverters();
 });
 
 // Add the HttpContextAccessor for the middlewares and handlers that
 // have no HttpContext to get the JsonOptions from the AddJsonOptions
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddRazorPages();
 
 // Add other features
 builder.Services.AddControllersWithViews();

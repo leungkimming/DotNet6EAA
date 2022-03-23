@@ -27,7 +27,7 @@ namespace API {
             builder.Register(c => {
                 var options = new DbContextOptionsBuilder<EFContext>();
                 options.UseLoggerFactory(c.Resolve<ILoggerFactory>()).EnableSensitiveDataLogging();
-                options.UseSqlServer(_dbconstr, b => b.MigrationsAssembly("P3.Data"));
+                options.UseSqlServer(_dbconstr, b => b.MigrationsAssembly("P7.Migrator"));
                 return options.Options;
             }).InstancePerLifetimeScope();
             builder.RegisterType<EFContext>()
