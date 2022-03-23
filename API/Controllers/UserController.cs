@@ -29,6 +29,7 @@ namespace API.Controllers
         [HttpPost(Name = "AddNewUser")]
         public async Task<IActionResult> Add([FromBody] AddUserRequest request)
         {
+            var user = HttpContext.User.Identity.Name;
             AddUserResponse response;
             response = await _service.AddNewAsync(request);
             //try

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Support\SimpleTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="appsettings.test.json" />
   </ItemGroup>
 

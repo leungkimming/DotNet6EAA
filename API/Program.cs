@@ -5,6 +5,9 @@ using Autofac;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.Extensions.Logging.EventLog;
 using API;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Server.HttpSys;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
@@ -39,21 +42,35 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 });
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-   .AddNegotiate();
-
-builder.Services.AddAuthorization(options =>
+//builder.Services.AddAuthentication();
+builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+if (builder.Environment.IsEnvironment("SpecFlow"))
 {
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .Build();
+    });
+} else {
+    builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+       .AddNegotiate();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.FallbackPolicy = options.DefaultPolicy;
+    });
+}    
+
 // for Blazor wasm hosting
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("SpecFlow"))
 {
     //app.UseDeveloperExceptionPage();
     app.UseSwagger();
@@ -61,6 +78,11 @@ if (app.Environment.IsDevelopment())
     // for Blazor wasm hosting
     app.UseWebAssemblyDebugging();
 } else {
+    builder.WebHost.UseHttpSys(options =>
+    {
+        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
+        options.Authentication.AllowAnonymous = false;
+    });
     //app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();

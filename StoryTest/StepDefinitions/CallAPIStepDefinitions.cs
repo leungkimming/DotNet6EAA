@@ -38,6 +38,8 @@ namespace P6.StoryTest.StepDefinitions
                     }
                 }
             };
+            SetAuthorization("HEH");
+            SetLogonId("41776");
             // let's post
             var response = await client.SendAsync(request).ConfigureAwait(false);
             try
