@@ -3,10 +3,8 @@ using Business.Departments;
 using Business.Users.Events;
 using Common.Shared;
 
-namespace Business.Users
-{
-    public partial class User: IAggregateRoot
-    {
+namespace Business.Users {
+    public partial class User : IAggregateRoot {
         public User(string userName
             , string firstName
             , string lastName
@@ -42,8 +40,7 @@ namespace Business.Users
             CoefficientsSalary = coefficientsSalary;
         }
 
-        public void AddDepartment(Department department)
-        {
+        public void AddDepartment(Department department) {
             Department = department;
             //DepartmentId = departmentId;
         }
@@ -52,16 +49,14 @@ namespace Business.Users
             , float workingDays
             , decimal bonus
             , bool isPaid
-            )
-        {
+            ) {
             // Make sure there's only one payslip  per month
             var exist = PaySlips.Any(_ => _.Date.Month == date.Month && _.Date.Year == date.Year);
             if (exist)
                 throw new PayslipMonthAlreadyExistException(date.Month);
 
             var payslip = new Payslip(this.Id, date, workingDays, bonus);
-            if (isPaid)
-            {
+            if (isPaid) {
                 payslip.Pay(this.CoefficientsSalary);
             }
 

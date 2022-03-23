@@ -2,6 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using AutoMapper;
+using Service.MapperProfiles;
+using API;
+using Common.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.Extensions.Logging.EventLog;
 using API;
@@ -31,24 +36,45 @@ builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assembly);
 
+// Add JsonOptions to set the NamingPolicy to use Pascal-Case and Case-Sensitive
+// default is Camel-Case and Case-Insensitive
+// Add custom converters so JsonSerializer can serialize all DTOs normally
+// Replace Newtonsoft.Json to System.Text.Json
+builder.Services.AddControllers().AddJsonOptions(options => {
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.Converters.AddDTOConverters();
+});
+
+// Add the HttpContextAccessor for the middlewares and handlers that
+// have no HttpContext to get the JsonOptions from the AddJsonOptions
+builder.Services.AddHttpContextAccessor();
+
 // Add other features
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
+builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 });
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-   .AddNegotiate();
-
+// Add Windows Authentication and Authorization and customize the Authorization policy
+// with custom requirement
+//builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
+builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
-// for Blazor wasm hosting
-builder.Services.AddRazorPages();
+    // By default, all incoming requests will be authorized according to the default policy.
+
+    // This will not use any antuhorization requirements, and not use GridCommon2 to authorize
+    //options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+    // This will use the specific authorization requirements to process the authorize, 
+    // can be replaced with any requirements actually needed,
+    // GridCommon2 is still not the unique choice
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .AddRequirements(new CustomAuthorizeRequirement())
+        .Build()
+);
 
 var app = builder.Build();
 
@@ -71,6 +97,7 @@ app.UseMiddleware<ErrorHandler>();
 
 app.UseCors(AllowCors);
 
+// Use Https redirection will maybe lead to preflight failed and get CORS issues
 app.UseHttpsRedirection();
 
 app.MapControllers();

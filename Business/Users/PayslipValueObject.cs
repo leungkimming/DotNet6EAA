@@ -1,11 +1,8 @@
-﻿namespace Business.Users
-{
-    public class PayslipValueObject
-    {
+﻿namespace Business.Users {
+    public class PayslipValueObject {
         public PayslipValueObject(float workingDays
             , float coefficientsSalary
-            , decimal bonus)
-        {
+            , decimal bonus) {
             TotalSalary = (decimal)(workingDays * coefficientsSalary) + bonus;
         }
 

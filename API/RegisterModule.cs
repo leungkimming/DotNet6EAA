@@ -4,11 +4,11 @@ using Data.EF.Interfaces;
 using Data.EF.Repositories;
 using Data.EF;
 using Service.Users;
-using Service.DomainEventHandlers;
+using Service;
 using MediatR;
+using Service.DomainEventHandlers;
 
-namespace API
-{
+namespace API {
     public class RegisterModule : Module
     {
         public string _dbconstr { get; }
@@ -33,7 +33,9 @@ namespace API
             builder.RegisterType<EFContext>()
                   .AsSelf()
                   .InstancePerLifetimeScope();
+            builder.RegisterType<GridCommonService>().As<IGridCommonService>();
             builder.RegisterType<UserService>().AsSelf();
+            builder.RegisterHandlers();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
                 .AsImplementedInterfaces();

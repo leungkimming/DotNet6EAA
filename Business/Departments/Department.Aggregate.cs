@@ -9,8 +9,7 @@ namespace Business.Departments
             Users = new HashSet<User>();
         }
 
-        public Department(string name
-            , string description) : this()
+        public Department(string name, string description) : this()
         {
             this.Update(name, description);
         }
