@@ -6,29 +6,22 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
-namespace API
-{
-    public class ErrorHandler
-    {
+namespace API {
+    public class ErrorHandler {
         private readonly RequestDelegate _next;
         public readonly ILogger<ErrorHandler> _logger;
         public string? RequestId { get; set; }
-        public ErrorHandler(RequestDelegate next, ILogger<ErrorHandler> logger)
-        {
+        public ErrorHandler(RequestDelegate next, ILogger<ErrorHandler> logger) {
             _next = next;
             this._logger = logger;
         }
 
-        public async Task Invoke(HttpContext context)
-        {
+        public async Task Invoke(HttpContext context) {
             int _statusCode = (int)HttpStatusCode.InternalServerError;
 
-            try
-            {
+            try {
                 await _next(context);
-            }
-            catch (Exception error)
-            {
+            } catch (Exception error) {
                 //int bug = 0;
                 //int bug1 = 2 / bug; // generate an exception in exception handler itself
 
@@ -36,8 +29,7 @@ namespace API
                 response.ContentType = "application/json";
                 string _message = "";
 
-                switch (error)
-                {
+                switch (error) {
                     case PayslipMonthAlreadyExistException ex:
                         _logger.LogError(100, ex.Message);
                         _statusCode = (int)HttpStatusCode.BadRequest;
@@ -52,7 +44,7 @@ namespace API
                         RequestId = Activity.Current?.Id ?? context.TraceIdentifier;
                         _logger.LogError(9998, error.Message + "\n" + error.StackTrace);
                         _statusCode = (int)HttpStatusCode.InternalServerError;
-                        _message = String.Format(@"Service temporarily interrupted.Please report the problem to IT Help Desk with Trace Id ""{0}""", 
+                        _message = String.Format(@"Service temporarily interrupted.Please report the problem to IT Help Desk with Trace Id ""{0}""",
                             RequestId);
                         break;
                 }

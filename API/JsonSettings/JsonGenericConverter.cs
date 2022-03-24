@@ -12,7 +12,7 @@ namespace API {
     public class CustomGenericConverter<T> : JsonConverter<T> where T : IDTO {
 
         public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var jsonObject = JsonSerializer.Deserialize(ref reader, typeof(T), options);
+            var jsonObject = JsonSerializer.Deserialize(ref reader, typeToConvert, options);
             if (jsonObject is not null) {
                 return (T)jsonObject;
             } else {
@@ -21,12 +21,13 @@ namespace API {
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) {
-            JsonSerializer.Serialize(writer, Convert.ChangeType(value, typeof(T)), options);
+            JsonSerializer.Serialize(writer, Convert.ChangeType(value, value.GetType()), options);
         }
     }
 
     /// <summary>
     /// The extension method to add IDTO inheritances
+    /// Has some problems in types reflection and instanciate, need to reconstruct
     /// </summary>
     public static class JsonConverterExtensions {
         public static void AddDTOConverters(this ICollection<JsonConverter> converters) {

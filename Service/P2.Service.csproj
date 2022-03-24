@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Common\P5.Common.csproj" />
     <ProjectReference Include="..\Business\P4.Business.csproj" />
     <ProjectReference Include="..\Data\P3.Data.csproj" />
+    <ProjectReference Include="..\P8.Utilities\P8.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,13 @@
 ﻿using HKElectric.GridCommon2.CoreService;
-using Common.Utilities;
 using Common.DTOs;
+using System.Security.Principal;
+using Utilities;
 
 namespace Service {
-    public class GridCommonService : IGridCommonService {
+    /// <summary>
+    /// GridCommon2 is an example for how to use IUserService
+    /// </summary>
+    public class GridCommonService : IUserService {
 
         private readonly CoreService _coreClient;
 
@@ -11,13 +15,50 @@ namespace Service {
             _coreClient = new CoreServiceClient();
         }
 
-        public async Task<UserProfileDTO?> GetUserProfile(string loginID) {
+        public UserProfileDTO? GetUserProfile(string loginID) {
+            var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
+            getUserProfileRequest.Code = loginID;
+            getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
+            var userPO = _coreClient.Request(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
+            var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
+            return userProfileDTO;
+        }
+
+        public UserProfileDTO? GetUserProfile(IIdentity userIdentity) {
+            if (userIdentity is null) {
+                return null;
+            } else {
+                var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
+                string? loginID = (userIdentity as WindowsIdentity)?.Name;
+                getUserProfileRequest.Code = loginID;
+                getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
+                var userPO = _coreClient.Request(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
+                var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
+                return userProfileDTO;
+            }
+        }
+
+        public async Task<UserProfileDTO?> GetUserProfileAsync(string loginID) {
             var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
             getUserProfileRequest.Code = loginID;
             getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
             var userPO = await _coreClient.RequestAsync(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
             var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
             return userProfileDTO;
+        }
+
+        public async Task<UserProfileDTO?> GetUserProfileAsync(IIdentity userIdentity) {
+            if (userIdentity is null) {
+                return null;
+            } else {
+                var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
+                string? loginID = (userIdentity as WindowsIdentity)?.Name;
+                getUserProfileRequest.Code = loginID;
+                getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
+                var userPO = await _coreClient.RequestAsync(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
+                var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
+                return userProfileDTO;
+            }
         }
 
         private UserProfileDTO? TranslateToDTO(UserProfilePO? userProfilePO) {

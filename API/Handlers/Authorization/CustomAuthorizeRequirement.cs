@@ -1,6 +1,5 @@
 ﻿using Common.DTOs;
 using Common.Shared;
-using Common.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -9,29 +8,36 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Utilities;
 
 namespace API {
-    public class CustomAuthorizeRequirement : IAuthorizationRequirement {
+    public sealed class CustomAuthorizeRequirement : IAuthorizationRequirement {
 
         /// <summary>
-        /// To check if the request user is an authorized user using GridCommon2.
+        /// To check if the request user is an authorized user using IUserService.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public virtual bool AuthorizeRequest(AuthorizationHandlerContext context, IHttpContextAccessor contextAccessor, IGridCommonService gridCommonService) {
+        /// <param name="context">The context to Authorize</param>
+        /// <returns>A flag if this user is authorized</returns>
+        public async Task<bool> AuthorizeRequest(
+            AuthorizationHandlerContext context, 
+            IHttpContextAccessor contextAccessor, 
+            IUserService userService) {
+
             IIdentity? currentUser = context.User.Identity;
 
             if (currentUser is not null && currentUser.IsAuthenticated) {
 
-                if (!TryGetAuthenticatedUserPrincipal(contextAccessor, currentUser, gridCommonService, out var userIdentity)) {
+                var customIdentity = await TryGetAuthenticatedUserIdentity(contextAccessor, currentUser, userService);
+
+                if (!customIdentity.IsAuthorized) {
                     throw new CustomException(ErrorRegistry.E1001, "Not authorized user");
                 }
 
-                if (userIdentity is null) {
+                if (customIdentity.UserIdentity is null) {
                     return false;
                 }
 
-                context.User.AddIdentity(userIdentity);
+                context.User.AddIdentity(customIdentity.UserIdentity);
 
                 return true;
             }
@@ -39,13 +45,18 @@ namespace API {
             return ServerSettings.Environment == EnvironmentType.Production ? false : true;
         }
 
-        private bool TryGetAuthenticatedUserPrincipal(
+        /// <summary>
+        /// Reconstruct the methods as async so give better performance
+        /// </summary>
+        /// <param name="contextAccessor">The HttpContext accessor to get services in HttpContext</param>
+        /// <param name="currentUser">The current user identity</param>
+        /// <param name="userService">The IUserService to handle the process of authorization</param>
+        /// <returns>A tuple that contains IsAuthorized to indicate the authorization and UserIdentity 
+        /// to indicate the custom claims identity</returns>
+        private async Task<(bool IsAuthorized, UserIdentity? UserIdentity)> TryGetAuthenticatedUserIdentity(
             IHttpContextAccessor contextAccessor,
             IIdentity currentUser,
-            IGridCommonService userService,
-            out UserIdentity? userIdentity) {
-
-            userIdentity = null;
+            IUserService userService) {
 
             var options = contextAccessor?.HttpContext?.RequestServices.GetService<IOptions<JsonOptions>>();
 
@@ -53,12 +64,12 @@ namespace API {
             UserProfileDTO? userProfile = null;
 
             // If the user identity not exists in the GridCommon, he will not be the trench work contractor web application user.
-            userProfile = userService.GetUserProfile(loginID).GetAwaiter().GetResult();
+            userProfile = await userService.GetUserProfileAsync(loginID);
 
             if (userProfile is null ||
                 userProfile.AccessCodes.Count == 0 ||
                 userProfile.UserRoles.Count == 0) {
-                return false;
+                return (false, null);
             }
 
             // Serialize the AccessCodes and UserRoles into Json string and set into claims
@@ -75,9 +86,7 @@ namespace API {
                     new Claim(ClaimTypes.Name, userProfile.Name)
                 };
 
-            userIdentity = new UserIdentity(claims);
-
-            return true;
+            return (true, new UserIdentity(claims));
         }
     }
 }

@@ -5,6 +5,7 @@ using Autofac;
 using API;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
@@ -12,8 +13,7 @@ const string CORS_ORIGINS = "CorsOrigins";
 var builder = WebApplication.CreateBuilder(args);
 // Windows Event logging
 builder.Logging.ClearProviders();
-builder.Logging.AddEventLog(eventLogSettings =>
-{
+builder.Logging.AddEventLog(eventLogSettings => {
     eventLogSettings.SourceName = ".NET Runtime";
 });
 
@@ -21,10 +21,16 @@ builder.Logging.AddEventLog(eventLogSettings =>
 // running on NTLM. But if use Kestrel, the WebApi will only support Negotiate, NTLM will be incompatible.
 // Http.Sys is only supported on Windows.
 // *When use debugging, don't select IIS Express to startup, select startup-project instead (Command startup)*
-builder.WebHost.UseHttpSys(options => {
-    options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
-    options.Authentication.AllowAnonymous = false;
-});
+if (builder.Environment.IsProduction()) {
+    builder.WebHost.UseHttpSys(options => {
+        options.Authentication.Schemes = AuthenticationSchemes.NTLM | AuthenticationSchemes.Negotiate;
+        options.Authentication.AllowAnonymous = false;
+    });
+} else {
+    builder.WebHost.UseKestrel();
+}
+
+//builder.WebHost.UseKestrel();
 
 // Add antifogery middleware to replace the dotnet 4.8 custom one
 builder.Services.AddAntiforgery();
@@ -35,10 +41,6 @@ builder.Services.AddCors(option => option.AddPolicy(
     policy =>
         policy.WithOrigins(builder.Configuration.GetSection(CORS_ORIGINS).Get<string[]>()).AllowAnyHeader().AllowCredentials().AllowAnyMethod()
 ));
-// Autofac
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder 
-    => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assembly);
@@ -59,8 +61,13 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 
-// Add other features
-builder.Services.AddControllersWithViews();
+// Autofac
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
+    => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
+
+//// Add other features
+//builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -68,8 +75,11 @@ builder.Services.AddSwaggerGen(c => {
 
 // Add Windows Authentication and Authorization and customize the Authorization policy
 // with custom requirement
-//builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
-builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+if (builder.Environment.IsProduction()) {
+    builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+} else {
+    builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
+}
 builder.Services.AddAuthorization(options =>
     // By default, all incoming requests will be authorized according to the default policy.
 
@@ -87,34 +97,29 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler("/Error");
+app.UseMiddleware<ErrorHandler>();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     //app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
     // for Blazor wasm hosting
     app.UseWebAssemblyDebugging();
 } else {
-    //app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.UseExceptionHandler("/Error");
-app.UseMiddleware<ErrorHandler>();
-
-app.UseCors(AllowCors);
-
 // Use Https redirection will maybe lead to preflight failed and get CORS issues
-app.UseHttpsRedirection();
-
-app.MapControllers();
+//app.UseHttpsRedirection();
 
 // for Blazor wasm hosting
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors(AllowCors);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();

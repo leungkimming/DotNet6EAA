@@ -33,7 +33,16 @@ namespace API {
             builder.RegisterType<EFContext>()
                   .AsSelf()
                   .InstancePerLifetimeScope();
-            builder.RegisterType<GridCommonService>().As<IGridCommonService>();
+            #region Register IUserServices
+            // In this region, register any services that implement IUserServices to authorize user
+            // Also, register decorators for different service instances
+            // In any IUserService injection, use IEnumerable<IUserService> to get the registered services
+            // Then use LinQ to choose your Authorize User Service
+            // This can handle different user authorization services without modify many codes
+            // Just change the type in the LinQ in CustomAuthorizeRequirement
+            builder.RegisterType<GridCommonService>().AsImplementedInterfaces();
+            builder.RegisterDecorator<GridCommonService, IUserService>();
+            #endregion
             builder.RegisterType<UserService>().AsSelf();
             builder.RegisterHandlers();
 
