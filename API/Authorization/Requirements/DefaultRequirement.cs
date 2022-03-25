@@ -11,7 +11,10 @@ using System.Text.Json.Nodes;
 using Utilities;
 
 namespace API {
-    public sealed class CustomAuthorizeRequirement : IAuthorizationRequirement {
+    /// <summary>
+    /// Default requirement will not implement ICustomRequirement
+    /// </summary>
+    public sealed class DefaultRequirement : IAuthorizationRequirement {
 
         /// <summary>
         /// To check if the request user is an authorized user using IUserService.

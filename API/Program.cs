@@ -57,8 +57,9 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 });
 
 // Add the HttpContextAccessor for the middlewares and handlers that
-// have no HttpContext to get the JsonOptions from the AddJsonOptions
+// have no HttpContext to get the services or features
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddRazorPages();
 
 // Autofac
@@ -67,33 +68,39 @@ builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
     => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
 
 //// Add other features
-//builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 });
 
-// Add Windows Authentication and Authorization and customize the Authorization policy
-// with custom requirement
 if (builder.Environment.IsProduction()) {
     builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
 } else {
     builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
 }
-builder.Services.AddAuthorization(options =>
+
+// Add Windows Authentication and Authorization and customize the Authorization policy
+// with custom requirement
+builder.Services.AddAuthorization(options => {
+    // This call will add the AccessCodesRequirement or any other custom requirements
+    // implements from ICustomRequirement combine with IAuthorizationRequirement as policies and
+    // add the class name as the policy name so can use with
+    // [Authorize(Policy = nameof(requirementName))] in controller actions
+    options.AddCustomRequirements();
+
     // By default, all incoming requests will be authorized according to the default policy.
 
     // This will not use any antuhorization requirements, and not use GridCommon2 to authorize
     //options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
-    // This will use the specific authorization requirements to process the authorize, 
-    // can be replaced with any requirements actually needed,
-    // GridCommon2 is still not the unique choice
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+    // This will use the CustomAuthorizeRequirement to process the authorize, 
+    // The DefaultRequirement will call IUserService to process the authorization
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
-        .AddRequirements(new CustomAuthorizeRequirement())
-        .Build()
-);
+        .AddRequirements(new DefaultRequirement())
+        .Build();
+});
 
 var app = builder.Build();
 

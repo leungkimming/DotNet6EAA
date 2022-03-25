@@ -7,18 +7,18 @@ using Service.Users;
 using Service;
 using MediatR;
 using Service.DomainEventHandlers;
+using Module = Autofac.Module;
+using Assembly = System.Reflection.Assembly;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API {
-    public class RegisterModule : Module
-    {
+    public class RegisterModule : Module {
         public string _dbconstr { get; }
 
-        public RegisterModule(string dbconstr)
-        {
+        public RegisterModule(string dbconstr) {
             this._dbconstr = dbconstr;
         }
-        protected override void Load(ContainerBuilder builder)
-        {
+        protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DepartmentRepository>().As<IDepartmentRepository>().InstancePerLifetimeScope();
@@ -33,6 +33,7 @@ namespace API {
             builder.RegisterType<EFContext>()
                   .AsSelf()
                   .InstancePerLifetimeScope();
+
             #region Register IUserServices
             // In this region, register any services that implement IUserServices to authorize user
             // Also, register decorators for different service instances
@@ -40,9 +41,32 @@ namespace API {
             // Then use LinQ to choose your Authorize User Service
             // This can handle different user authorization services without modify many codes
             // Just change the type in the LinQ in CustomAuthorizeRequirement
-            builder.RegisterType<GridCommonService>().AsImplementedInterfaces();
-            builder.RegisterDecorator<GridCommonService, IUserService>();
+            var userServiceTypes = Assembly.GetAssembly(typeof(IUserService))?
+                .GetTypes()
+                .Where(t => typeof(IUserService).IsAssignableFrom(t) && t.IsClass)
+                .ToList();
+            userServiceTypes?.ForEach(t => {
+                builder.RegisterType(t).As<IUserService>();
+                builder.RegisterDecorator(t, typeof(IUserService));
+            });
+            //builder.RegisterType<GridCommonService>().AsImplementedInterfaces();
+            //builder.RegisterDecorator<GridCommonService, IUserService>();
             #endregion
+
+            builder.RegisterRequirementDefinitions();
+
+            #region Register IHandler
+            var handlerTypes = Assembly.GetAssembly(typeof(IHandler))?
+                .GetTypes()
+                .Where(t => typeof(IHandler).IsAssignableFrom(t) && t.IsClass)
+                .ToList();
+            handlerTypes?.ForEach(h => {
+                builder.RegisterType(h).AsImplementedInterfaces();
+                builder.RegisterDecorator(h, typeof(IAuthorizationHandler));
+                builder.RegisterDecorator(h, typeof(IHandler));
+            });
+            #endregion
+
             builder.RegisterType<UserService>().AsSelf();
             builder.RegisterHandlers();
 
@@ -51,8 +75,7 @@ namespace API {
             builder.RegisterAssemblyTypes(typeof(OnPayslipAddedDomainEventHandler).Assembly)
                 .AsClosedTypesOf(typeof(INotificationHandler<>));
 
-            builder.Register<ServiceFactory>(context =>
-            {
+            builder.Register<ServiceFactory>(context => {
                 var componentContext = context.Resolve<IComponentContext>();
                 return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
             });

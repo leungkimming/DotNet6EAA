@@ -15,9 +15,9 @@ namespace Service {
             _coreClient = new CoreServiceClient();
         }
 
-        public UserProfileDTO? GetUserProfile(string loginID) {
+        public UserProfileDTO? GetUserProfile(string loginData) {
             var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
-            getUserProfileRequest.Code = loginID;
+            getUserProfileRequest.Code = loginData;
             getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
             var userPO = _coreClient.Request(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
             var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
@@ -38,9 +38,9 @@ namespace Service {
             }
         }
 
-        public async Task<UserProfileDTO?> GetUserProfileAsync(string loginID) {
+        public async Task<UserProfileDTO?> GetUserProfileAsync(string loginData) {
             var getUserProfileRequest = new GetUserProfileWithSystemCodeRequest();
-            getUserProfileRequest.Code = loginID;
+            getUserProfileRequest.Code = loginData;
             getUserProfileRequest.SystemCode = ServerSettings.SystemCode;
             var userPO = await _coreClient.RequestAsync(getUserProfileRequest) as GetUserProfileWithSystemCodeResponse;
             var userProfileDTO = TranslateToDTO(userPO?.UserProfile);
