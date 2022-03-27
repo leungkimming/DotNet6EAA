@@ -47,6 +47,9 @@ namespace P6.StoryTest.Support
             }
 
             // TODO: Add as many claims as you need here
+            claims.Add(new Claim(ClaimTypes.Role, "AA01"));
+            claims.Add(new Claim(ClaimTypes.Role, "AB01"));
+            claims.Add(new Claim(ClaimTypes.Role, "AC01"));
 
             var identity = new ClaimsIdentity(claims, AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

@@ -2,6 +2,7 @@
 @using Common.DTOs
 @inject HttpClient Http
 @using System.Runtime.InteropServices
+@inject Util utility
 
 <PageTitle>Index</PageTitle>
 @if (_RuntimeInfo == null)
@@ -47,6 +48,10 @@ else
                 <td>@_RuntimeInfo.User</td>
             </tr>
             <tr>
+                <td>User Access Rights</td>
+                <td>@_RuntimeInfo.AccessRights</td>
+            </tr>
+            <tr>
                 <td>SQL Connection String</td>
                 <td>@_RuntimeInfo.SQLConnection</td>
             </tr>
@@ -77,9 +82,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await utility.RefreshToken();
         _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
         if (_RuntimeInfo.SQLConnection == null) {_RuntimeInfo.SQLConnection = "N/A";}
         if (_RuntimeInfo.User == null) {_RuntimeInfo.User = "N/A";}
     }
-
 }

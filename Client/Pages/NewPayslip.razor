@@ -1,7 +1,8 @@
 ﻿@page "/addpayslip/{userId:int}"
 @using Common.DTOs.Users
-@using Common.Shared
+
 @inject HttpClient Http
+@inject Util utility
 
 <PageTitle>Add Payslip</PageTitle>
 
@@ -64,6 +65,7 @@
         _completed = true;
         _message = "";
         _notspinning = false;
+        await utility.RefreshToken();
         var result = await Http.PostAsJsonAsync("users/AddPayslip", _newpayslip);
         _notspinning = true;
         if (result.IsSuccessStatusCode)

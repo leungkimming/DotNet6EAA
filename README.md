@@ -29,19 +29,13 @@ protected override void OnModelCreating(ModelBuilder modelBuilder) {
 ``` 
 builder.Services.AddDbContext<EFContext>(options => <br> options.UseSqlServer(configuration.GetConnectionString("DDDConnectionString"), b => b.MigrationsAssembly("P3.Data")));
 ``` 
+### More EF Migration commmands
+* dotnet ef migrations remove --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj
+* dotnet ef migrations script --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj --output Migrations\script.sql
 
 ## Tidy up Business
 * Move Share & DTO from Business to Common
 * Move Interface from Business to Data
-
-## Add SpecFlow, StepDefinitaionBase
-* appsettings.test.json: define a new test SQLDB
-* client: created by custom WebApplicationFactory<br>test SQLDB injected into client
-** public partial class Program { }
-** ref: https://github.com/dotnet/aspnetcore/issues/37680
-* Drop test SQLDB tables (careful of sequence due to forign keys)
-* Run Client's EF migration to create a empty DB
-* Load initial data after migration
 
 ## Repository
 * use Generic repository to manipulate individual Entity
@@ -54,10 +48,11 @@ RepositoryBase<T>(_dbContext);
       .Include(User => User.Department)
       .ToListAsync();
 ```
+# Please visit wiki pages for more topics
 ## Use of Autofac DI & AutoMapper
 ## Blazor Client WebAssembly Added
-## More EF Migration commmands
-* dotnet ef migrations remove --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj
-* dotnet ef migrations script --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj --output Migrations\script.sql
-
-# Please visit wiki pages for more topics
+## Add SpecFlow
+## Blazor webassembly client
+## Domain Event Pattern
+## Global Exception Handling
+## Negotiate Authentication and Policy-based Authorization

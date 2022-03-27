@@ -5,6 +5,7 @@ using Business.Departments;
 using Common.Shared;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace Service.Users
 {
@@ -87,6 +88,14 @@ namespace Service.Users
             var payslipDTOs = payslips.Select(x => _mapper.Map<PayslipDTO>(x)).ToList();
             return payslipDTOs;
         }
-
+        public List<Claim> GetUserClaims(string userId)
+        {
+            return new List<Claim> {
+                new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.Role, "AA01"),
+                new Claim(ClaimTypes.Role, "AB01"),
+                new Claim(ClaimTypes.Role, "AC01")
+            };
+        }
     }
 }

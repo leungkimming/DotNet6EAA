@@ -1,7 +1,7 @@
 ﻿using Common.DTOs.Users;
-using Common.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Service.Users;
+using API.Authorization;
 
 namespace API.Controllers
 {
@@ -20,6 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet(Name = "GetUserList")]
+        [AccessCodeAuthorize("AA01")]
         public async Task<IActionResult> Get([FromQuery] GetUserRequest request)
         {
             var users = await _service.SearchAsync(request);
@@ -27,37 +28,25 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = "AddNewUser")]
+        [AccessCodeAuthorize("AB01")]
         public async Task<IActionResult> Add([FromBody] AddUserRequest request)
         {
-            var user = HttpContext.User.Identity.Name;
             AddUserResponse response;
             response = await _service.AddNewAsync(request);
-            //try
-            //{
-            //    response = await _service.AddNewAsync(request);
-            //}
-            //catch (UserAlreadyExistException ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
             return Ok(response);
         }
 
         [HttpPost("Addpayslip")]
+        [AccessCodeAuthorize("AC01")]
         public async Task<IActionResult> AddPayslip([FromBody] AddPayslipRequest request)
         {
             AddPayslipResponse _response;
             _response = await _service.AddUserPayslipAsync(request);
-            //try
-            //{
-            //    _response = await _service.AddUserPayslipAsync(request);
-            //} catch (PayslipMonthAlreadyExistException ex) {
-            //    return BadRequest(ex.Message);
-            //}
             return Ok(_response);
         }
 
         [HttpGet("GetPayslip")]
+        [AccessCodeAuthorize("AA01")]
         public async Task<IActionResult> GetPayslip([FromQuery] GetPayslipRequest request)
         {
             var payslips = await _service.SearchAsync(request);

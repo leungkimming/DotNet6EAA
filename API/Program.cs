@@ -3,11 +3,10 @@ using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using Microsoft.AspNetCore.Authentication.Negotiate;
-using Microsoft.Extensions.Logging.EventLog;
 using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.HttpSys;
+using API.Jwt;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
@@ -40,35 +39,55 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+    c.OperationFilter<CustomHeaderSwaggerAttribute>();
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                    {
+                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+        }
+    });
 });
 
-//builder.Services.AddAuthentication();
 builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
 if (builder.Environment.IsEnvironment("SpecFlow"))
 {
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
-    builder.Services.AddAuthorization(options =>
-    {
-        options.DefaultPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-        .Build();
-    });
 } else {
     builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
        .AddNegotiate();
-    builder.Services.AddAuthorization(options =>
-    {
-        options.FallbackPolicy = options.DefaultPolicy;
-    });
-}    
+}
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 // for Blazor wasm hosting
 builder.Services.AddRazorPages();
 
-var app = builder.Build();
+builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
 
+var app = builder.Build();
+/// <summary>
+/// ///////////////////////////////////////////////////////////////////////////////////
+/// </summary>
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("SpecFlow"))
 {

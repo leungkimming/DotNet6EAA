@@ -15,4 +15,5 @@ public class RuntimeInfo
     public string User { get; set; }
     public string SQLConnection { get; set; }
     public string Environment { get; set; }
+    public string AccessRights { get; set; }
 }

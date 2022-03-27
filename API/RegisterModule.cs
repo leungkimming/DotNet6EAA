@@ -6,6 +6,10 @@ using Data.EF;
 using Service.Users;
 using Service.DomainEventHandlers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using API.Authorization;
+using API.Jwt;
+
 
 namespace API
 {
@@ -45,6 +49,14 @@ namespace API
                 var componentContext = context.Resolve<IComponentContext>();
                 return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
             });
+
+            builder.RegisterType<AccessCodePolicyProvider>().As<IAuthorizationPolicyProvider>()
+                .SingleInstance();
+            builder.RegisterType<AccessCodeAuthorizationHandler>().As<IAuthorizationHandler>()
+                .SingleInstance();
+            builder.RegisterType<AuthorizationResultTransformer>().As<IAuthorizationMiddlewareResultHandler>()
+                .SingleInstance();
+            //builder.RegisterType<JWTUtil>().As<IJWTUtil>().SingleInstance();
         }
     }
 
