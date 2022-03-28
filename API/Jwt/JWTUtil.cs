@@ -85,8 +85,8 @@ namespace API.Jwt
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(1), // for testing logics after expiry
-                                                         //Expires = DateTime.UtcNow.AddDays(1),  // valid for 1 day
+                Expires = DateTime.UtcNow.AddMinutes(10), // for testing logics after expiry
+              //Expires = DateTime.UtcNow.AddDays(1),  // valid for 1 day
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
