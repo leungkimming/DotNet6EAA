@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P6.StoryTest", "StoryTest\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{ED548EE0-CC2F-413D-9479-7CE9BA72D0DC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P7.Migrator", "Migrator\P7.Migrator.csproj", "{DBF08A21-86ED-458C-875E-9B5858713333}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{ED548EE0-CC2F-413D-9479-7CE9BA72D0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED548EE0-CC2F-413D-9479-7CE9BA72D0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED548EE0-CC2F-413D-9479-7CE9BA72D0DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBF08A21-86ED-458C-875E-9B5858713333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBF08A21-86ED-458C-875E-9B5858713333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBF08A21-86ED-458C-875E-9B5858713333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBF08A21-86ED-458C-875E-9B5858713333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

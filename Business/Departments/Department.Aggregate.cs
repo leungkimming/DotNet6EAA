@@ -10,16 +10,17 @@ namespace Business.Departments
         }
 
         public Department(string name
-            , string description) : this()
+            , string description, string manager) : this()
         {
-            this.Update(name, description);
+            this.Update(name, description, manager);
         }
 
         public void Update(string name
-            , string description)
+            , string description, string manager)
         {
             Name = name;
             Description = description;
+            Manager = manager;
         }
     }
 }

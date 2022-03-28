@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20220323031119_TestMigration.cs" />
+    <Compile Remove="Migrations\20220323031119_TestMigration.Designer.cs" />
+    <Compile Remove="Migrations\20220328032643_m1test.cs" />
+    <Compile Remove="Migrations\20220328032643_m1test.Designer.cs" />
+    <Compile Remove="Migrations\20220328033246_m2test.cs" />
+    <Compile Remove="Migrations\20220328033246_m2test.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data\P3.Data.csproj" />
+  </ItemGroup>
+
+</Project>
