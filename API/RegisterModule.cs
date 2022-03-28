@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.EF.Interfaces;
 using Data.EF.Repositories;
 using Data.EF;
+using Data.Query;
 using Service.Users;
 using Service.DomainEventHandlers;
 using MediatR;
@@ -38,6 +39,7 @@ namespace API
                   .AsSelf()
                   .InstancePerLifetimeScope();
             builder.RegisterType<UserService>().AsSelf();
+            builder.RegisterType<PaymentQuery>().As<IPaymentQuery>();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
                 .AsImplementedInterfaces();

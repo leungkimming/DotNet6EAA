@@ -1,7 +1,9 @@
 ﻿using Common.DTOs.Users;
 using Microsoft.AspNetCore.Mvc;
 using Service.Users;
+using Data.Query;
 using API.Authorization;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -11,12 +13,14 @@ namespace API.Controllers
     {
         private readonly UserService _service;
         private readonly ILogger<UserController> _logger;
+        private readonly IPaymentQuery _paymentQuery;
 
         public UserController(ILogger<UserController> logger
-            , UserService service)
+            , UserService service, IPaymentQuery paymentquery)
         {
             _service = service;
             _logger = logger;
+            _paymentQuery = paymentquery;
         }
 
         [HttpGet(Name = "GetUserList")]
@@ -51,6 +55,15 @@ namespace API.Controllers
         {
             var payslips = await _service.SearchAsync(request);
             return Ok(payslips);
+        }
+        [HttpGet ("GetPaymentStat")]
+        [AccessCodeAuthorize("AA01")]
+        [ProducesResponseType(typeof(IEnumerable<PaymentSummary>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<PaymentSummary>>> GetPaymentOfFrequentWorkers(int days)
+        {
+            var paymentSummary = await _paymentQuery.GetPaymentOfFrequentWorkersAsync(days);
+
+            return Ok(paymentSummary);
         }
     }
 }

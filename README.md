@@ -12,6 +12,14 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * Create first migration:<br>dotnet ef migrations add ver2 --startup-project ..\API\P1.API.csproj
 * Create DB: <br>dotnet ef database update  --startup-project ..\API\P1.API.csproj
 
+## How to test API using Swagger UI
+* On home page, click the "API Swagger UI"" link
+* First, select the Login API and click try it out
+* click execute and copy the token string
+* in the API you wish to test, click try it out and paste the token string onto the X-UserRoles field
+* fill in API parameters as appropriate
+* click Execute
+
 ## Tidy up Business
 * convert Program.cs to .NET webApplication builder
 * Move Share & DTO from Business to Common
