@@ -47,28 +47,17 @@ namespace API {
                 .ToList();
             userServiceTypes?.ForEach(t => {
                 builder.RegisterType(t).As<IUserService>();
-                builder.RegisterDecorator(t, typeof(IUserService));
+                builder.RegisterDecorator(t, t);
             });
             //builder.RegisterType<GridCommonService>().AsImplementedInterfaces();
             //builder.RegisterDecorator<GridCommonService, IUserService>();
             #endregion
 
+            builder.RegisterCustomRequirements();
             builder.RegisterRequirementDefinitions();
-
-            #region Register IHandler
-            var handlerTypes = Assembly.GetAssembly(typeof(IHandler))?
-                .GetTypes()
-                .Where(t => typeof(IHandler).IsAssignableFrom(t) && t.IsClass)
-                .ToList();
-            handlerTypes?.ForEach(h => {
-                builder.RegisterType(h).AsImplementedInterfaces();
-                builder.RegisterDecorator(h, typeof(IAuthorizationHandler));
-                builder.RegisterDecorator(h, typeof(IHandler));
-            });
-            #endregion
+            builder.RegisterAuthorizationHandlers();
 
             builder.RegisterType<UserService>().AsSelf();
-            builder.RegisterHandlers();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
                 .AsImplementedInterfaces();

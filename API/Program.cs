@@ -26,11 +26,7 @@ if (builder.Environment.IsProduction()) {
         options.Authentication.Schemes = AuthenticationSchemes.NTLM | AuthenticationSchemes.Negotiate;
         options.Authentication.AllowAnonymous = false;
     });
-} else {
-    builder.WebHost.UseKestrel();
 }
-
-//builder.WebHost.UseKestrel();
 
 // Add antifogery middleware to replace the dotnet 4.8 custom one
 builder.Services.AddAntiforgery();
@@ -83,23 +79,23 @@ if (builder.Environment.IsProduction()) {
 // Add Windows Authentication and Authorization and customize the Authorization policy
 // with custom requirement
 builder.Services.AddAuthorization(options => {
-    // This call will add the AccessCodesRequirement or any other custom requirements
-    // implements from ICustomRequirement combine with IAuthorizationRequirement as policies and
-    // add the class name as the policy name so can use with
-    // [Authorize(Policy = nameof(requirementName))] in controller actions
-    options.AddCustomRequirements();
-
     // By default, all incoming requests will be authorized according to the default policy.
 
     // This will not use any antuhorization requirements, and not use GridCommon2 to authorize
     //options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
-    // This will use the CustomAuthorizeRequirement to process the authorize, 
-    // The DefaultRequirement will call IUserService to process the authorization
-    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+    // This will use the DefaultAuthorizeRequirement to process the authorization.
+    // The DefaultRequirement will call IUserService to process the authorization.
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .AddRequirements(new DefaultRequirement())
         .Build();
+
+    // This call will add the AccessCodesRequirement or any other custom requirements
+    // implements from ICustomRequirement combine with IAuthorizationRequirement as policies and
+    // add the class name as the policy name so can use with
+    // [Authorize(Policy = nameof(requirementName))] attribute tag in controller actions
+    options.AddCustomRequirements();
 });
 
 var app = builder.Build();

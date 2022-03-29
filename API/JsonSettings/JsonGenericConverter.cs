@@ -31,8 +31,9 @@ namespace API {
     /// </summary>
     public static class JsonConverterExtensions {
         public static void AddDTOConverters(this ICollection<JsonConverter> converters) {
-            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(IDTO).IsAssignableFrom(t)).ToList();
-            types.ForEach(t => {
+            var types = Assembly.GetAssembly(typeof(IDTO))?.GetTypes()
+                .Where(t => typeof(IDTO).IsAssignableFrom(t) && t.IsClass).ToList();
+            types?.ForEach(t => {
                 var makeGeneric = typeof(CustomGenericConverter<>).MakeGenericType(t);
                 var instance = Activator.CreateInstance(makeGeneric);
                 if (instance is not null) {
