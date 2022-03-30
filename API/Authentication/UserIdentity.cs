@@ -4,14 +4,14 @@ using System.Text.Json;
 namespace API {
     public class UserIdentity : ClaimsIdentity {
         /// <summary>
-        /// Indicate the user name of the current authenticated contractor user.
+        /// Indicate the user name of the current authenticated user.
         /// </summary>
         public string? LoginID { get; private set; }
 
         /// <summary>
-        /// Indicate the vendor number of the current authenticated contractor user.
+        /// Indicate the user number of the current authenticated user.
         /// </summary>
-        public string? VendorNo { get; private set; }
+        public string? UserNo { get; private set; }
 
         /// <summary>
         /// Indicate the custom claims to receive the UserRoles and AccessCodess of the current authenticated contractor user.
@@ -20,7 +20,7 @@ namespace API {
 
         public UserIdentity() : base() {
             LoginID = string.Empty;
-            VendorNo = string.Empty;
+            UserNo = string.Empty;
             CustomClaims = GetCustomClaim();
         }
 
@@ -32,7 +32,7 @@ namespace API {
         /// <param name="claims">The IEnumerbale<Claim> of customization</param>
         public UserIdentity(IEnumerable<Claim> claims) : base(claims) {
             LoginID = claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            VendorNo = claims.SingleOrDefault(c => c.Type == ClaimTypes.SerialNumber)?.Value;
+            UserNo = claims.SingleOrDefault(c => c.Type == ClaimTypes.SerialNumber)?.Value;
             CustomClaims = GetCustomClaim();
         }
 

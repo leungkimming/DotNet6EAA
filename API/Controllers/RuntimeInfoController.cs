@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text.Json;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("RuntimeInfo")]
-public class RuntimeInfoController : ControllerBase
+public class RuntimeInfoController : AuthControllerBase
 {
     private IConfiguration _conf { get; set; }
     public RuntimeInfoController(IConfiguration config)
@@ -27,6 +28,7 @@ public class RuntimeInfoController : ControllerBase
             SystemVersion = WindowsIdentity.GetCurrent().Name,
             RuntimeDirectory = RuntimeEnvironment.GetRuntimeDirectory(),
             User = HttpContext.User.Identity.Name,
+            AccessCodes = JsonSerializer.Serialize(AuthenticatedUserClaims.AccessCodes).Replace('[', ' ').Replace(']', ' ').Replace(',', '|').Replace('"', ' '),
             SQLConnection = _conf.GetConnectionString("DDDConnectionString"),
             Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
         };
