@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,6 +14,7 @@ namespace API {
     [ApiController]
     [Route("[controller]/[action]")]
     [Produces(MediaTypeNames.Application.Json)]
+    [Authorize]
     public class AuthControllerBase : ControllerBase {
 
         /// <summary>

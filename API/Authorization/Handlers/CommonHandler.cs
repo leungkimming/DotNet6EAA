@@ -26,7 +26,9 @@ namespace API {
             var pendingRequirements = context.PendingRequirements.ToList();
             pendingRequirements.ForEach(async requirement => {
                 if (requirement.GetType() == typeof(DefaultRequirement)) {
-                    if (!await ((DefaultRequirement)requirement).AuthorizeRequest(context, _contextAccessor, _userService)) {
+                    if (await ((DefaultRequirement)requirement).AuthorizeRequest(context, _contextAccessor, _userService)) {
+                        context?.Succeed(requirement);
+                    } else {
                         context?.Fail();
                     }
                 } else {

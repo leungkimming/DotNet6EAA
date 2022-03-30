@@ -24,7 +24,7 @@ builder.Logging.AddEventLog(eventLogSettings => {
 if (builder.Environment.IsProduction()) {
     builder.WebHost.UseHttpSys(options => {
         options.Authentication.Schemes = AuthenticationSchemes.NTLM | AuthenticationSchemes.Negotiate;
-        options.Authentication.AllowAnonymous = false;
+        options.Authentication.AllowAnonymous = true;
     });
 }
 
@@ -32,10 +32,10 @@ if (builder.Environment.IsProduction()) {
 builder.Services.AddAntiforgery();
 
 // allow CORS
-builder.Services.AddCors(option => option.AddPolicy(
-    AllowCors,
+builder.Services.AddCors(option => option.AddDefaultPolicy(
     policy =>
-        policy.WithOrigins(builder.Configuration.GetSection(CORS_ORIGINS).Get<string[]>()).AllowAnyHeader().AllowCredentials().AllowAnyMethod()
+        policy.WithOrigins(builder.Configuration.GetSection(CORS_ORIGINS).Get<string[]>())
+            .AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 ));
 
 // Add AutoMapper
@@ -86,7 +86,7 @@ builder.Services.AddAuthorization(options => {
 
     // This will use the DefaultAuthorizeRequirement to process the authorization.
     // The DefaultRequirement will call IUserService to process the authorization.
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .AddRequirements(new DefaultRequirement())
         .Build();
@@ -122,7 +122,7 @@ if (app.Environment.IsDevelopment()) {
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors(AllowCors);
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
