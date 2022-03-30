@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Business.Users.Events;
-using Business.Users;
 using Data.EF.Interfaces;
+using Messages;
+using NServiceBus;
+using Microsoft.Extensions.Logging;
 
 namespace Service.DomainEventHandlers
 {
@@ -14,29 +11,35 @@ namespace Service.DomainEventHandlers
         : INotificationHandler<OnPayslipAddedDomainEvent>
     {
         public IUnitOfWork _unitOfWork;
-        public OnPayslipAddedDomainEventHandler(IUnitOfWork unitOfWork)
+        private readonly ILogger<OnPayslipAddedDomainEventHandler> _log;
+        private readonly IMessageSession _messageSession;
+        public OnPayslipAddedDomainEventHandler(IUnitOfWork unitOfWork,
+            IMessageSession messageSession, 
+            ILogger<OnPayslipAddedDomainEventHandler> logger)
         {
             this._unitOfWork = unitOfWork;
+            _messageSession = messageSession;
+            _log = logger;
         }
         public async Task Handle(OnPayslipAddedDomainEvent notification, CancellationToken cancellationToken)
         {
-            string letter = "To: "
-                + notification.Payslip.User.Address + "\n"
-                + "Dear " + notification.Payslip.User.UserName + "\n"
-                + "Your Salary, amount to "
-                + notification.Payslip.TotalSalary.ToString()
-                + ", was debited to your bank on "
-                + notification.Payslip.PaymentDate.ToString() + ".\n";
-            //await sendLetterService(letter);
+            var Event = new PayslipIssued
+            { 
+             UserId = notification.Payslip.UserId,
+             PayslipDate = notification.Payslip.Date,
+             Amount = notification.Payslip.TotalSalary,
+             letter = $"To: {notification.Payslip.User.Address} \n"
+                + $"Dear {notification.Payslip.User.UserName} \n"
+                + $"Your Salary, amount to {notification.Payslip.TotalSalary} "
+                + $" was debited to your bank on { notification.Payslip.PaymentDate }.\n"
+        };
 
-            var repository = _unitOfWork.UserRepository();
-            var user = await repository.GetAsync(_ => _.Id == notification.Payslip.User.Id);
-            if (user != null)
-            {
-                user.SendPayslipLetter(notification.Payslip, letter);
+            // Send the command
+            await _messageSession.Publish(Event);
 
-                await repository.UpdateAsync(user);
-            }
+            _log.LogInformation($"Payslip Issued, UserId = {Event.UserId}, " +
+                $"Date {Event.PayslipDate}, " +
+                $"Amount {Event.Amount} to Finance and Bank");
         }
     }
 }

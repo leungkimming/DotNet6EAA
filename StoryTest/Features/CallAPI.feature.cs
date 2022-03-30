@@ -185,8 +185,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 40
-  testRunner.And("the response contains UserId (1) and TotalSalary (75100) and lettersentdate (\"tod" +
-                        "ay\") and letter start with (\"To: Kwong Chiu Terrace\\nDear Micl\\nYour Salary\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the response contains UserId (1) and TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

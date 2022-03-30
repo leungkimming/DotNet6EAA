@@ -1,14 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <Compile Remove="OrderPlacedHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NServiceBus" Version="7.7.0" />
     <PackageReference Include="NServiceBus.Extensions.Hosting" Version="1.1.0" />
     <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
@@ -16,9 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\P5.Common.csproj" />
-    <ProjectReference Include="..\Business\P4.Business.csproj" />
-    <ProjectReference Include="..\Data\P3.Data.csproj" />
     <ProjectReference Include="..\Messages\X1.Messages.csproj" />
   </ItemGroup>
 

@@ -32,12 +32,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NServiceBus" Version="7.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj" />
     <ProjectReference Include="..\Data\P3.Data.csproj" />
+    <ProjectReference Include="..\Messages\X1.Messages.csproj" />
     <ProjectReference Include="..\Migrator\P7.Migrator.csproj" />
     <ProjectReference Include="..\Service\P2.Service.csproj" />
   </ItemGroup>

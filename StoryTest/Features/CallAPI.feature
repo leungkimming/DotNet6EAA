@@ -37,4 +37,5 @@ Scenario: CallAPIAddPayslip
   """
   When I post this request to the "users/AddPayslip" operation
   Then the result is a 200 ("OK") response
-  And the response contains UserId (1) and TotalSalary (75100) and lettersentdate ("today") and letter start with ("To: Kwong Chiu Terrace\nDear Micl\nYour Salary")
+  And the response contains UserId (1) and TotalSalary (75100)
+  #And the response contains UserId (1) and TotalSalary (75100) and lettersentdate ("today") and letter start with ("To: Kwong Chiu Terrace\nDear Micl\nYour Salary")

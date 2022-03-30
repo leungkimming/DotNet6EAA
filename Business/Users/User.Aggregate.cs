@@ -80,9 +80,9 @@ namespace Business.Users
             return payslip;
         }
 
-        public void SendPayslipLetter(Payslip payslip, string letter)
+        public void SendPayslipLetter(DateTime payslipDate, string letter)
         {
-            Payslip? ps = PaySlips.FirstOrDefault(_ => _.Date == payslip.Date);
+            Payslip? ps = PaySlips.FirstOrDefault(_ => _.Date == payslipDate.Date);
             if (ps!=null)
             {
                 ps.UpdateLetterSent(letter);
