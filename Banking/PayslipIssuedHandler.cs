@@ -18,7 +18,10 @@ namespace Banking
                 $"Amount {message.Amount}. " +
                 $"Press Enter if bank transfer completed...");
             Console.ReadLine();
-    
+            log.Info($"Processing continued for UserId = {message.UserId}, " +
+                $"Date {message.PayslipDate}, " +
+                $"Amount {message.Amount}. ");
+
             var bankTranferred = new BankTranferred
             {
                 UserId = message.UserId,

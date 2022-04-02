@@ -21,6 +21,8 @@ namespace Finance
                        {
                            // Define the endpoint name
                            var endpointConfiguration = new EndpointConfiguration("Finance");
+                           endpointConfiguration.AuditSagaStateChanges(
+                               serviceControlQueue: "audit");
                            var persistence = endpointConfiguration.UsePersistence<LearningPersistence>();
                            // Select the learning (filesystem-based) transport to communicate
                            // with other endpoints
