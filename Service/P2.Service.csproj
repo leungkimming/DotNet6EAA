@@ -9,17 +9,21 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="NServiceBus" Version="7.7.0" />
-    <PackageReference Include="NServiceBus.Extensions.Hosting" Version="1.1.0" />
-    <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
-    <PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="3.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\P5.Common.csproj" />
     <ProjectReference Include="..\Business\P4.Business.csproj" />
     <ProjectReference Include="..\Data\P3.Data.csproj" />
-    <ProjectReference Include="..\Messages\X1.Messages.csproj" />
   </ItemGroup>
+
+  <!-- Uncomment ItemGroup to enable NServiceBus -->
+  <!--<ItemGroup>
+	<PackageReference Include="NServiceBus" Version="7.7.0" />
+    <PackageReference Include="NServiceBus.Extensions.Hosting" Version="1.1.0" />
+    <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
+    <PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="3.0.6" />
+    <ProjectReference Include="..\Messages\X1.Messages.csproj" />
+  </ItemGroup>-->
 
 </Project>

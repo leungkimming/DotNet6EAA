@@ -7,8 +7,9 @@ using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.HttpSys;
 using API.Jwt;
-using NServiceBus;
-using Messages;
+// Uncomment to enable NServiceBus
+//using NServiceBus;
+//using Messages;
 
 const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
@@ -86,21 +87,22 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
 
-builder.Host.UseNServiceBus(context =>
-{
-    var endpointConfiguration = new EndpointConfiguration("API");
-    endpointConfiguration.UseTransport<LearningTransport>();
+// Uncomment to enable NService
+//builder.Host.UseNServiceBus(context =>
+//{
+//    var endpointConfiguration = new EndpointConfiguration("API");
+//    endpointConfiguration.UseTransport<LearningTransport>();
 
-    endpointConfiguration.SendFailedMessagesTo("error");
-    endpointConfiguration.AuditProcessedMessagesTo("audit");
-    endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
+//    endpointConfiguration.SendFailedMessagesTo("error");
+//    endpointConfiguration.AuditProcessedMessagesTo("audit");
+//    endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
 
-    var metrics = endpointConfiguration.EnableMetrics();
-    metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
+//    var metrics = endpointConfiguration.EnableMetrics();
+//    metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
 
-    return endpointConfiguration;
+//    return endpointConfiguration;
 
-});
+//});
 
 var app = builder.Build();
 /// <summary>
