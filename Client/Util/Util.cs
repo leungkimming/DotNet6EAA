@@ -1,14 +1,17 @@
 ﻿using Common.DTOs;
 using System.Net.Http.Json;
+using Microsoft.JSInterop;
 
 namespace Client.Util
 {
     public class Util
     {
         private HttpClient Http { get; set; }
-        public Util(HttpClient _Http)
+        private IJSRuntime _jSRuntime { get; set; }
+        public Util(HttpClient _Http, IJSRuntime jsRuntime)
         {
             Http = _Http;
+            _jSRuntime = jsRuntime;
         }
         public async Task RefreshToken()
         {
@@ -17,6 +20,10 @@ namespace Client.Util
 
             Http.DefaultRequestHeaders.Remove("X-UserRoles");
             Http.DefaultRequestHeaders.Add("X-UserRoles", authResult.Token);
+
+            var token = await _jSRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
+            Http.DefaultRequestHeaders.Remove("X-CSRF-TOKEN-HEADER");
+            Http.DefaultRequestHeaders.Add("X-CSRF-TOKEN-HEADER", token);
         }
     }
 }

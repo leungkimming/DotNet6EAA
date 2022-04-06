@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using API.Jwt;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
 
 namespace API.Authorization
 {
@@ -24,24 +23,24 @@ namespace API.Authorization
         {
             string token;
             JwtSecurityToken jwtToken;
+            List<Claim> effectiveClaims = new List<Claim>();
 
             HttpContext httpconcontext = (HttpContext)context.Resource;
             if (jwtUtil.ValidateToken(httpconcontext.Request, out jwtToken, out token) )
             {
                 // Avoid hacker using other user's claims. Check the login user against the name in the JWT token
                 if (context.User.Identity.Name ==
-                    jwtToken.Claims.Where(c => c.Type == "name").Select(c => c.Value).SingleOrDefault())
+                    jwtToken.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault())
                 {
-                    context.User.AddIdentity(new ClaimsIdentity(jwtToken.Claims, "UserRoles"));
+                    Array.ForEach(jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role)
+                        .ToArray(), c => ((ClaimsIdentity)context.User.Identity).AddClaim(c));
                 }
             }
 
             ClaimsPrincipal? userIdentity = context.User;
-            if (userIdentity == null) return Task.CompletedTask;
+            if (userIdentity == null) return Task.CompletedTask; //Unauthorized anonymous user
 
-            IEnumerable<Claim>? userClaims = userIdentity.Claims.Where(c => (c.Type == "role" || c.Type == ClaimTypes.Role));
-            if (userClaims == null) return Task.CompletedTask;
-            if (userClaims.Count() == 0) return Task.CompletedTask;
+            IEnumerable<Claim>? userClaims = userIdentity.Claims.Where(c => c.Type == ClaimTypes.Role);
 
             foreach (Claim claim in userClaims)
             {

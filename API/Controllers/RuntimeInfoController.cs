@@ -6,7 +6,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using API.Jwt;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 
 namespace API.Controllers;
@@ -14,6 +13,7 @@ namespace API.Controllers;
 [ApiController]
 [Route("RuntimeInfo")]
 [Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
+[IgnoreAntiforgeryToken]
 public class RuntimeInfoController : ControllerBase
 {
     private IConfiguration _conf { get; set; }
@@ -39,7 +39,6 @@ public class RuntimeInfoController : ControllerBase
                 accessCodes += claim.Value + "/";
             }
         }
-
         return new RuntimeInfo
         {
             OSArchitecture = RuntimeInformation.OSDescription,

@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using System.Net;
 using System.Text.Json;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace API.Authorization
 {
@@ -28,7 +26,8 @@ namespace API.Authorization
             {
                 if (policyAuthorizationResult.AuthorizationFailure.FailedRequirements.Any(requirement => requirement is AccessCodeRequirement))
                 {
-                    AccessCodeRequirement req = (AccessCodeRequirement)authorizationPolicy.Requirements[0];
+                    AccessCodeRequirement req = (AccessCodeRequirement)authorizationPolicy.Requirements
+                        .Where(requirement => requirement is AccessCodeRequirement).FirstOrDefault();
 
                     string _message = String.Format(@"User Id ""{0}"" ""{1}"" to resource ""{2}"" denied, missing access code ""{3}""", 
                     httpContext.User.Identity.Name,
@@ -40,7 +39,7 @@ namespace API.Authorization
                     await httpContext.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Access denied. Please call IT Service Desk." }));
                     return;
                 }
-                // User Id "HEH\41776" "GET" to resource "localhost:44355/users" denied, missing access code "AA01"
+                // Event Log: User Id "HEH\41776" "GET" to resource "localhost:44355/users" denied, missing access code "AA01"
                 // Other transformations here
             }
             await _handler.HandleAsync(requestDelegate, httpContext, authorizationPolicy, policyAuthorizationResult);

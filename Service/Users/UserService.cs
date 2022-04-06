@@ -6,6 +6,7 @@ using Common.Shared;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Service.Users
 {
@@ -13,7 +14,8 @@ namespace Service.Users
     {
         public UserService(IUnitOfWork unitOfWork,
             ILogger<UserService> logger,
-            IMapper mapper) : base(unitOfWork, logger, mapper)
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -70,6 +72,7 @@ namespace Service.Users
         }
         public async Task<List<UserInfoDTO>> SearchAsync(GetUserRequest request)
         {
+            var x = _httpContext.User;
             //          var repository = UnitOfWork.AsyncRepository<User>();
             var repository = UnitOfWork.UserRepository();
             var users = await repository

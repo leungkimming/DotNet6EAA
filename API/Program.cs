@@ -7,6 +7,7 @@ using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.HttpSys;
 using API.Jwt;
+using Microsoft.AspNetCore.Mvc;
 // Uncomment to enable NServiceBus
 //using NServiceBus;
 //using Messages;
@@ -37,7 +38,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
 builder.Services.AddAutoMapper(typeof(Service.MapperProfiles.UserProfile).Assembly);
 
 // Add other features
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(); // default PropertyNameCaseInsensitive false;PropertyNamingPolicy null; MaxDepth 64
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -76,6 +78,10 @@ if (builder.Environment.IsEnvironment("SpecFlow"))
 } else {
     builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
        .AddNegotiate();
+    builder.Services.AddMvc(options =>
+    {
+        options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
+    });
 }
 builder.Services.AddAuthorization(options =>
 {
@@ -87,6 +93,9 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
 
+builder.Services.AddAntiforgery(options => {
+    options.HeaderName = "X-CSRF-TOKEN-HEADER";
+});
 // Uncomment to enable NService
 //builder.Host.UseNServiceBus(context =>
 //{

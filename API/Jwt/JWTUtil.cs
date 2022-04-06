@@ -27,6 +27,8 @@ namespace API.Jwt
                 ClockSkew = TimeSpan.Zero
             };
             tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.InboundClaimTypeMap.Clear();
+            tokenHandler.OutboundClaimTypeMap.Clear();
         }
 
         public AuthResult ValidateRefreshJTWToken(HttpRequest request, string userId, List<Claim> claims)

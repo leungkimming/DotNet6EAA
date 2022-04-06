@@ -7,6 +7,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("Error")]
+    [IgnoreAntiforgeryToken]
     public class ErrorController : ControllerBase
     {
         public readonly ILogger<ErrorHandler> _logger;
