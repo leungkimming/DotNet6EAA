@@ -20,6 +20,16 @@ namespace API.Jwt
                     Type = "string"
                 }
             });
+            operation.Parameters.Add(new OpenApiParameter
+            {
+                Name = "X-CSRF-TOKEN-HEADER",
+                In = ParameterLocation.Header,
+                Required = false,
+                Schema = new OpenApiSchema
+                {
+                    Type = "string"
+                }
+            });
         }
     }
 }
