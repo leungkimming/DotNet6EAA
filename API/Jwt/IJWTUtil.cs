@@ -9,7 +9,7 @@ namespace API.Jwt
 {
     public interface IJWTUtil
     {
-        public AuthResult ValidateRefreshJTWToken(HttpRequest request, string userId, List<Claim> claims);
         public bool ValidateToken(HttpRequest request, out JwtSecurityToken jwtToken, out string token);
+        public AuthResult GenerateJwtToken(string user, List<Claim> claims);
     }
 }

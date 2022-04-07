@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using API.Jwt;
 using Common.Shared;
-using Microsoft.AspNetCore.Authentication.Negotiate;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Service.Users;
 using Microsoft.AspNetCore.Antiforgery;
+using Common.DTOs;
 
 namespace API.Controllers;
 
@@ -31,8 +31,21 @@ public class LoginController : ControllerBase
     [HttpGet(Name = "Login")]
     public async Task<IActionResult> Get()
     {
+        JwtSecurityToken jwtToken;
+        string token;
+
         if (HttpContext.User.Identity.Name == "" || HttpContext.User.Identity.Name == null) {
             throw new InvalidUserException();
+        }
+
+        if (jwtUtil.ValidateToken(HttpContext.Request, out jwtToken, out token))
+        {
+            return Ok(new AuthResult()
+            {
+                Token = token,
+                Success = true,
+                RefreshToken = ""
+            });
         }
 
         List<Claim>? claims = _service.GetUserClaims(HttpContext.User.Identity.Name);
@@ -42,9 +55,8 @@ public class LoginController : ControllerBase
             c => claimsIdentity.AddClaim(c));
 
         AntiforgeryTokenSet? tokens = antiforgery.GetAndStoreTokens(HttpContext);
-        System.Diagnostics.Debug.WriteLine($"Path={HttpContext.Request.Path.Value} User={HttpContext.User.Identity.Name}, NewToken={tokens.RequestToken}");
         HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken, new CookieOptions() { HttpOnly = false });
 
-        return Ok(jwtUtil.ValidateRefreshJTWToken(HttpContext.Request, HttpContext.User.Identity.Name, claims));
+        return Ok(jwtUtil.GenerateJwtToken(HttpContext.User.Identity.Name, claims));
     }
 }

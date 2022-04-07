@@ -9,49 +9,35 @@ namespace API.Jwt
 {
     public class JWTUtil : IJWTUtil
     {
-        public string Secret { get; set; }
-        private byte[] key { get; set; }
+        private SigningCredentials signingCredentials { get; set; }
+        private EncryptingCredentials encryptingCredentials { get; set; }
         private TokenValidationParameters validationParm { get; set; }
         private JwtSecurityTokenHandler tokenHandler { get; set; }
         public JWTUtil(IConfiguration config)
         {
-            key = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:Secret").Value);
+            var signingKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:SigningKey").Value);
+            var encryptKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:EncryptKey").Value);
             validationParm = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                IssuerSigningKey = new SymmetricSecurityKey(signingKey),
+                TokenDecryptionKey = new SymmetricSecurityKey(encryptKey),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 RequireExpirationTime = false,
                 ClockSkew = TimeSpan.Zero
             };
+            signingCredentials = new SigningCredentials(new SymmetricSecurityKey(signingKey), 
+                SecurityAlgorithms.HmacSha256Signature);
+            encryptingCredentials = new EncryptingCredentials(new SymmetricSecurityKey(encryptKey), 
+                SecurityAlgorithms.Aes128KW, SecurityAlgorithms.Aes128CbcHmacSha256);
+
             tokenHandler = new JwtSecurityTokenHandler();
             tokenHandler.InboundClaimTypeMap.Clear();
             tokenHandler.OutboundClaimTypeMap.Clear();
         }
 
-        public AuthResult ValidateRefreshJTWToken(HttpRequest request, string userId, List<Claim> claims)
-        {
-            AuthResult authResult = null;
-            string token;
-            JwtSecurityToken jwtToken;
-
-            if (ValidateToken(request, out jwtToken, out token))
-            {
-                authResult = new AuthResult()
-                {
-                    Token = token,
-                    Success = true,
-                    RefreshToken = ""
-                };
-            } else
-            {
-                authResult = GenerateJwtToken(key, userId, claims);
-            }
-
-            return authResult;
-        }
         public bool ValidateToken(HttpRequest request, out JwtSecurityToken jwtToken, out string token) 
         {
             var tokens = request.Headers["X-UserRoles"];
@@ -82,16 +68,15 @@ namespace API.Jwt
             }
             return true;
         }
-        private AuthResult GenerateJwtToken(byte[] key, string user, List<Claim> claims)
+        public AuthResult GenerateJwtToken(string user, List<Claim> claims)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(10), // for testing logics after expiry
-              //Expires = DateTime.UtcNow.AddDays(1),  // valid for 1 day
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = signingCredentials,
+                EncryptingCredentials = encryptingCredentials,
             };
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = tokenHandler.WriteToken(token);
 
