@@ -38,6 +38,8 @@ namespace P6.StoryTest.StepDefinitions
                     }
                 }
             };
+            SetAuthorization("HEH");
+            SetLogonId("41776");
             // let's post
             var response = await client.SendAsync(request).ConfigureAwait(false);
             try
@@ -69,14 +71,21 @@ namespace P6.StoryTest.StepDefinitions
             Assert.AreEqual(result.DepartmentName, iT);
         }
 
-        [Then(@"the response contains UserId \((.*)\) and TotalSalary \((.*)\) and lettersentdate \(""([^""]*)""\) and letter start with \(""([^""]*)""\)")]
-        public void ThenTheResponseContainsUserIdAndTotalSalaryAndLettersentdateAndLetterStartWith(int p0, int p1, string today, string p3)
+        [Then(@"the response contains UserId \((.*)\) and TotalSalary \((.*)\)")]
+        public void ThenTheResponseContainsUserIdAndTotalSalary(int p0, int p1)
         {
             AddPayslipResponse result = JsonConvert.DeserializeObject<AddPayslipResponse>(context.Get<string>("ResponseBody"));
             Assert.AreEqual(result.UserId, p0);
             Assert.AreEqual(result.TotalSalary, p1);
-            Assert.AreEqual(result.LetterSentDate.Value.Date.ToString(), DateTime.Now.Date.ToString());
-            Assert.IsTrue(result.Letter.StartsWith(p3.Replace("\\n","\n")));
         }
+        //[Then(@"the response contains UserId \((.*)\) and TotalSalary \((.*)\) and lettersentdate \(""([^""]*)""\) and letter start with \(""([^""]*)""\)")]
+        //public void ThenTheResponseContainsUserIdAndTotalSalaryAndLettersentdateAndLetterStartWith(int p0, int p1, string today, string p3)
+        //{
+        //    AddPayslipResponse result = JsonConvert.DeserializeObject<AddPayslipResponse>(context.Get<string>("ResponseBody"));
+        //    Assert.AreEqual(result.UserId, p0);
+        //    Assert.AreEqual(result.TotalSalary, p1);
+        //    Assert.AreEqual(result.LetterSentDate.Value.Date.ToString(), DateTime.Now.Date.ToString());
+        //    Assert.IsTrue(result.Letter.StartsWith(p3.Replace("\\n","\n")));
+        //}
     }
 }

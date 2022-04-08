@@ -33,6 +33,9 @@ namespace Data.EF
             //modelBuilder.Entity<RootEntity>().Ignore(c => c.Events);
             modelBuilder.Ignore<RootEntity>().Ignore<BaseDomainEvent>();
 
+            modelBuilder.Entity<User>().HasIndex(b => b.UserName).IsUnique();
+            modelBuilder.Entity<Department>().HasIndex(b => b.Name).IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
     }

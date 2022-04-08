@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//// Comment all lines to enable NServiceBus Demo
+
 using MediatR;
 using Business.Users.Events;
-using Business.Users;
 using Data.EF.Interfaces;
 
 namespace Service.DomainEventHandlers
@@ -20,29 +16,18 @@ namespace Service.DomainEventHandlers
         }
         public async Task Handle(OnPayslipAddedDomainEvent notification, CancellationToken cancellationToken)
         {
-            string letter = "To: "
-                + notification.Payslip.User.Address + "\n"
-                + "Dear " + notification.Payslip.User.UserName + "\n"
-                + "Your Salary, amount to "
-                + notification.Payslip.TotalSalary.ToString();
-            if (notification.Payslip.IsPaid)
-            {
-                letter += ", was debited to your bank on "
-                    + notification.Payslip.PaymentDate.ToString() + ".\n";
-            } else
-            {
-                letter += ", will be debited to your bank." + "\n";
-            }
-            //await sendLetterService(letter);
+            string letter = $"To: {notification.Payslip.User.Address} \n"
+               + $"Dear {notification.Payslip.User.UserName} \n"
+               + $"Your Salary, amount to {notification.Payslip.TotalSalary} "
+               + $" was debited to your bank on { notification.Payslip.PaymentDate }.\n";
 
             var repository = _unitOfWork.UserRepository();
             var user = await repository.GetAsync(_ => _.Id == notification.Payslip.User.Id);
             if (user != null)
             {
-                user.SendPayslipLetter(notification.Payslip, letter);
+                user.SendPayslipLetter(notification.Payslip.Date, letter);
 
                 await repository.UpdateAsync(user);
-                await _unitOfWork.SaveChangesAsync();
             }
         }
     }

@@ -21,5 +21,11 @@ namespace Common.Shared
         {
         }
     }
-
+    public class InvalidUserException : Exception
+    {
+        public InvalidUserException()
+            : base("Invalid AD User")
+        {
+        }
+    }
 }

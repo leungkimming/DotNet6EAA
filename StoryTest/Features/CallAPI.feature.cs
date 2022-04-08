@@ -179,14 +179,13 @@ this.ScenarioInitialize(scenarioInfo);
                         ": 100,\r\n\"isPaid\": true\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 38
-  testRunner.When("I post this request to the \"users/payslips\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.When("I post this request to the \"users/AddPayslip\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 39
   testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 40
-  testRunner.And("the response contains UserId (1) and TotalSalary (75100) and lettersentdate (\"tod" +
-                        "ay\") and letter start with (\"To: Kwong Chiu Terrace\\nDear Micl\\nYour Salary\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the response contains UserId (1) and TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

@@ -1,7 +1,8 @@
 ﻿@page "/adduser"
 @using Common.DTOs.Users
-@using Common.Shared
+
 @inject HttpClient Http
+@inject Util utility
 
 <PageTitle>Add User</PageTitle>
 
@@ -72,6 +73,7 @@
         _message = "";
         _completed = true;
         _notspinning = false;
+        await utility.RefreshToken();
         var result = await Http.PostAsJsonAsync("users", _newuser);
         _notspinning = true;
         if (result.IsSuccessStatusCode)

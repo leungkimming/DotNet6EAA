@@ -2,21 +2,26 @@
 using Data.EF.Interfaces;
 using Business.Users;
 using Business.Departments;
-using AutoMapper;
 using Common.Shared;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Service.Users
 {
     public class UserService : BaseService
     {
-        private readonly IMapper _mapper;
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
+        public UserService(IUnitOfWork unitOfWork,
+            ILogger<UserService> logger,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
-            _mapper = mapper;
         }
 
         public async Task<AddUserResponse> AddNewAsync(AddUserRequest model)
         {
+            _logger.LogWarning(2000, "Add " + model.UserName);
             var repository = UnitOfWork.AsyncRepository<User>();
             var checkuser = await repository.GetAsync(x => x.UserName == model.UserName);
             if (checkuser != null)
@@ -67,7 +72,8 @@ namespace Service.Users
         }
         public async Task<List<UserInfoDTO>> SearchAsync(GetUserRequest request)
         {
-//          var repository = UnitOfWork.AsyncRepository<User>();
+            var x = _httpContext.User;
+            //          var repository = UnitOfWork.AsyncRepository<User>();
             var repository = UnitOfWork.UserRepository();
             var users = await repository
                 .ListAsyncwithDept(_ => _.UserName.Contains(request.Search));
@@ -85,6 +91,17 @@ namespace Service.Users
             var payslipDTOs = payslips.Select(x => _mapper.Map<PayslipDTO>(x)).ToList();
             return payslipDTOs;
         }
-
+        public List<Claim> GetUserClaims(string userId)
+        {
+            return new List<Claim> {
+                new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.Role, "AA01"),
+                new Claim(ClaimTypes.Role, "AB01"),
+                new Claim(ClaimTypes.Role, "AC01"),
+                new Claim(ClaimTypes.UserData, "{StaffId=41776"),
+                new Claim(ClaimTypes.UserData, "{Section=DIA"),
+                new Claim(ClaimTypes.UserData, "{DateJoin=20220406")
+            };
+        }
     }
 }

@@ -8,40 +8,22 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * First, View, SQL Server Object Explorer and note down your SQL server instance name e.g. <br>(localdb)\\ProjectsV13
 * Replace the SQL server instance in API project's appsettings.json file e.g. <br> "DDDConnectionString": "Server=(localdb)\\ProjectsV13;Database=DDDSample;Trusted_Connection=True;MultipleActiveResultSets=true"
 * Build the project, ensure all 6 success
-* cd DOS to current folder "Data"
-* Create first migration:<br>dotnet ef migrations add ver2 --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj
+* cd DOS to current folder "Migrator"
+* Create first migration:<br>dotnet ef migrations add ver2 --startup-project ..\API\P1.API.csproj
 * Create DB: <br>dotnet ef database update  --startup-project ..\API\P1.API.csproj
 
-## Changes to made EF Migration work
-* convert Program.cs to .NET webApplication builder
-* rename RootEntity for MediatR (created a Payslip Domain event example)
-* Separate the RootEntity
-```
-public abstract class RootEntity {
-  protected RootEntity() {
-     _events = new List<BaseDomainEvent>();
-  }
-
-protected override void OnModelCreating(ModelBuilder modelBuilder) {
-  modelBuilder.Ignore<RootEntity>().Ignore<BaseDomainEvent>();
-``` 
-* in Program.cs
-``` 
-builder.Services.AddDbContext<EFContext>(options => <br> options.UseSqlServer(configuration.GetConnectionString("DDDConnectionString"), b => b.MigrationsAssembly("P3.Data")));
-``` 
+## How to test API using Swagger UI
+* On home page, click the "API Swagger UI"" link
+* First, select the Login API and click try it out
+* click execute and copy the token string
+* in the API you wish to test, click try it out and paste the token string onto the X-UserRoles field
+* fill in API parameters as appropriate
+* click Execute
 
 ## Tidy up Business
+* convert Program.cs to .NET webApplication builder
 * Move Share & DTO from Business to Common
 * Move Interface from Business to Data
-
-## Add SpecFlow, StepDefinitaionBase
-* appsettings.test.json: define a new test SQLDB
-* client: created by custom WebApplicationFactory<br>test SQLDB injected into client
-** public partial class Program { }
-** ref: https://github.com/dotnet/aspnetcore/issues/37680
-* Drop test SQLDB tables (careful of sequence due to forign keys)
-* Run Client's EF migration to create a empty DB
-* Load initial data after migration
 
 ## Repository
 * use Generic repository to manipulate individual Entity
@@ -54,10 +36,12 @@ RepositoryBase<T>(_dbContext);
       .Include(User => User.Department)
       .ToListAsync();
 ```
+# Please visit wiki pages for more topics
 ## Use of Autofac DI & AutoMapper
 ## Blazor Client WebAssembly Added
-## More EF Migration commmands
-* dotnet ef migrations remove --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj
-* dotnet ef migrations script --context Data.EF.EFContext --startup-project ..\API\P1.API.csproj --output Migrations\script.sql
-
-# Please visit wiki pages for more topics
+## Add SpecFlow
+## Blazor webassembly client
+## Domain Event Pattern
+## Global Exception Handling
+## Negotiate Authentication and Policy-based Authorization
+## Add Data Migration Project

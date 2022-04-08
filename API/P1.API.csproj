@@ -24,9 +24,10 @@
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -37,10 +38,19 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj" />
     <ProjectReference Include="..\Data\P3.Data.csproj" />
+    <ProjectReference Include="..\Migrator\P7.Migrator.csproj" />
     <ProjectReference Include="..\Service\P2.Service.csproj" />
   </ItemGroup>
 	
   <ItemGroup>
 	<InternalsVisibleTo Include="P6.StoryTest" />
   </ItemGroup>
+
+  <!-- Uncomment ItemGroup to enable NServiceBus -->
+  <!-- <ItemGroup>
+	  <PackageReference Include="NServiceBus" Version="7.7.0" />
+    <ProjectReference Include="..\Messages\X1.Messages.csproj" />
+  </ItemGroup> -->
+
+
 </Project>

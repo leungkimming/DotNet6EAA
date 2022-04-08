@@ -1,7 +1,10 @@
 ﻿@page "/searchuser"
 @using Common.DTOs.Users
+@using System.Text.Json
+
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject Util utility
 
 <PageTitle>Search User</PageTitle>
 
@@ -103,6 +106,7 @@
         </tbody>
     </table>
 }
+<p hidden=@(_message == "") style="white-space: pre-line" >@_message</p>
 
 
 <div class="spinner" hidden=@_notspinning ></div>
@@ -111,15 +115,46 @@
     private bool _notspinning = true;
     private PayslipDTO[]? payslips;
     private GetUserRequest _getUser = new GetUserRequest();
+    private string _message;
 
     async Task Send()
     {
+        _message = "";
+
         _notspinning = false;
-        users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
+        await utility.RefreshToken();
+        var response = await Http.GetAsync("users?Search=" + _getUser.Search);
         _notspinning = true;
+
+        var content = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            users = JsonSerializer.Deserialize<UserInfoDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });            
+        } else
+        {
+            _message = content;
+        }
+        //users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
     }
+
     async Task Payslip(UserInfoDTO user)
     {
-        payslips = await Http.GetFromJsonAsync<PayslipDTO[]>("users/GetPayslip?userId=" + user.Id);
+        _message = "";
+
+        _notspinning = false;
+        await utility.RefreshToken();
+        var response = await Http.GetAsync("users/GetPayslip?userId=" + user.Id);
+        _notspinning = true;
+
+        var content = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            payslips = JsonSerializer.Deserialize<PayslipDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        else
+        {
+            _message = content;
+        }
+        //payslips = await Http.GetFromJsonAsync<PayslipDTO[]>("users/GetPayslip?userId=" + user.Id);
     }
 }

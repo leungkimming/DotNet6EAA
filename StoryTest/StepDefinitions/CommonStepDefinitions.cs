@@ -2,8 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Business.Departments;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Hosting;
 
 namespace P6.StoryTest.StepDefinitions
 {
@@ -32,9 +30,9 @@ namespace P6.StoryTest.StepDefinitions
                 db.Database.ExecuteSqlRaw("Drop Table IF Exists Users");
                 db.Database.ExecuteSqlRaw("Drop Table IF Exists Departments");
                 db.Database.ExecuteSqlRaw("Drop Table IF Exists __EFMigrationsHistory");
-                db.Database.Migrate();
+                db.Database.EnsureCreated();
                 DbSet<Department> _dbSet = db.Set<Department>();
-                _dbSet.Add(new Department("IT", "Information Technology"));
+                _dbSet.Add(new Department("IT", "Information Technology", "Mullar"));
                 db.SaveChanges();
             }
         }
