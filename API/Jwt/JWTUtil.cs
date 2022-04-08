@@ -17,8 +17,6 @@ namespace API.Jwt
         {
             var signingKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:SigningKey").Value);
             var encryptKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:EncryptKey").Value);
-            byte[] encryptKey32 = new byte[256 / 8];
-            Array.Copy(encryptKey, encryptKey32, 256 / 8);
             validationParm = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -32,7 +30,7 @@ namespace API.Jwt
             };
             signingCredentials = new SigningCredentials(new SymmetricSecurityKey(signingKey), 
                 SecurityAlgorithms.HmacSha256Signature);
-            encryptingCredentials = new EncryptingCredentials(new SymmetricSecurityKey(encryptKey32), 
+            encryptingCredentials = new EncryptingCredentials(new SymmetricSecurityKey(encryptKey), 
                 SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes256CbcHmacSha512);
 
             tokenHandler = new JwtSecurityTokenHandler();
