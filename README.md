@@ -14,11 +14,13 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 
 ## How to test API using Swagger UI
 * On home page, click the "API Swagger UI"" link
-* First, select the Login API and click try it out
-* click execute and copy the token string
-* in the API you wish to test, click try it out and paste the token string onto the X-UserRoles field
-* fill in API parameters as appropriate
-* click Execute
+* press F12 and monitor network
+* First, execute Login API
+    * Copy the antifogery token in F12 response header
+    * Copy the JWE string in the Swagger UI
+* in the API you wish to test, paste the JWE token string onto the X-UserRoles field
+* paste the antiforgery token string onto the X-CSRF-TOKEN-HEADER field
+* fill in API parameters as appropriate and execute
 
 ## Tidy up Business
 * convert Program.cs to .NET webApplication builder
@@ -37,11 +39,16 @@ RepositoryBase<T>(_dbContext);
       .ToListAsync();
 ```
 # Please visit wiki pages for more topics
-## Use of Autofac DI & AutoMapper
-## Blazor Client WebAssembly Added
-## Add SpecFlow
-## Blazor webassembly client
-## Domain Event Pattern
-## Global Exception Handling
-## Negotiate Authentication and Policy-based Authorization
-## Add Data Migration Project
+*  Use of Autofac DI & AutoMapper
+*  Blazor Client WebAssembly Added
+*  Add SpecFlow
+*  Blazor webassembly client
+*  Domain Event Pattern
+*  Global Exception Handling
+*  Negotiate Authentication and Policy-based Authorization
+*  Add Data Migration Project
+*  Concurrency Control
+*  CQRS Pattern
+*  Logging
+*  Validation
+*  Integration Event Pattern using Service Bus
