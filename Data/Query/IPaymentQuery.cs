@@ -1,8 +1,6 @@
 ﻿
-namespace Data.Query
-{
-    public interface IPaymentQuery
-    {
+namespace Data {
+    public interface IPaymentQuery {
         Task<IEnumerable<PaymentSummary>> GetPaymentOfFrequentWorkersAsync(int days);
     }
 }

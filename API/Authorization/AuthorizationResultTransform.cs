@@ -3,15 +3,12 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using System.Net;
 using System.Text.Json;
 
-namespace API.Authorization
-{
-    public class AuthorizationResultTransformer : IAuthorizationMiddlewareResultHandler
-    {
+namespace API {
+    public class AuthorizationResultTransformer : IAuthorizationMiddlewareResultHandler {
         private readonly IAuthorizationMiddlewareResultHandler _handler;
         public readonly ILogger<AuthorizationResultTransformer> _logger;
 
-        public AuthorizationResultTransformer(ILogger<AuthorizationResultTransformer> logger)
-        {
+        public AuthorizationResultTransformer(ILogger<AuthorizationResultTransformer> logger) {
             _handler = new AuthorizationMiddlewareResultHandler();
             _logger = logger;
         }
@@ -20,16 +17,12 @@ namespace API.Authorization
             RequestDelegate requestDelegate,
             HttpContext httpContext,
             AuthorizationPolicy authorizationPolicy,
-            PolicyAuthorizationResult policyAuthorizationResult)
-        {
-            if (policyAuthorizationResult.Forbidden && policyAuthorizationResult.AuthorizationFailure != null)
-            {
-                if (policyAuthorizationResult.AuthorizationFailure.FailedRequirements.Any(requirement => requirement is AccessCodeRequirement))
-                {
-                    AccessCodeRequirement req = (AccessCodeRequirement)authorizationPolicy.Requirements
-                        .Where(requirement => requirement is AccessCodeRequirement).FirstOrDefault();
+            PolicyAuthorizationResult policyAuthorizationResult) {
+            if (policyAuthorizationResult.Forbidden && policyAuthorizationResult.AuthorizationFailure != null) {
+                if (policyAuthorizationResult.AuthorizationFailure.FailedRequirements.Any(requirement => requirement is AccessCodeRequirement)) {
+                    AccessCodeRequirement req = (AccessCodeRequirement)authorizationPolicy.Requirements.FirstOrDefault(requirement => requirement is AccessCodeRequirement);
 
-                    string _message = String.Format(@"User Id ""{0}"" ""{1}"" to resource ""{2}"" denied, missing access code ""{3}""", 
+                    string _message = String.Format(@"User Id ""{0}"" ""{1}"" to resource ""{2}"" denied, missing access code ""{3}""",
                     httpContext.User.Identity.Name,
                     httpContext.Request.Method,
                     httpContext.Request.Host + httpContext.Request.PathBase + httpContext.Request.Path,

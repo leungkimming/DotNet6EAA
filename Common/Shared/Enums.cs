@@ -1,8 +1,6 @@
 ﻿
-namespace Common.Shared
-{
-    public static class Enums
-    {
+namespace Common {
+    public static class Enums {
         public readonly record struct Department(int Id, string Name);
 
         public static Department[] Departments = new Department[] {

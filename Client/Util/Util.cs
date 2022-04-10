@@ -1,20 +1,16 @@
-﻿using Common.DTOs;
+﻿using Common;
 using System.Net.Http.Json;
 using Microsoft.JSInterop;
 
-namespace Client.Util
-{
-    public class Util
-    {
+namespace Client {
+    public class Util {
         private HttpClient Http { get; set; }
         private IJSRuntime _jSRuntime { get; set; }
-        public Util(HttpClient _Http, IJSRuntime jsRuntime)
-        {
+        public Util(HttpClient _Http, IJSRuntime jsRuntime) {
             Http = _Http;
             _jSRuntime = jsRuntime;
         }
-        public async Task RefreshToken()
-        {
+        public async Task RefreshToken() {
             AuthResult authResult;
             authResult = await Http.GetFromJsonAsync<AuthResult>("Login");
 

@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.DTOs.Users
-{
-    public class AddPayslipRequest
-    {
+namespace Common {
+    public class AddPayslipRequest : DTObase {
         [Required(ErrorMessage = "Date is mandatory")]
         public DateTime? Date { get; set; }
 
         [Required]
-        public int? UserId { get; set; }
+        public UserInfoDTO UserDTO { get; set; }
 
         [Required(ErrorMessage = "Working days is mandatory")]
         [Range(1, 31, ErrorMessage = "Working days must be between 1 to 31")]

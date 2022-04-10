@@ -12,19 +12,19 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(EFContext))]
-    [Migration("20220304063636_ver3")]
-    partial class ver3
+    [Migration("20220409105640_ver12")]
+    partial class ver12
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Business.Departments.Department", b =>
+            modelBuilder.Entity("Business.Department", b =>
                 {
                     b.Property<short>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,17 +33,32 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Manager")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("Business.Users.Payslip", b =>
+            modelBuilder.Entity("Business.Payslip", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,6 +74,12 @@ namespace Data.Migrations
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Letter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LetterSentDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
@@ -79,7 +100,7 @@ namespace Data.Migrations
                     b.ToTable("Payslips");
                 });
 
-            modelBuilder.Entity("Business.Users.User", b =>
+            modelBuilder.Entity("Business.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,6 +109,7 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("BirthDate")
@@ -99,28 +121,40 @@ namespace Data.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<short?>("DepartmentId1")
+                    b.Property<short>("DepartmentId1")
                         .HasColumnType("smallint");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId1");
 
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Business.Users.Payslip", b =>
+            modelBuilder.Entity("Business.Payslip", b =>
                 {
-                    b.HasOne("Business.Users.User", "User")
+                    b.HasOne("Business.User", "User")
                         .WithMany("PaySlips")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -129,21 +163,23 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Business.Users.User", b =>
+            modelBuilder.Entity("Business.User", b =>
                 {
-                    b.HasOne("Business.Departments.Department", "Department")
+                    b.HasOne("Business.Department", "Department")
                         .WithMany("Users")
-                        .HasForeignKey("DepartmentId1");
+                        .HasForeignKey("DepartmentId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("Business.Departments.Department", b =>
+            modelBuilder.Entity("Business.Department", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Business.Users.User", b =>
+            modelBuilder.Entity("Business.User", b =>
                 {
                     b.Navigation("PaySlips");
                 });

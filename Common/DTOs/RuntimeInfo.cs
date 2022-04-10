@@ -1,7 +1,6 @@
-namespace Common.DTOs;
+namespace Common;
 
-public class RuntimeInfo
-{
+public class RuntimeInfo {
     public string OSArchitecture { get; set; }
 
     public string OSDescription { get; set; }

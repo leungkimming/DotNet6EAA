@@ -1,10 +1,8 @@
-﻿using Business.Base;
+﻿using Business;
 using System.Linq.Expressions;
 
-namespace Data.EF.Interfaces
-{
-    public interface IAsyncRepository<T> where T : RootEntity
-    {
+namespace Data {
+    public interface IAsyncRepository<T> where T : RootEntity {
         Task<T> AddAsync(T entity);
 
         Task<T> UpdateAsync(T entity);

@@ -1,11 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Business.Users;
-using Business.Base;
 
-namespace Business.JWT
-{
-    public class RefreshToken : BaseEntity<int>
-    {
+namespace Business {
+    public class RefreshToken : BaseEntity<int> {
         public int Id { get; set; }
         public string UserId { get; set; }
         public string Token { get; set; }
@@ -16,6 +12,6 @@ namespace Business.JWT
         public DateTime ExpiryDate { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public User User {get;set;}
+        public User User { get; set; }
     }
 }

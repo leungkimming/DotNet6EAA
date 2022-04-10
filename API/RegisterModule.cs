@@ -1,29 +1,18 @@
 ﻿using Autofac;
 using Microsoft.EntityFrameworkCore;
-using Data.EF.Interfaces;
-using Data.EF.Repositories;
-using Data.EF;
-using Data.Query;
-using Service.Users;
-using Service.DomainEventHandlers;
+using Data;
+using Service;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using API.Authorization;
-using API.Jwt;
 
-
-namespace API
-{
-    public class RegisterModule : Module
-    {
+namespace API {
+    public class RegisterModule : Module {
         public string _dbconstr { get; }
 
-        public RegisterModule(string dbconstr)
-        {
+        public RegisterModule(string dbconstr) {
             this._dbconstr = dbconstr;
         }
-        protected override void Load(ContainerBuilder builder)
-        {
+        protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DepartmentRepository>().As<IDepartmentRepository>().InstancePerLifetimeScope();
@@ -46,8 +35,7 @@ namespace API
             builder.RegisterAssemblyTypes(typeof(OnPayslipAddedDomainEventHandler).Assembly)
                 .AsClosedTypesOf(typeof(INotificationHandler<>));
 
-            builder.Register<ServiceFactory>(context =>
-            {
+            builder.Register<ServiceFactory>(context => {
                 var componentContext = context.Resolve<IComponentContext>();
                 return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
             });

@@ -1,7 +1,5 @@
 ﻿
-namespace Data.Exceptions
-{
-    class DataException
-    {
+namespace Data {
+    class DataException {
     }
 }

@@ -1,11 +1,8 @@
 ﻿using MediatR;
 
-namespace Business.Base
-{
-    public abstract class BaseDomainEvent : INotification
-    {
-        public BaseDomainEvent()
-        {
+namespace Business {
+    public abstract class BaseDomainEvent : INotification {
+        public BaseDomainEvent() {
             EventId = Guid.NewGuid();
             CreatedOn = DateTime.UtcNow;
         }

@@ -1,26 +1,21 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace API.Authorization
-{
-    internal class AccessCodePolicyProvider : IAuthorizationPolicyProvider
-    {
+namespace API {
+    internal class AccessCodePolicyProvider : IAuthorizationPolicyProvider {
         const string POLICY_PREFIX = "Role";
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
-        public AccessCodePolicyProvider(IOptions<AuthorizationOptions> options)
-        {
+        public AccessCodePolicyProvider(IOptions<AuthorizationOptions> options) {
             FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
         }
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
-        
-        public Task<AuthorizationPolicy> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetFallbackPolicyAsync();
 
-        public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
-        {
-            if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
-            {
+        public Task<AuthorizationPolicy?> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetFallbackPolicyAsync();
+
+        public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName) {
+            if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase)) {
                 var policy = new AuthorizationPolicyBuilder();
                 policy.AddRequirements(new AccessCodeRequirement(policyName.Substring(POLICY_PREFIX.Length)));
                 policy.RequireAuthenticatedUser();

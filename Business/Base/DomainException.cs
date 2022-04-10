@@ -1,7 +1,5 @@
 ﻿
-namespace Business.Base
-{
-    class DomainException
-    {
+namespace Business {
+    class DomainException {
     }
 }

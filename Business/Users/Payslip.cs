@@ -1,14 +1,10 @@
-﻿using Business.Base;
-
-namespace Business.Users
-{
-    public class Payslip : BaseEntity<int>
-    {
+﻿
+namespace Business {
+    public class Payslip : BaseEntity<int> {
         public Payslip(int userId
             , DateTime date
             , float workingDays
-            , decimal bonus)
-        {
+            , decimal bonus) {
             UserId = userId;
             Date = date;
             WorkingDays = workingDays;
@@ -28,10 +24,7 @@ namespace Business.Users
         public string? Letter { get; private set; }
         public virtual User User { get; private set; }
 
-        public void Pay(
-            float coefficientsSalary
-            )
-        {
+        public void Pay(float coefficientsSalary) {
             if (IsPaid)
                 throw new Exception("This Payslip has been paid.");
 
@@ -40,8 +33,7 @@ namespace Business.Users
             TotalSalary = Value.TotalSalary;
             PaymentDate = DateTime.Now;
         }
-        public void UpdateLetterSent(string letter)
-        {
+        public void UpdateLetterSent(string letter) {
             LetterSentDate = DateTime.Now;
             Letter = letter;
         }

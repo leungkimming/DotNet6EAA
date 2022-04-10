@@ -1,12 +1,9 @@
 ﻿using MediatR;
-using Business.Base;
+using Business;
 
-namespace Data.EF
-{
-    static class MediatorExtension
-    {
-        public static async Task DispatchDomainEventsAsync(this IMediator mediator, EFContext ctx)
-        {
+namespace Data {
+    static class MediatorExtension {
+        public static async Task DispatchDomainEventsAsync(this IMediator mediator, EFContext ctx) {
             var domainEntities = ctx.ChangeTracker
                 .Entries<RootEntity>()
                 .Where(x => x.Entity.Events != null && x.Entity.Events.Any());
