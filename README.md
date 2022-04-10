@@ -1,10 +1,10 @@
-# a SOLID+DDD+Specflow based .NET 6 framework
+# A SOLID+DDD+Specflow based .NET 6 framework
 * Fork from EnLabSoftware's HRManagement
 ## Ref: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/
 ## Ref: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/
 ### Author: Michael Leung from Hong Kong
 ## Intro
-I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .NET 6. I selected EnLabSoftware's HRManagement template as the base for migration. I refactor the solution to align with the original .net framework and add EF Migration & SpecFlow test project.
+I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .NET 6. I selected EnLabSoftware's HRManagement template as the base for migration. I refactor the solution to align with the above Microsoft references and add EF Migration & SpecFlow test project.
 
 ## Step to run
 * First, View, SQL Server Object Explorer and note down your SQL server instance name e.g. <br>(localdb)\\ProjectsV13
