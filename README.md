@@ -13,7 +13,7 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * Supplement with Command Query Request Segregation (CQRS)
 * Supplement with Event Service Bus
 * Solution Architecture:<br>
-[[wiki/images/EAA.PNG]] 
+[[https://github.com/leungkimming/DotNet6EAA/wiki/images/EAA.PNG]] 
 ### SOLID principles
 * S - Single-responsiblity Principle
 * O - Open-closed Principle
