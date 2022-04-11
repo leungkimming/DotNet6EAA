@@ -12,7 +12,7 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * When Business Logics has side effects, create Domain Event (MediatR) to handle in Servce Layer
 * Supplement with Command Query Request Segregation (CQRS)
 * Supplement with Event Service Bus
-![Solution Architecture](https://github.com/leungkimming/DotNet6EAA/wiki/images/EAA.PNG)
+![Solution Architecture](https://github.com/leungkimming/DotNet6EAA/wiki/images/EAAa.PNG)
 ### SOLID principles
 * S - Single-responsiblity Principle
 * O - Open-closed Principle
