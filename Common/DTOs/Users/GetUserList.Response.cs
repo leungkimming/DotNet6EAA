@@ -1,6 +1,6 @@
 ﻿
 namespace Common {
-    public class UserInfoDTO : DTObase {
+    public class UserInfoDTO : DTObaseResponse {
         public int Id { get; set; }
         public string UserName { get; set; }
 

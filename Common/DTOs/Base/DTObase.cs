@@ -1,9 +1,8 @@
 ﻿
-namespace Common
-{
-    public class DTObase {
+namespace Common {
+    public abstract class DTObase {
         public byte[]? RowVersion { get; set; }
-        public DTObase() {
+        protected DTObase() {
             RowVersion = null;
         }
     }

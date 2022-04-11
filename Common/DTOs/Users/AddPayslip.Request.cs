@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Common {
-    public class AddPayslipRequest : DTObase {
+    public class AddPayslipRequest : DTObaseRequest {
         [Required(ErrorMessage = "Date is mandatory")]
         public DateTime? Date { get; set; }
 

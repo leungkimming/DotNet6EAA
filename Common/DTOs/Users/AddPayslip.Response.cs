@@ -1,5 +1,5 @@
 ﻿namespace Common {
-    public class AddPayslipResponse : DTObase {
+    public class AddPayslipResponse : DTObaseResponse {
         public int UserId { get; set; }
 
         public decimal TotalSalary { get; set; }

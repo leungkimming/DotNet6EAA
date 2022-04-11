@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Common {
-    public class UpdateUserRequest : DTObase {
+    public class UpdateUserRequest : DTObaseRequest {
         [Required]
         public int? Id { get; set; }
 

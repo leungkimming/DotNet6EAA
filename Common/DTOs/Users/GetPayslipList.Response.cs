@@ -1,6 +1,6 @@
 ﻿
 namespace Common {
-    public class PayslipDTO : DTObase {
+    public class PayslipDTO : DTObaseResponse {
         public DateTime Date { get; set; }
         public float WorkingDays { get; set; }
         public bool IsPaid { get; set; }
