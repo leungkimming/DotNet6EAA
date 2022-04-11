@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Common {
-    public class AddUserRequest : DTObase {
+    public class AddUserRequest : DTObaseRequest {
         [Required(ErrorMessage = "UserName is mandatory")]
         [StringLength(50)]
         public string UserName { get; set; }

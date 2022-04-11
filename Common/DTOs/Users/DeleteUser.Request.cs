@@ -1,5 +1,5 @@
 ﻿namespace Common {
-    public class DeleteUserRequest : DTObase {
+    public class DeleteUserRequest : DTObaseRequest {
         public int Id { get; set; }
     }
 }
