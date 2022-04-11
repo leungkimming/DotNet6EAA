@@ -1,7 +1,5 @@
-﻿namespace Common.DTOs.Users
-{
-    public class AddPayslipResponse
-    {
+﻿namespace Common {
+    public class AddPayslipResponse : DTObaseResponse {
         public int UserId { get; set; }
 
         public decimal TotalSalary { get; set; }

@@ -1,7 +1,5 @@
-﻿namespace Common.DTOs.Users
-{
-    public class DeleteUserResponse
-    {
+﻿namespace Common {
+    public class DeleteUserResponse : DTObaseResponse {
         public int Id { get; set; }
         public string UserName { get; set; }
     }

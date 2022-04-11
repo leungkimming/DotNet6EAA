@@ -1,7 +1,5 @@
 ﻿
-namespace Business.Base
-{
-    class BaseDomainService
-    {
+namespace Business {
+    class BaseDomainService {
     }
 }

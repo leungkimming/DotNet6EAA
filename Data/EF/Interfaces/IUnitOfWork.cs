@@ -1,9 +1,7 @@
-﻿using Business.Base;
+﻿using Business;
 
-namespace Data.EF.Interfaces
-{
-    public interface IUnitOfWork
-    {
+namespace Data {
+    public interface IUnitOfWork {
         Task<int> SaveChangesAsync();
 
         IAsyncRepository<T> AsyncRepository<T>() where T : RootEntity;

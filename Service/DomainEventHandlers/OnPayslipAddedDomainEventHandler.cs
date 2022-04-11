@@ -1,48 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
-using Business.Users.Events;
-using Business.Users;
-using Data.EF.Interfaces;
+﻿//// Comment all lines to enable NServiceBus Demo
 
-namespace Service.DomainEventHandlers
-{
+using MediatR;
+using Business;
+using Data;
+
+namespace Service {
     public class OnPayslipAddedDomainEventHandler
-        : INotificationHandler<OnPayslipAddedDomainEvent>
-    {
+        : INotificationHandler<OnPayslipAddedDomainEvent> {
         public IUnitOfWork _unitOfWork;
-        public OnPayslipAddedDomainEventHandler(IUnitOfWork unitOfWork)
-        {
+        public OnPayslipAddedDomainEventHandler(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
-        public async Task Handle(OnPayslipAddedDomainEvent notification, CancellationToken cancellationToken)
-        {
-            string letter = "To: "
-                + notification.Payslip.User.Address + "\n"
-                + "Dear " + notification.Payslip.User.UserName + "\n"
-                + "Your Salary, amount to "
-                + notification.Payslip.TotalSalary.ToString();
-            if (notification.Payslip.IsPaid)
-            {
-                letter += ", was debited to your bank on "
-                    + notification.Payslip.PaymentDate.ToString() + ".\n";
-            } else
-            {
-                letter += ", will be debited to your bank." + "\n";
-            }
-            //await sendLetterService(letter);
+        public async Task Handle(OnPayslipAddedDomainEvent notification, CancellationToken cancellationToken) {
+            string letter = $"To: {notification.Payslip.User.Address} \n"
+               + $"Dear {notification.Payslip.User.UserName} \n"
+               + $"Your Salary, amount to {notification.Payslip.TotalSalary} "
+               + $" was debited to your bank on { notification.Payslip.PaymentDate }.\n";
 
             var repository = _unitOfWork.UserRepository();
             var user = await repository.GetAsync(_ => _.Id == notification.Payslip.User.Id);
-            if (user != null)
-            {
-                user.SendPayslipLetter(notification.Payslip, letter);
+            if (user != null) {
+                user.SendPayslipLetter(notification.Payslip.Date, letter);
 
                 await repository.UpdateAsync(user);
-                await _unitOfWork.SaveChangesAsync();
             }
         }
     }

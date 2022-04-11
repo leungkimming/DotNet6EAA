@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.DTOs.Users
-{
-    public class UpdateUserRequest
-    {
+namespace Common {
+    public class UpdateUserRequest : DTObaseRequest {
         [Required]
         public int? Id { get; set; }
 

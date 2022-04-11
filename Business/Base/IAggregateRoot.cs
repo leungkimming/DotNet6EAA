@@ -1,6 +1,4 @@
-﻿namespace Business.Base
-{
-    public interface IAggregateRoot
-    {
+﻿namespace Business {
+    public interface IAggregateRoot {
     }
 }

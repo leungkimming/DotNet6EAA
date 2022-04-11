@@ -1,27 +1,21 @@
-﻿using Business.Base;
-using Data.EF.Interfaces;
-using Data.EF.Repositories;
+﻿using Business;
 using MediatR;
 
-namespace Data.EF;
+namespace Data;
 
-public class UnitOfWork : IUnitOfWork
-{
+public class UnitOfWork : IUnitOfWork {
     private readonly EFContext _dbContext;
     private readonly IMediator _mediator;
-    public UnitOfWork(EFContext dbContext, IMediator mediator)
-    {
+    public UnitOfWork(EFContext dbContext, IMediator mediator) {
         _dbContext = dbContext;
         this._mediator = mediator;
     }
 
-    public IAsyncRepository<T> AsyncRepository<T>() where T : RootEntity
-    {
+    public IAsyncRepository<T> AsyncRepository<T>() where T : RootEntity {
         return new RepositoryBase<T>(_dbContext);
     }
 
-    public async Task<int> SaveChangesAsync()
-    {
+    public async Task<int> SaveChangesAsync() {
         // Dispatch Domain Events collection. 
         // Choices:
         // A) Right BEFORE committing data (EF SaveChanges) into the DB will make a single transaction including  
@@ -35,8 +29,7 @@ public class UnitOfWork : IUnitOfWork
         return await _dbContext.SaveChangesAsync();
     }
 
-    public IUserRepository UserRepository()
-    {
+    public IUserRepository UserRepository() {
         return new UserRepository(_dbContext);
     }
 }

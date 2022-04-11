@@ -1,78 +1,74 @@
-﻿@page "/addpayslip/{userId:int}"
-@using Common.DTOs.Users
-@using Common.Shared
+﻿@page "/addpayslip"
+@using Common
+
 @inject HttpClient Http
+@inject Util utility
+@inject StateContainer StateContainer
 
 <PageTitle>Add Payslip</PageTitle>
 
 <EditForm OnValidSubmit="@Send"
-          Model = "@_newpayslip">
+          Model="@_newpayslip">
     <DataAnnotationsValidator />
     <h1>Add Payslip</h1>
     <hr />
     <ValidationSummary />
     <table class="table">
-    <tbody>
-        <tr>
-            <td>Date:</td>
-            <td><InputDate @bind-Value="_newpayslip.Date" /></td>
-        </tr>
-        <tr>
-            <td>WorkingDays:</td>
-            <td><input @bind="_newpayslip.WorkingDays" /></td>
-        </tr>
-        <tr>
-            <td>Bonus:</td>
-            <td><input @bind="_newpayslip.Bonus" /></td>
-        </tr>
-        <tr>
-            <td>IsPaid:</td>
-            <InputSelect id="department" @bind-Value="_newpayslip.IsPaid">
+        <tbody>
+            <tr>
+                <td>Date:</td>
+                <td><InputDate @bind-Value="_newpayslip.Date" /></td>
+            </tr>
+            <tr>
+                <td>WorkingDays:</td>
+                <td><input @bind="_newpayslip.WorkingDays" /></td>
+            </tr>
+            <tr>
+                <td>Bonus:</td>
+                <td><input @bind="_newpayslip.Bonus" /></td>
+            </tr>
+            <tr>
+                <td>IsPaid:</td>
+                <InputSelect id="department" @bind-Value="_newpayslip.IsPaid">
                     <option value="true">true</option>
                     <option value="false">false</option>
-            </InputSelect>
-        </tr>
-        <tr>
-            <td colspan="2"><button type="submit" disabled=@_completed>Submit</button></td>
-        </tr>
-    </tbody>
-</table>
+                </InputSelect>
+            </tr>
+            <tr>
+                <td colspan="2"><button type="submit" disabled=@_completed>Submit</button></td>
+            </tr>
+        </tbody>
+    </table>
 </EditForm>
-<div class="spinner" hidden=@_notspinning ></div>
+<div class="spinner" hidden=@_notspinning></div>
 
-<p hidden=@(_message == "") style="white-space: pre-line" >@_message</p>
+<p hidden=@(_message == "") style="white-space: pre-line">@_message</p>
 
 @code {
-    [Parameter]
-    public int userId { get; set; }
-
     private AddPayslipRequest _newpayslip;
     private string _message;
     private bool _notspinning = true;
     private bool _completed = false;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         _newpayslip = new AddPayslipRequest();
-        _newpayslip.UserId = userId;
+        _newpayslip.UserDTO = StateContainer.UserInfoDTO;;
         _newpayslip.IsPaid = true;
         _newpayslip.Bonus = 0;
     }
 
-    async Task Send()
-    {
+    async Task Send() {
         _completed = true;
         _message = "";
         _notspinning = false;
+        await utility.RefreshToken();
         var result = await Http.PostAsJsonAsync("users/AddPayslip", _newpayslip);
         _notspinning = true;
-        if (result.IsSuccessStatusCode)
-        {
+        if (result.IsSuccessStatusCode) {
             AddPayslipResponse response = await result.Content.ReadFromJsonAsync<AddPayslipResponse>();
             _message = "Created for User ID:" + response.UserId
                 + "\r\nSalary:" + response.TotalSalary;
-            if (response.LetterSentDate != null)
-            {
+            if (response.LetterSentDate != null) {
                 _message += "\r\nLetter sent on " + response.LetterSentDate.Value.ToString("dd/MM/yyyy")
                 + "\r\nContent:" + response.Letter;
             }
