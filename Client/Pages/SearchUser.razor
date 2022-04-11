@@ -1,15 +1,16 @@
 ﻿@page "/searchuser"
-@using Common.DTOs.Users
+@using Common
 @using System.Text.Json
 
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject Util utility
+@inject StateContainer StateContainer
 
 <PageTitle>Search User</PageTitle>
 
 <EditForm OnValidSubmit="@Send"
-          Model = "@_getUser">
+          Model="@_getUser">
     <DataAnnotationsValidator />
     <h1>Search User</h1>
     <hr />
@@ -25,8 +26,7 @@
     </table>
 
 </EditForm>
-@if (users != null)
-{
+@if (users != null) {
     <table class="table">
         <thead>
             <tr>
@@ -42,8 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in users)
-            {
+            @foreach (var user in users) {
                 <tr>
                     <td>@user.Id</td>
                     <td>@user.UserName</td>
@@ -55,15 +54,14 @@
                     <td>@user.CoefficientsSalary</td>
                     <td>
                         <a style="cursor:pointer" @onclick="@(() => Payslip(user))"><u>view</u></a>&nbsp;&nbsp;
-                        <NavLink class=".btn-link" href=@("addpayslip/" + user.Id)>add</NavLink>
-                    </td>
+                        <a style="cursor:pointer" @onclick="@(() => AddPayslip(user))"><u>add</u></a>
+@*                        <NavLink class=".btn-link" href=@("addpayslip/" + user)>add</NavLink>*@                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
-@if (payslips != null)
-{
+@if (payslips != null) {
     <table class="table">
         <thead>
             <tr>
@@ -76,15 +74,13 @@
                 <th>LetterSentDate</th>
             </tr>
         </thead>
-        @if (payslips.Count() == 0)
-        {
+        @if (payslips.Count() == 0) {
             <tr>
-                 <td colspan=7>No Records Found!</td>
+                <td colspan=7>No Records Found!</td>
             </tr>
         }
         <tbody>
-            @foreach (var payslip in payslips)
-            {
+            @foreach (var payslip in payslips) {
                 <tr>
                     <td>@payslip.Date.ToString("dd/MM/yyyy")</td>
                     <td>@payslip.WorkingDays</td>
@@ -94,22 +90,21 @@
                     <td>@payslip.Bonus</td>
                     <td>@((@payslip.LetterSentDate == null)?"":@payslip.LetterSentDate.Value.ToString("dd/MM/yyyy"))</td>
                 </tr>
-@if(payslip.Letter != "")
-{
-                <tr>
-                    <td></td>
-                    <td colspan=6>@payslip.Letter</td>
-                </tr>
-                    
-}
+                @if (payslip.Letter != "") {
+                    <tr>
+                        <td></td>
+                        <td colspan=6>@payslip.Letter</td>
+                    </tr>
+
+                }
             }
         </tbody>
     </table>
 }
-<p hidden=@(_message == "") style="white-space: pre-line" >@_message</p>
+<p hidden=@(_message == "") style="white-space: pre-line">@_message</p>
 
 
-<div class="spinner" hidden=@_notspinning ></div>
+<div class="spinner" hidden=@_notspinning></div>
 @code {
     private UserInfoDTO[]? users;
     private bool _notspinning = true;
@@ -117,8 +112,7 @@
     private GetUserRequest _getUser = new GetUserRequest();
     private string _message;
 
-    async Task Send()
-    {
+    async Task Send() {
         _message = "";
 
         _notspinning = false;
@@ -127,18 +121,15 @@
         _notspinning = true;
 
         var content = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
-        {
-            users = JsonSerializer.Deserialize<UserInfoDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });            
-        } else
-        {
+        if (response.IsSuccessStatusCode) {
+            users = JsonSerializer.Deserialize<UserInfoDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        } else {
             _message = content;
         }
         //users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
     }
 
-    async Task Payslip(UserInfoDTO user)
-    {
+    async Task Payslip(UserInfoDTO user) {
         _message = "";
 
         _notspinning = false;
@@ -147,14 +138,17 @@
         _notspinning = true;
 
         var content = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
-        {
+        if (response.IsSuccessStatusCode) {
             payslips = JsonSerializer.Deserialize<PayslipDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
-        else
-        {
+        } else {
             _message = content;
         }
         //payslips = await Http.GetFromJsonAsync<PayslipDTO[]>("users/GetPayslip?userId=" + user.Id);
     }
+    async Task AddPayslip(UserInfoDTO user)
+    {
+        StateContainer.UserInfoDTO = user;
+        NavigationManager.NavigateTo("addpayslip", false);
+    }
+
 }

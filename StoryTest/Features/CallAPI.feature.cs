@@ -48,11 +48,7 @@ namespace P6.StoryTest.Features
         public static void FeatureSetup(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "CallAPI", @"![Calculator](https://specflow.org/wp-content/uploads/2020/09/calculator.png)
-Simple calculator for adding **two** numbers
-
-Link to a feature: [Calculator](StoryTest/Features/Calculator.feature)
-***Further read***: **[Learn more about how to generate Living Documentation](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerator/Generating-Documentation.html)**", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "CallAPI", null, ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -105,7 +101,7 @@ Link to a feature: [Calculator](StoryTest/Features/Calculator.feature)
                     "mytag"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddNew", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 9
+#line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -125,22 +121,22 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 10
-  testRunner.Given("I have the following request body:", "{\r\n\"userName\": \"Micl\",\r\n\"firstName\": \"Leung\",\r\n\"lastName\": \"Michael\",\r\n\"address\":" +
+#line 4
+ testRunner.Given("I have the following request body:", "{\r\n\"userName\": \"Micl\",\r\n\"firstName\": \"Leung\",\r\n\"lastName\": \"Michael\",\r\n\"address\":" +
                         " \"Kwong Chiu Terrace\",\r\n\"birthDate\": \"1961-03-04T00:00:00.000Z\",\r\n\"departmentId\"" +
                         ": 1,\r\n\"CoefficientsSalary\": 7500\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 22
-  testRunner.And("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 16
+ testRunner.And("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 23
-  testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 17
+ testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 24
-  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 18
+ testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 25
-  testRunner.And("the response contains username (\"Micl\") and ID (1) and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 19
+ testRunner.And("the response contains username (\"Micl\") and ID (1) and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -154,7 +150,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 27
+#line 21
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -174,18 +170,35 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 28
-  testRunner.Given("I have the following request body:", "{\r\n\"date\": \"2022-03-11T12:21:09.256Z\",\r\n\"userId\": 1,\r\n\"workingDays\": 10,\r\n\"bonus\"" +
-                        ": 100,\r\n\"isPaid\": true\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 22
+ testRunner.Given("I can retrieve the newly inserted user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 38
-  testRunner.When("I post this request to the \"users/AddPayslip\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table1.AddRow(new string[] {
+                            "date",
+                            "2022-04-09T00:00:00+08:00"});
+                table1.AddRow(new string[] {
+                            "workingDays",
+                            "10"});
+                table1.AddRow(new string[] {
+                            "bonus",
+                            "100"});
+                table1.AddRow(new string[] {
+                            "isPaid",
+                            "true"});
+#line 23
+ testRunner.And("I have the following Payslip", ((string)(null)), table1, "And ");
 #line hidden
-#line 39
-  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 29
+ testRunner.When("I post this request to the AddPayslip API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 40
-  testRunner.And("the response contains UserId (1) and TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 30
+ testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 31
+ testRunner.And("the response contains UserId (1) and TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

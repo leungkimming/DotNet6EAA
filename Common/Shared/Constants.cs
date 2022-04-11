@@ -1,7 +1,5 @@
 ﻿
-namespace Common.Shared
-{
-    class Constants
-    {
+namespace Common {
+    class Constants {
     }
 }

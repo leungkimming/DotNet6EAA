@@ -1,27 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
-using API.Jwt;
-using Common.Shared;
+using Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Service.Users;
+using Service;
 using Microsoft.AspNetCore.Antiforgery;
-using Common.DTOs;
 
-namespace API.Controllers;
+namespace API;
 
 [Route("Login")]
 [ApiController]
 [IgnoreAntiforgeryToken]
-public class LoginController : ControllerBase
-{
+public class LoginController : ControllerBase {
     private IConfiguration _conf { get; set; }
     private readonly IJWTUtil jwtUtil;
-    private readonly UserService _service; 
-    private IAntiforgery antiforgery;
+    private readonly UserService _service;
+    private readonly IAntiforgery antiforgery;
     public LoginController(IConfiguration config,
         IJWTUtil _jwtUtil, UserService service,
-        IAntiforgery antiForgery)
-    {
+        IAntiforgery antiForgery) {
         _conf = config;
         jwtUtil = _jwtUtil;
         _service = service;
@@ -29,8 +25,7 @@ public class LoginController : ControllerBase
     }
 
     [HttpGet(Name = "Login")]
-    public async Task<IActionResult> Get()
-    {
+    public async Task<IActionResult> Get() {
         JwtSecurityToken jwtToken;
         string token;
 
@@ -38,10 +33,8 @@ public class LoginController : ControllerBase
             throw new InvalidUserException();
         }
 
-        if (jwtUtil.ValidateToken(HttpContext.Request, out jwtToken, out token))
-        {
-            return Ok(new AuthResult()
-            {
+        if (jwtUtil.ValidateToken(HttpContext.Request, out jwtToken, out token)) {
+            return Ok(new AuthResult() {
                 Token = token,
                 Success = true,
                 RefreshToken = ""

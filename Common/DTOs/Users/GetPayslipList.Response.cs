@@ -1,8 +1,6 @@
 ﻿
-namespace Common.DTOs.Users
-{
-    public class PayslipDTO
-    {
+namespace Common {
+    public class PayslipDTO : DTObase {
         public DateTime Date { get; set; }
         public float WorkingDays { get; set; }
         public bool IsPaid { get; set; }

@@ -1,5 +1,5 @@
 ﻿@page "/adduser"
-@using Common.DTOs.Users
+@using Common
 
 @inject HttpClient Http
 @inject Util utility
@@ -37,10 +37,9 @@
         <tr>
             <td>Department:</td>
             <InputSelect id="department" @bind-Value="_newuser.DepartmentId">
-                @foreach (var dept in Enums.Departments)
-                {
-                    <option value="@dept.Id">@dept.Name</option>
-                }
+                    @foreach (var dept in Enums.Departments) {
+                        <option value="@dept.Id">@dept.Name</option>
+                    }
             </InputSelect>
         </tr>
         <tr>
@@ -63,24 +62,21 @@
     private bool _notspinning = true;
     private bool _completed = false;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         _newuser = new AddUserRequest();
         _newuser.DepartmentId = 1;
     }
-    async Task Send()
-    {
+    async Task Send() {
         _message = "";
         _completed = true;
         _notspinning = false;
         await utility.RefreshToken();
         var result = await Http.PostAsJsonAsync("users", _newuser);
         _notspinning = true;
-        if (result.IsSuccessStatusCode)
-        {
+        if (result.IsSuccessStatusCode) {
             AddUserResponse response = await result.Content.ReadFromJsonAsync<AddUserResponse>();
-            _message = "Created ID:" + response.Id 
-                + "\nUser Name=" + response.UserName 
+            _message = "Created ID:" + response.Id
+                + "\nUser Name=" + response.UserName
                 + "\nin Department - " + response.DepartmentName;
         } else {
             _message = "Error: " + await result.Content.ReadAsStringAsync();

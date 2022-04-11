@@ -1,16 +1,13 @@
 ﻿@page "/"
-@using Common.DTOs
+@using Common
 @inject HttpClient Http
 @using System.Runtime.InteropServices
 @inject Util utility
 
 <PageTitle>Index</PageTitle>
-@if (_RuntimeInfo == null)
-{
+@if (_RuntimeInfo == null) {
     <p><em>Loading...</em></p>
-}
-else
-{
+} else {
     <table class="table">
         <tbody>
             <tr>
@@ -80,11 +77,10 @@ else
 @code {
     private RuntimeInfo _RuntimeInfo;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         await utility.RefreshToken();
         _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
-        if (_RuntimeInfo.SQLConnection == null) {_RuntimeInfo.SQLConnection = "N/A";}
-        if (_RuntimeInfo.User == null) {_RuntimeInfo.User = "N/A";}
+        if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
+        if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
     }
 }

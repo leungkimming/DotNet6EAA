@@ -1,13 +1,9 @@
-﻿using Business.Departments;
-using Data.EF.Interfaces;
+﻿using Business;
 
-namespace Data.EF.Repositories
-{
+namespace Data {
     public class DepartmentRepository : RepositoryBase<Department>
-        , IDepartmentRepository
-    {
-        public DepartmentRepository(EFContext dbContext) : base(dbContext)
-        {
+        , IDepartmentRepository {
+        public DepartmentRepository(EFContext dbContext) : base(dbContext) {
         }
     }
 }

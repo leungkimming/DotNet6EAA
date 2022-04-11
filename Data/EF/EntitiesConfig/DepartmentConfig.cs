@@ -1,7 +1,5 @@
 ﻿
-namespace Data.EF.EntitiesConfig
-{
-    class DepartmentConfig
-    {
+namespace Data {
+    class DepartmentConfig {
     }
 }

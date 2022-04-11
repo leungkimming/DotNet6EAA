@@ -1,8 +1,6 @@
 ﻿
-namespace Common.DTOs.Users
-{
-    public class UserInfoDTO
-    {
+namespace Common {
+    public class UserInfoDTO : DTObase {
         public int Id { get; set; }
         public string UserName { get; set; }
 

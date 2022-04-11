@@ -1,12 +1,7 @@
-﻿using Business.Base;
-using Business.Departments;
-
-namespace Business.Users
-{
-    public partial class User : BaseEntity<int>
-    {
-        public User()
-        {
+﻿
+namespace Business {
+    public partial class User : BaseEntity<int> {
+        public User() {
             PaySlips = new HashSet<Payslip>();
         }
 
@@ -17,8 +12,8 @@ namespace Business.Users
         public DateTime? BirthDate { get; private set; }
         public int DepartmentId { get; private set; }
         public float CoefficientsSalary { get; private set; }
-
         public virtual Department Department { get; private set; }
+        public byte[] RowVersion { get; set; }
         public virtual ICollection<Payslip> PaySlips { get; private set; }
     }
 }
