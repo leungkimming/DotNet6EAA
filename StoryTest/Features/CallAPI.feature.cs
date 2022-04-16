@@ -121,22 +121,44 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table1.AddRow(new string[] {
+                            "userName",
+                            "Micl"});
+                table1.AddRow(new string[] {
+                            "firstName",
+                            "Leung"});
+                table1.AddRow(new string[] {
+                            "lastName",
+                            "Michael"});
+                table1.AddRow(new string[] {
+                            "address",
+                            "Kwong Chiu Terrace"});
+                table1.AddRow(new string[] {
+                            "birthDate",
+                            "1961-03-04T00:00:00+08:00"});
+                table1.AddRow(new string[] {
+                            "departmentName",
+                            "IT"});
+                table1.AddRow(new string[] {
+                            "CoefficientsSalary",
+                            "7500"});
 #line 4
- testRunner.Given("I have the following request body:", "{\r\n\"userName\": \"Micl\",\r\n\"firstName\": \"Leung\",\r\n\"lastName\": \"Michael\",\r\n\"address\":" +
-                        " \"Kwong Chiu Terrace\",\r\n\"birthDate\": \"1961-03-04T00:00:00.000Z\",\r\n\"departmentId\"" +
-                        ": 1,\r\n\"CoefficientsSalary\": 7500\r\n}", ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have the following new user:", ((string)(null)), table1, "Given ");
 #line hidden
-#line 16
+#line 13
  testRunner.And("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 17
+#line 14
  testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 18
+#line 15
  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 19
- testRunner.And("the response contains username (\"Micl\") and ID (1) and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 16
+ testRunner.And("the response contains username (\"Micl\") and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -150,7 +172,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 21
+#line 18
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -170,35 +192,35 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 22
- testRunner.Given("I can retrieve the newly inserted user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 19
+ testRunner.Given("I can retrieve user (\"Micl\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                             "Field",
                             "Value"});
-                table1.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "date",
                             "2022-04-09T00:00:00+08:00"});
-                table1.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "workingDays",
                             "10"});
-                table1.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "bonus",
                             "100"});
-                table1.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "isPaid",
                             "true"});
-#line 23
- testRunner.And("I have the following Payslip", ((string)(null)), table1, "And ");
+#line 20
+ testRunner.And("I have the following Payslip", ((string)(null)), table2, "And ");
 #line hidden
-#line 29
+#line 26
  testRunner.When("I post this request to the AddPayslip API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 30
+#line 27
  testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 31
- testRunner.And("the response contains UserId (1) and TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 28
+ testRunner.And("the response contains TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

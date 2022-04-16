@@ -36,9 +36,9 @@
         </tr>
         <tr>
             <td>Department:</td>
-            <InputSelect id="department" @bind-Value="_newuser.DepartmentId">
+            <InputSelect id="department" @bind-Value="_newuser.DepartmentName">
                     @foreach (var dept in Enums.Departments) {
-                        <option value="@dept.Id">@dept.Name</option>
+                        <option value="@dept.Name">@dept.Name</option>
                     }
             </InputSelect>
         </tr>
@@ -64,7 +64,7 @@
 
     protected override async Task OnInitializedAsync() {
         _newuser = new AddUserRequest();
-        _newuser.DepartmentId = 1;
+        _newuser.DepartmentName = "IT";
     }
     async Task Send() {
         _message = "";

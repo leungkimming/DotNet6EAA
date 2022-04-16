@@ -48,6 +48,9 @@ namespace API {
                     default:
                         RequestId = Activity.Current?.Id ?? context.TraceIdentifier;
                         _logger.LogError(9998, error.Message + "\n" + error.StackTrace);
+                        if (error.InnerException != null) {
+                            _logger.LogError(9998,error.InnerException.Message + "\n" + error.InnerException.StackTrace);
+                        }
                         _statusCode = (int)HttpStatusCode.InternalServerError;
                         _message = String.Format(@"Service temporarily interrupted.Please report the problem to IT Help Desk with Trace Id ""{0}""",
                             RequestId);
