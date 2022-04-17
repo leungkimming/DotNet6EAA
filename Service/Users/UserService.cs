@@ -24,7 +24,7 @@ namespace Service {
             }
 
             var deptRepos = UnitOfWork.AsyncRepository<Department>();
-            var dept = await deptRepos.GetAsync(_ => _.Id == model.DepartmentId);
+            var dept = await deptRepos.GetAsync(_ => _.Name == model.DepartmentName);
             var user = _mapper.Map<User>(model);
 
             if (dept != null) {

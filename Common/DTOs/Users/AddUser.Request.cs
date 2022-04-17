@@ -21,7 +21,7 @@ namespace Common {
         public DateTime? BirthDate { get; set; }
 
         [Required(ErrorMessage = "Department is mandatory")]
-        public int? DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
 
         [Required(ErrorMessage = "Coefficients Salary is mandatory")]
         public float CoefficientsSalary { get; set; }
