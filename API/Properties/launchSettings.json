@@ -14,6 +14,7 @@
       "launchBrowser": true,
       // uncomment below to start with swagger UI
       //"launchUrl": "swagger",
+      "launchUrl": "https://localhost:44355/dotnet6EAA",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
