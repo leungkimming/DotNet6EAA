@@ -65,7 +65,17 @@ builder.Services.AddSwaggerGen(c => {
     });
 });
 
+// Authentication, authorization, Antiforgery Token
 builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme);
+if (!builder.Environment.IsDevelopment()) {
+    builder.WebHost.UseHttpSys(options => {
+        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
+        options.Authentication.AllowAnonymous = false;
+    });
+}
+
 if (builder.Environment.IsEnvironment("SpecFlow")) {
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
@@ -80,23 +90,16 @@ builder.Services.AddAuthorization(options => {
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
-// for Blazor wasm hosting
-builder.Services.AddRazorPages();
-
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
-
 builder.Services.AddAntiforgery(options => {
     options.HeaderName = "X-CSRF-TOKEN-HEADER";
 });
 
-if (!builder.Environment.IsDevelopment()) {
-    builder.WebHost.UseHttpSys(options => {
-        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
-        options.Authentication.AllowAnonymous = false;
-    });
-}
+// for Blazor wasm hosting
+builder.Services.AddRazorPages();
+
+// for IIS hosting
 builder.WebHost.UseIIS();
-builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
 
 // Uncomment to enable NService
 //builder.Host.UseNServiceBus(context =>

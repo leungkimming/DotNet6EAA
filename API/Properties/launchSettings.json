@@ -23,7 +23,8 @@
     "API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      //"launchUrl": "swagger",
+      "launchUrl": "https://localhost:44355/dotnet6EAA",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
