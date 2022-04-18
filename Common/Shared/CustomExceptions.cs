@@ -27,4 +27,11 @@ namespace Common {
         {
         }
     }
+    public class SystemParameterAlreadyExistException : Exception {
+        public SystemParameterAlreadyExistException() { }
+
+        public SystemParameterAlreadyExistException(string systemParameter)
+            : base(String.Format("System Parameter {0} already exist", systemParameter)) {
+        }
+    }
 }

@@ -87,6 +87,8 @@ namespace Service {
                 new Claim(ClaimTypes.Role, "AA01"),
                 new Claim(ClaimTypes.Role, "AB01"),
                 new Claim(ClaimTypes.Role, "AC01"),
+                new Claim(ClaimTypes.Role, "SP01"),
+                new Claim(ClaimTypes.Role, "SP02"),
                 new Claim(ClaimTypes.UserData, "{StaffId=41776"),
                 new Claim(ClaimTypes.UserData, "{Section=DIA"),
                 new Claim(ClaimTypes.UserData, "{DateJoin=20220406")

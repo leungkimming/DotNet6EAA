@@ -22,6 +22,22 @@ namespace Business {
     }
 
     public abstract class BaseEntity<TKey> : RootEntity {
+
         public TKey Id { get; set; }
+        public byte[] RowVersion { get; set; }
+        public string CreateBy { get; set; }
+        public string UpdateBy { get; set; }
+        public DateTime CreateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
+        public virtual void Refresh(string currentLoginID, DateTime now) {
+            if (this.CreateTime == DateTime.MinValue) {
+                this.CreateBy = currentLoginID;
+                this.CreateTime = now;
+            }
+
+            this.UpdateBy = currentLoginID;
+            this.UpdateTime = now;
+        }
+
     }
 }

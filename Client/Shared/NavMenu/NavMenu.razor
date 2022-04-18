@@ -1,0 +1,85 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+@*        <a class="navbar-brand" href="">DotNet6EAA Template</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>*@
+        <div style="height: 60px;">
+            <TelerikMenu Data="@MenuItems" Orientation="@orientation">
+</TelerikMenu>
+        </div>
+    </div>
+</div>
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="adduser">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add User
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="searchuser">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Search User
+            </NavLink>
+        </div>
+    </nav>
+</div>*@
+
+@code {
+    MenuOrientation orientation = MenuOrientation.Vertical;
+    public List<MenuItem> MenuItems { get; set; }
+
+    public class MenuItem
+    {
+        public string Text { get; set; }
+        public string Icon { get; set; }
+        public string ImageClass { get; set; }
+        public string ImageUrl { get; set; }
+        public List<MenuItem> Items { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        MenuItems = new List<MenuItem>()
+        {
+            new MenuItem()
+            {
+                Text = "DotNet6EAA Template",
+                Icon = "menu",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem()
+                    {
+                        Text = "FaceBook",
+                        Icon = "facebook"
+                    },
+                    new MenuItem()
+                    {
+                        Text = "LinkedIn",
+                        Icon = "linkedin"
+                    },
+                    new MenuItem()
+                    {
+                        Text = "Twitter",
+                        Icon = "twitter"
+                    },
+                }
+            }
+        };
+
+        base.OnInitialized();
+    }
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu() {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

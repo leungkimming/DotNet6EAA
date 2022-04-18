@@ -1,0 +1,113 @@
+﻿@page "/systemparameters/searchdatas"
+@using System.Data
+@using Telerik.DataSource.Extensions
+@using System.Text.Json
+@inject Util utility
+@inject HttpClient http
+@inject IMapper _mapper
+
+
+<div class="flex-center">
+    <div class="div-container" name="toolBars">
+        <TelerikButton Icon="search" ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@Search"></TelerikButton>
+        <TelerikButton Icon="reset" ButtonType="ButtonType.Button" OnClick="@OnClear"></TelerikButton>
+    </div>
+    <div class="div-container" name="searchingCriteria">
+        <TelerikCard Width="auto">
+            <CardHeader Class="k-hbox justify-space-between">
+                <div>
+                    <CardTitle>Searching Criteria</CardTitle>
+                </div>
+
+                <div>
+                    <TelerikButton FillMode="@(ThemeConstants.Button.FillMode.Flat)" Icon="@generalSearchUtil.ExpandIcon" OnClick="@generalSearchUtil.ToggleAsync"></TelerikButton>
+                </div>
+            </CardHeader>
+            <TelerikAnimationContainer @ref="@generalSearchUtil.AnimationContainerRef"
+                                       AnimationDuration="300"
+                                       AnimationType="@AnimationType.RevealVertical"
+                                       ParentInlineStyle="display: block; position: relative;">
+
+                <CardBody>
+                    <TelerikForm Model="@systemParametersSearchRequest"
+                                 Width="auto"
+                                 Columns="2" ColumnSpacing="20px">
+                        <FormButtons></FormButtons>
+                        <FormItems>
+                            <FormItem LabelText="Code" Field="@nameof(systemParametersSearchRequest.Code)"></FormItem>
+                            <FormItem LabelText="Description" Field="@nameof(systemParametersSearchRequest.Description)"></FormItem>
+                        </FormItems>
+
+                    </TelerikForm>
+                </CardBody>
+            </TelerikAnimationContainer>
+        </TelerikCard>
+    </div>
+
+    <div class="div-container" name="itemsList">
+        <TelerikGrid @ref="Grid"
+                     Data="@sourceData"
+                     ConfirmDelete="true"
+                     Pageable="true"
+                     Sortable="true"
+                     Resizable="true"
+                     Reorderable="true"
+                     EditMode="GridEditMode.Popup"
+                     SelectionMode="GridSelectionMode.Multiple"
+                     Navigable="true"
+                     OnRead="@ReadItems"
+                     PageSize="@pageSize"
+                     OnCreate="@CreateItem">
+            <GridToolBar>
+                <GridCommandButton Command="Add" Icon="add">Add System Parameter</GridCommandButton>
+            </GridToolBar>
+            <GridColumns>
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Code) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Description) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.DataTypeCode) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Value_Integer) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Value_Decimal) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Value_Datetime) />
+                <GridColumn Field=@nameof(SystemParametersSearchResponse.Value_Text) />
+
+
+            </GridColumns>
+        </TelerikGrid>
+    </div>
+    <p hidden=@(generalSearchUtil.Message == "") style="white-space: pre-line">@generalSearchUtil.Message</p>
+    <div class="spinner" hidden=@generalSearchUtil.Notspinning></div>
+</div>
+
+@code {
+    TelerikGrid<SystemParametersSearchResponse> Grid { get; set; }
+    public SystemParametersSearchRequest systemParametersSearchRequest { get; set; } = new SystemParametersSearchRequest();
+    private List<SystemParametersSearchResponse> sourceData { get; set; }
+    private GetAllDatasResponse<SystemParametersSearchResponse> getAllDatasResponse { get; set; }
+    private GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse> generalSearchUtil { get; set; }
+    private int pageSize = 10;
+    private void OnClear() {
+        systemParametersSearchRequest = new SystemParametersSearchRequest();
+    }
+
+    protected override async Task OnInitializedAsync() {
+        generalSearchUtil = new GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse>(utility, http);
+    }
+    async Task Search() {
+        await generalSearchUtil.RefreshAsync(Grid);
+    }
+
+    private async Task ReadItems(GridReadEventArgs args) {
+        systemParametersSearchRequest.PageNo = args.Request.Page;
+        systemParametersSearchRequest.RecordsPerPage = args.Request.PageSize;
+
+        getAllDatasResponse = await generalSearchUtil.SearchAsync(systemParametersSearchRequest, "systemparameters/searchall");
+        args.Data = getAllDatasResponse.Datas;
+        args.Total = getAllDatasResponse.TotalCount;
+    }
+    private async Task CreateItem(GridCommandEventArgs args) {
+        var systemParameter = _mapper.Map<AddSystemParameterRequest>(args.Item);
+       HttpContent jsonContent = JsonContent.Create(systemParameter);
+       await generalSearchUtil.CreateAsync(jsonContent,"systemparameters/addsystemparameter");
+    }
+
+}

@@ -32,4 +32,7 @@ public class UnitOfWork : IUnitOfWork {
     public IUserRepository UserRepository() {
         return new UserRepository(_dbContext);
     }
+    public ISystemParametersRepository SystemParametersRepository() {
+        return new SystemParametersRepository(_dbContext);
+    }
 }
