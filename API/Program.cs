@@ -7,6 +7,8 @@ using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.Mvc;
+using Data;
+using Microsoft.AspNetCore.Server.IIS;
 // Uncomment to enable NServiceBus
 //using NServiceBus;
 //using Messages;
@@ -65,7 +67,17 @@ builder.Services.AddSwaggerGen(c => {
     });
 });
 
+// Authentication, authorization, Antiforgery Token
 builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme);
+if (!builder.Environment.IsDevelopment()) {
+    builder.WebHost.UseHttpSys(options => {
+        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
+        options.Authentication.AllowAnonymous = false;
+    });
+}
+
 if (builder.Environment.IsEnvironment("SpecFlow")) {
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
@@ -80,14 +92,17 @@ builder.Services.AddAuthorization(options => {
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
-// for Blazor wasm hosting
-builder.Services.AddRazorPages();
-
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
-
 builder.Services.AddAntiforgery(options => {
     options.HeaderName = "X-CSRF-TOKEN-HEADER";
 });
+
+// for Blazor wasm hosting
+builder.Services.AddRazorPages();
+
+// for IIS hosting
+builder.WebHost.UseIIS();
+
 // Uncomment to enable NService
 //builder.Host.UseNServiceBus(context =>
 //{
@@ -106,26 +121,27 @@ builder.Services.AddAntiforgery(options => {
 //});
 
 var app = builder.Build();
+app.UsePathBase("/dotnet6EAA");
 /// <summary>
 /// ///////////////////////////////////////////////////////////////////////////////////
 /// </summary>
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("SpecFlow")) {
+if (app.Environment.IsDevelopment()) {
     //app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "API v1"));
     // for Blazor wasm hosting
     app.UseWebAssemblyDebugging();
 } else {
-    builder.WebHost.UseHttpSys(options => {
-        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
-        options.Authentication.AllowAnonymous = false;
-    });
-    //app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+if (!builder.Environment.IsEnvironment("SpecFlow")) {
+    using (var scope = app.Services.CreateScope()) {
+        var dataContext = scope.ServiceProvider.GetRequiredService<EFContext>();
+        dataContext.Database.Migrate();
+    }
+}
 app.UseExceptionHandler("/Error");
 app.UseMiddleware<ErrorHandler>();
 

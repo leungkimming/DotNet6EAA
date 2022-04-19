@@ -21,11 +21,11 @@ namespace P6.StoryTest {
 
             using (var scope = provider.CreateScope()) {
                 var db = scope.ServiceProvider.GetRequiredService<Data.EFContext>();
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Payslips");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Users");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists Departments");
-                db.Database.ExecuteSqlRaw("Drop Table IF Exists __EFMigrationsHistory");
+                string sql = "EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL' EXEC sp_MSForEachTable 'DELETE FROM ?' EXEC sp_MSForEachTable 'ALTER TABLE ? CHECK CONSTRAINT ALL'";
+                db.Database.ExecuteSqlRaw(sql);
+                db.SaveChanges();
                 db.Database.EnsureCreated();
+                db.SaveChanges();
                 DbSet<Department> _dbSet = db.Set<Department>();
                 _dbSet.Add(new Department("IT", "Information Technology", "Mullar"));
                 db.SaveChanges();

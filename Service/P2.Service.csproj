@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
 	<OutputType>Library</OutputType>
 	<CodeAnalysisRuleSet></CodeAnalysisRuleSet>
+	<Configurations>Debug;Release;SpecFlow</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,12 +21,12 @@
   </ItemGroup>
 
   <!-- Uncomment ItemGroup to enable NServiceBus -->
-  <!--<ItemGroup>
+  <!-- <ItemGroup>
 	<PackageReference Include="NServiceBus" Version="7.7.0" />
     <PackageReference Include="NServiceBus.Extensions.Hosting" Version="1.1.0" />
     <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
     <PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="3.0.6" />
-    <ProjectReference Include="..\Messages\X1.Messages.csproj" />
-  </ItemGroup>-->
+    <ProjectReference Include="..\ServiceBusDemo\Messages\X1.Messages.csproj" />
+  </ItemGroup> -->
 
 </Project>
