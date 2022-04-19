@@ -6,16 +6,16 @@ using Telerik.Blazor.Components;
 namespace Client {
     public class GeneralSearchUtil<T, L> where T : DTObaseRequest where L : DTObaseResponse {
         private readonly Util _util;
-        private readonly HttpClient _http;
+        private readonly HttpUtil _httpUtil;
         public bool Notspinning = true;
 
         public string Message;
         public TelerikAnimationContainer AnimationContainerRef { get; set; }
         public bool Expanded { get; set; } = false;
         
-        public GeneralSearchUtil(Util util, HttpClient http) {
+        public GeneralSearchUtil(Util util, HttpUtil httpUtil) {
             _util = util;
-            _http = http;
+            _httpUtil = httpUtil;
         }
         public async Task RefreshAsync(TelerikGrid<L> telerikGrid) {
             var state=telerikGrid.GetState();
@@ -24,9 +24,8 @@ namespace Client {
         public async Task<GetAllDatasResponse<L>> SearchAsync(T searchRequest, string apiUrl) {
             Message = "";
             Notspinning = false;
-            await _util.RefreshToken();
             HttpContent jsonContent = JsonContent.Create(searchRequest);
-            var response = await _http.PostAsync($"{apiUrl}",jsonContent);
+            var response = await _httpUtil.PostAsync($"{apiUrl}",jsonContent);
             Notspinning = true;
             if (response == null) {
                 Message = "Response data is null";
@@ -57,8 +56,7 @@ namespace Client {
         public async Task CreateAsync(HttpContent jsonContent, string apiUrl) {
             Message = "";
             Notspinning = false;
-            await _util.RefreshToken();
-            var response = await _http.PostAsync($"{apiUrl}",jsonContent);
+            var response = await _httpUtil.PostAsync($"{apiUrl}",jsonContent);
             Notspinning = true;
             if (response == null) {
                 Message = "Response data is null";

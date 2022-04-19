@@ -1,7 +1,5 @@
-﻿namespace Client
-{
-    public static class DrawerMenu
-    {
+﻿namespace Client {
+    public static class DrawerMenu {
         public static IEnumerable<DrawerItem> MenuItems =>
         new List<DrawerItem>
             {

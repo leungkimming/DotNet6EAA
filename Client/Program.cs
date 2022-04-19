@@ -12,6 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<Util>();
+builder.Services.AddScoped<HttpUtil>();
 //builder.Services.AddScoped<GeneralSearchUtil<GetAllDatasRequest, DTObaseResponse>>();
 builder.Services.AddSingleton<StateContainer>();
 // register the Telerik services
