@@ -41,8 +41,10 @@ public class RuntimeInfoController : ControllerBase {
             RuntimeDirectory = RuntimeEnvironment.GetRuntimeDirectory(),
             User = HttpContext.User.Identity.Name,
             SQLConnection = _conf.GetConnectionString("DDDConnectionString"),
-            Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
-            AccessRights = accessCodes
+            Configuration = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+            AccessRights = accessCodes,
+            Environment = _conf.GetSection("AppEnvironment").Value,
+            Build = _conf.GetSection("Build").Value
         };
     }
 }

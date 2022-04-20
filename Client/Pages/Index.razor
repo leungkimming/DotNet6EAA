@@ -18,9 +18,9 @@
             </tr>
             <tr>
                 <td style="width:30%;">Build Configuration</td>
-                <td>@_RuntimeInfo.Environment</td>
+                <td>@_RuntimeInfo.Configuration</td>
             </tr>
-            @if (@_RuntimeInfo.Environment == "Development") {
+            @if (@_RuntimeInfo.Configuration == "Development") {
             <tr>
                 <td>Swagger API</td>
                 <td><a href="./swagger" target="_blank">API Swagger UI</a></td>
