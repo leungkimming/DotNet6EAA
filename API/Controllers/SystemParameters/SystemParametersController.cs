@@ -33,5 +33,14 @@ namespace API {
             response = await _service.AddNewAsync(request);
             return Ok(response);
         }
+        [HttpPost]
+        [Route("editsystemparameter")]
+        [AccessCodeAuthorize("SP03")]
+        public async Task<IActionResult> EditSystemParameter([FromBody] EditSystemParameterRequest request) {
+            EditDataResponse response;
+            request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
+            response = await _service.EditNewAsync(request);
+            return Ok(response);
+        }
     }
 }

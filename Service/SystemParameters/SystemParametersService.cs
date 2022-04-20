@@ -44,5 +44,16 @@ namespace Service {
             addDataResponse.Message = "Successfully";
             return addDataResponse;
         }
+        public async Task<EditDataResponse> EditNewAsync(EditSystemParameterRequest model) {
+            EditDataResponse editDataResponse= new EditDataResponse();
+            var repository = UnitOfWork.AsyncRepository<SystemParameters>();
+            var systemParameter = await repository.GetAsync(x => x.Id == model.Id);
+            systemParameter.Update(model.Code,model.Description,model.ParameterTypeCode,model.DataTypeCode,model.Value_Text,model.Value_Datetime,model.Value_Decimal,model.Value_Integer);
+            await repository.UpdateAsync(systemParameter);
+            await UnitOfWork.SaveChangesAsync();
+            editDataResponse.IsSuccess = true;
+            editDataResponse.Message = "Successfully";
+            return editDataResponse;
+        }
     }
 }

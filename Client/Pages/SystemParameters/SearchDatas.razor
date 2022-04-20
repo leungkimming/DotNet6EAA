@@ -57,11 +57,19 @@
                      Navigable="true"
                      OnRead="@ReadItems"
                      PageSize="@pageSize"
-                     OnCreate="@CreateItem">
+                     OnCreate="@CreateItem"
+                     OnUpdate="@UpdateHandler"
+                     OnDelete="@DeleteHandler">
             <GridToolBar>
                 <GridCommandButton Command="Add" Icon="add">Add System Parameter</GridCommandButton>
             </GridToolBar>
             <GridColumns>
+                <GridCommandColumn Width="90px">
+                    <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
+                    <GridCommandButton Command="Edit" Icon="edit"></GridCommandButton>
+                    <GridCommandButton Command="Delete" Icon="delete"></GridCommandButton>
+                    <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
+                </GridCommandColumn>
                 <GridColumn Field=@nameof(SystemParametersSearchResponse.Code) />
                 <GridColumn Field=@nameof(SystemParametersSearchResponse.Description) />
                 <GridColumn Field=@nameof(SystemParametersSearchResponse.DataTypeCode) />
@@ -76,9 +84,16 @@
     </div>
     <p hidden=@(generalSearchUtil.Message == "") style="white-space: pre-line">@generalSearchUtil.Message</p>
     <div class="spinner" hidden=@generalSearchUtil.Notspinning></div>
+    <div >
+        <TelerikNotification @ref="generalSearchUtil.NotificationComponent"
+                           
+                             HorizontalPosition="@NotificationHorizontalPosition.Center"
+                             VerticalPosition="@NotificationVerticalPosition.Top"></TelerikNotification>
+    </div>
 </div>
 
 @code {
+
     TelerikGrid<SystemParametersSearchResponse> Grid { get; set; }
     public SystemParametersSearchRequest systemParametersSearchRequest { get; set; } = new SystemParametersSearchRequest();
     private List<SystemParametersSearchResponse> sourceData { get; set; }
@@ -106,8 +121,20 @@
     }
     private async Task CreateItem(GridCommandEventArgs args) {
         var systemParameter = _mapper.Map<AddSystemParameterRequest>(args.Item);
-       HttpContent jsonContent = JsonContent.Create(systemParameter);
-       await generalSearchUtil.CreateAsync(jsonContent,"systemparameters/addsystemparameter");
+        HttpContent jsonContent = JsonContent.Create(systemParameter);
+        await generalSearchUtil.CreateAsync(jsonContent, "systemparameters/addsystemparameter");
+        generalSearchUtil.ShowSuccessNotifications("Create Success.");
     }
+    private async Task UpdateHandler(GridCommandEventArgs args) {
+        var systemParameter = _mapper.Map<EditSystemParameterRequest>(args.Item);
+        HttpContent jsonContent = JsonContent.Create(systemParameter);
+        await generalSearchUtil.UpdateAsync(jsonContent, "systemparameters/editsystemparameter");
+    }
+
+    public void DeleteHandler(GridCommandEventArgs args) {
+        //ProductService.DeleteProduct((ProductDto)args.Item);
+        //LoadData();
+    }
+
 
 }

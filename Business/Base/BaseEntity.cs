@@ -40,4 +40,8 @@ namespace Business {
         }
 
     }
+    public abstract class InternalEntity<TKey> : RootEntity {
+
+        public TKey Id { get; set; }
+    }
 }

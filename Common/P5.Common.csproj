@@ -14,4 +14,8 @@
     <None Remove="Interfaces\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Message\" />
+  </ItemGroup>
+
 </Project>

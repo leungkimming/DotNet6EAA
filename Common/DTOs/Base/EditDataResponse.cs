@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Common {
-    public abstract class DTObaseRequest : DTObase {
-       
+    public class EditDataResponse : DTObaseResponse {
+        public string Message { get; set; }
+        public bool IsSuccess { get; set; }
     }
 }

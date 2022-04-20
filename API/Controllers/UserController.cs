@@ -30,6 +30,7 @@ namespace API {
         [AccessCodeAuthorize("AB01")]
         public async Task<IActionResult> Add([FromBody] AddUserRequest request) {
             AddUserResponse response;
+            request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
             response = await _service.AddNewAsync(request);
             return Ok(response);
         }
@@ -38,6 +39,7 @@ namespace API {
         [AccessCodeAuthorize("AC01")]
         public async Task<IActionResult> AddPayslip([FromBody] AddPayslipRequest request) {
             AddPayslipResponse _response;
+            request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
             _response = await _service.AddUserPayslipAsync(request);
             return Ok(_response);
         }
