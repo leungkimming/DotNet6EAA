@@ -6,7 +6,6 @@ using Telerik.Blazor.Components;
 namespace Client {
     public class GeneralSearchUtil<T, L> where T : DTObaseRequest where L : DTObaseResponse {
 
-        private readonly Util _util;
         private readonly HttpUtil _httpUtil;
 
         public bool Notspinning = true;
@@ -16,8 +15,7 @@ namespace Client {
         public TelerikAnimationContainer AnimationContainerRef { get; set; }
         public bool Expanded { get; set; } = false;
         
-        public GeneralSearchUtil(Util util, HttpUtil httpUtil) {
-            _util = util;
+        public GeneralSearchUtil(HttpUtil httpUtil) {
             _httpUtil = httpUtil;
         }
         public async Task RefreshAsync(TelerikGrid<L> telerikGrid) {

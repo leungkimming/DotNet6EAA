@@ -1,8 +1,7 @@
 ﻿@page "/"
 @using Common
-@inject HttpClient Http
+@inject HttpUtil _httpUtil
 @using System.Runtime.InteropServices
-@inject Util utility
 
 <PageTitle>Index</PageTitle>
 <TelerikButton>Say Hello</TelerikButton>
@@ -18,9 +17,15 @@
                 <td colspan="2"><u><h3>dotnet versions running on Windows Server /w NTLM</h3></u></td>
             </tr>
             <tr>
-                <td style="width:30%;">Environment</td>
+                <td style="width:30%;">Build Configuration</td>
                 <td>@_RuntimeInfo.Environment</td>
             </tr>
+            @if (@_RuntimeInfo.Environment == "Development") {
+            <tr>
+                <td>Swagger API</td>
+                <td><a href="./swagger" target="_blank">API Swagger UI</a></td>
+            </tr>                
+            }
             <tr>
                 <td>OS Architecture</td>
                 <td>@_RuntimeInfo.OSArchitecture</td>
@@ -79,8 +84,7 @@
     private RuntimeInfo _RuntimeInfo;
 
     protected override async Task OnInitializedAsync() {
-        await utility.RefreshToken();
-        _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
         if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
         if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
     }

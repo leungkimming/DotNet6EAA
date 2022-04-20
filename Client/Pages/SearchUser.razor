@@ -2,9 +2,8 @@
 @using Common
 @using System.Text.Json
 
-@inject HttpClient Http
+@inject HttpUtil _httpUtil
 @inject NavigationManager NavigationManager
-@inject Util utility
 @inject StateContainer StateContainer
 
 <PageTitle>Search User</PageTitle>
@@ -116,8 +115,7 @@
         _message = "";
 
         _notspinning = false;
-        await utility.RefreshToken();
-        var response = await Http.GetAsync("users?Search=" + _getUser.Search);
+        var response = await _httpUtil.GetAsync("users?Search=" + _getUser.Search);
         _notspinning = true;
 
         var content = await response.Content.ReadAsStringAsync();
@@ -133,8 +131,7 @@
         _message = "";
 
         _notspinning = false;
-        await utility.RefreshToken();
-        var response = await Http.GetAsync("users/GetPayslip?userId=" + user.Id);
+        var response = await _httpUtil.GetAsync("users/GetPayslip?userId=" + user.Id);
         _notspinning = true;
 
         var content = await response.Content.ReadAsStringAsync();

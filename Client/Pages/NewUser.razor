@@ -1,8 +1,7 @@
 ﻿@page "/adduser"
 @using Common
 
-@inject HttpClient Http
-@inject Util utility
+@inject HttpUtil _httpUtil
 
 <PageTitle>Add User</PageTitle>
 
@@ -70,8 +69,7 @@
         _message = "";
         _completed = true;
         _notspinning = false;
-        await utility.RefreshToken();
-        var result = await Http.PostAsJsonAsync("users", _newuser);
+        var result = await _httpUtil.PostAsJsonAsync("users", _newuser);
         _notspinning = true;
         if (result.IsSuccessStatusCode) {
             AddUserResponse response = await result.Content.ReadFromJsonAsync<AddUserResponse>();

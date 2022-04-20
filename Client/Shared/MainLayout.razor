@@ -1,7 +1,6 @@
 ﻿@using Common
-@inject HttpClient Http
+@inject HttpUtil _httpUtil
 @using System.Runtime.InteropServices
-@inject Util utility
 @inherits LayoutComponentBase
 @inject ITelerikStringLocalizer L
 @inject ILocalStorageService LocalStorage
@@ -48,8 +47,7 @@
     TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
     protected override async Task OnInitializedAsync() {
         await SetDrawerState();
-        await utility.RefreshToken();
-        _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
         if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
         if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
     }

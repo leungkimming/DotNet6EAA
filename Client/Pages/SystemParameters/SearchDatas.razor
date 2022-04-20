@@ -2,7 +2,6 @@
 @using System.Data
 @using Telerik.DataSource.Extensions
 @using System.Text.Json
-@inject Util utility
 @inject HttpUtil http
 @inject IMapper _mapper
 
@@ -105,7 +104,7 @@
     }
 
     protected override async Task OnInitializedAsync() {
-        generalSearchUtil = new GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse>(utility, http);
+        generalSearchUtil = new GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse>(http);
     }
     async Task Search() {
         await generalSearchUtil.RefreshAsync(Grid);
