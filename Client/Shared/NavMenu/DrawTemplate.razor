@@ -1,0 +1,20 @@
+﻿@inject ITelerikStringLocalizer L
+@namespace Client
+<div class="k-drawer-items">
+    <ul role="menubar" aria-orientation="vertical">
+
+        @foreach(var items in Data.GroupBy(i => i.Group)) {
+             @foreach (var item in items)
+            {
+                <DrawerNavLink href="@item.Url" Text="@item.Text" Icon="@item.Icon" Match="NavLinkMatch.All" />
+            }
+            <li class="k-drawer-item k-drawer-separator"></li>
+        }       
+    </ul>
+</div>
+
+@code {
+
+    [Parameter] public IEnumerable<DrawerItem> Data { get; set; }
+
+}

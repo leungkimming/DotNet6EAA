@@ -28,6 +28,12 @@ namespace Data {
         public Task<List<T>> ListAsync(Expression<Func<T, bool>> expression) {
             return _dbSet.Where(expression).ToListAsync();
         }
+        public Task<int> ListCountAsync(Expression<Func<T, bool>> expression) {
+            return _dbSet.Where(expression).CountAsync();
+        }
+        public Task<List<T>> ListAsyncByPagging(Expression<Func<T, bool>> expression, int pageSize, int pageNo) {
+            return _dbSet.Where(expression).Skip((pageNo - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
 
         public Task<T> UpdateAsync(T entity) {
             _dbSet.Update(entity);

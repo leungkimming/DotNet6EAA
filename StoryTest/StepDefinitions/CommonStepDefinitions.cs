@@ -21,13 +21,16 @@ namespace P6.StoryTest {
 
             using (var scope = provider.CreateScope()) {
                 var db = scope.ServiceProvider.GetRequiredService<Data.EFContext>();
-                string sql = "EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL' EXEC sp_MSForEachTable 'DELETE FROM ?' EXEC sp_MSForEachTable 'ALTER TABLE ? CHECK CONSTRAINT ALL'";
-                db.Database.ExecuteSqlRaw(sql);
-                db.SaveChanges();
+                //string sql = "EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL' EXEC sp_MSForEachTable 'DELETE FROM ?' EXEC sp_MSForEachTable 'ALTER TABLE ? CHECK CONSTRAINT ALL'";
+                //db.Database.ExecuteSqlRaw(sql);
+                //db.SaveChanges();
+                db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
                 db.SaveChanges();
                 DbSet<Department> _dbSet = db.Set<Department>();
-                _dbSet.Add(new Department("IT", "Information Technology", "Mullar"));
+                Department dep = new Department("IT", "Information Technology", "Mullar");
+                dep.Refresh(System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now);
+                _dbSet.Add(dep);
                 db.SaveChanges();
             }
         }

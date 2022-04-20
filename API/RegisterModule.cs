@@ -15,6 +15,7 @@ namespace API {
         protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<SystemParametersRepository>().As<ISystemParametersRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DepartmentRepository>().As<IDepartmentRepository>().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(RepositoryBase<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope();
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
@@ -28,6 +29,7 @@ namespace API {
                   .AsSelf()
                   .InstancePerLifetimeScope();
             builder.RegisterType<UserService>().AsSelf();
+            builder.RegisterType<SystemParametersService>().AsSelf();
             builder.RegisterType<PaymentQuery>().As<IPaymentQuery>();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)

@@ -1,18 +1,77 @@
-﻿@inherits LayoutComponentBase
+﻿@using Common
+@inject HttpClient Http
+@using System.Runtime.InteropServices
+@inject Util utility
+@inherits LayoutComponentBase
+@inject ITelerikStringLocalizer L
+@inject ILocalStorageService LocalStorage
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@* @Body and other code will be present here depending on your project *@
 
-    <main>
-        <div class="top-row px-4">
-            <a href="./swagger" target="_blank">API Swagger UI</a>
-            <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/" target="_blank">Reference</a>
+
+<TelerikRootComponent >
+    <div class="header">
+        <div class="nav-container">
+            <div class="menu-button">
+                <TelerikButton Icon="menu" OnClick="@ToggleMenuDrawer" />
+            </div>
+            <div class="title">
+                <h1>.NET 6 Framework</h1>
+            </div>
+            <div class="information" >
+                <label>@_RuntimeInfo?.User</label>
+            </div>
+            <div class="settings">
+                <TelerikButton Icon="gear" />
+            </div>
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    </div>
+    <TelerikDrawer @ref="MenuDrawer"
+                   Expanded="@Expanded"
+                   ExpandedChanged="((bool newValue) => ExpandedChangedHandler(newValue))"
+                   Width="280px" Data="DrawerMenu.MenuItems" Mode="DrawerMode.Push" Position="DrawerPosition.Left" >
+        <Template>
+            <DrawTemplate Data="context"></DrawTemplate>
+        </Template>
+        <DrawerContent>
+            <div class="contentbody">
+                @Body
 </div>
+        </DrawerContent>
+    </TelerikDrawer>
+</TelerikRootComponent>
+
+
+@code {
+    private RuntimeInfo _RuntimeInfo;
+    bool Expanded { get; set; }
+    TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
+    protected override async Task OnInitializedAsync() {
+        await SetDrawerState();
+        await utility.RefreshToken();
+        _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
+        if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
+    }
+    #region Menu Drawer
+    async Task SetDrawerState() {
+        var hasKey = await LocalStorage.ContainKeyAsync("drawerState");
+        if (hasKey) {
+            Expanded = await LocalStorage.GetItemAsync<bool>("drawerState");
+        } else {
+            Expanded = true;
+        }
+    }
+    async Task ToggleMenuDrawer() {
+        if (Expanded) {
+            await MenuDrawer.CollapseAsync();
+        } else {
+            await MenuDrawer.ExpandAsync();
+        }
+    }
+    async Task ExpandedChangedHandler(bool value) {
+        Expanded = value;
+        await LocalStorage.SetItemAsync("drawerState", value);
+    }
+    #endregion
+}

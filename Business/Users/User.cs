@@ -13,7 +13,6 @@ namespace Business {
         public int DepartmentId { get; private set; }
         public float CoefficientsSalary { get; private set; }
         public virtual Department Department { get; private set; }
-        public byte[] RowVersion { get; set; }
         public virtual ICollection<Payslip> PaySlips { get; private set; }
     }
 }

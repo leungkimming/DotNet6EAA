@@ -36,6 +36,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(Service.SystemParametersProfile).Assembly);
+
 
 // Add other features
 builder.Services.AddControllersWithViews(); // default PropertyNameCaseInsensitive false;PropertyNamingPolicy null; MaxDepth 64

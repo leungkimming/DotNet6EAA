@@ -14,6 +14,7 @@ namespace P6.StoryTest {
         [Given(@"I have the following new user:")]
         public void GivenIHaveTheFollowingNewUser(Table table) {
             AddUserRequest newuser = table.CreateInstance<AddUserRequest>();
+            newuser.Refresh(System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now);
             context.Set<AddUserRequest>(newuser, "newuserRequest");
         }
 
@@ -59,6 +60,7 @@ namespace P6.StoryTest {
         [Given(@"I have the following Payslip")]
         public void GivenIHaveTheFollowingPayslip(Table table) {
             AddPayslipRequest addPayslipRequest = table.CreateInstance<AddPayslipRequest>();
+            addPayslipRequest.Refresh(System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now);
             addPayslipRequest.UserDTO = context.Get<UserInfoDTO>("AddPayslipUser");
             context.Set<AddPayslipRequest>(addPayslipRequest, "AddPayslipRequest");
         }

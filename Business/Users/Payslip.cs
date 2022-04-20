@@ -1,6 +1,6 @@
 ﻿
 namespace Business {
-    public class Payslip : BaseEntity<int> {
+    public class Payslip : InternalEntity<int> {
         public Payslip(int userId
             , DateTime date
             , float workingDays

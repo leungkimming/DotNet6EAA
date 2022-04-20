@@ -22,11 +22,22 @@ namespace Data {
             modelBuilder.Ignore<RootEntity>().Ignore<BaseDomainEvent>();
 
             modelBuilder.Entity<User>().HasIndex(b => b.UserName).IsUnique();
-            modelBuilder.Entity<Department>().HasIndex(b => b.Name).IsUnique();
-
-            modelBuilder.Entity<Department>().Property(p => p.RowVersion).IsRowVersion();
             modelBuilder.Entity<User>().Property(p => p.RowVersion).IsRowVersion();
+            modelBuilder.Entity<User>().Property(p => p.CreateBy).HasMaxLength(400);
+            modelBuilder.Entity<User>().Property(p => p.UpdateBy).HasMaxLength(400);
 
+            modelBuilder.Entity<Department>().HasIndex(b => b.Name).IsUnique();
+            modelBuilder.Entity<Department>().Property(p => p.RowVersion).IsRowVersion();
+            modelBuilder.Entity<Department>().Property(p => p.CreateBy).HasMaxLength(400);
+            modelBuilder.Entity<Department>().Property(p => p.UpdateBy).HasMaxLength(400);
+
+            modelBuilder.Entity<SystemParameters>().HasIndex(p => p.Code).IsUnique();
+            modelBuilder.Entity<SystemParameters>().Property(p => p.RowVersion).IsRowVersion();
+            modelBuilder.Entity<SystemParameters>().Property(p => p.CreateBy).HasMaxLength(400);
+            modelBuilder.Entity<SystemParameters>().Property(p => p.UpdateBy).HasMaxLength(400);
+            modelBuilder.Entity<SystemParameters>().Property(p => p.Code).HasMaxLength(400);
+            modelBuilder.Entity<SystemParameters>().Property(p => p.Description).HasMaxLength(2000);
+            modelBuilder.Entity<SystemParameters>().Property(p => p.ParameterTypeCode).HasMaxLength(400);
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -7,5 +7,6 @@ namespace Data {
         IAsyncRepository<T> AsyncRepository<T>() where T : RootEntity;
 
         IUserRepository UserRepository();
+        ISystemParametersRepository SystemParametersRepository();
     }
 }
