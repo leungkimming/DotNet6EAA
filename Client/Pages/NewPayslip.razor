@@ -1,8 +1,7 @@
 ﻿@page "/addpayslip"
 @using Common
 
-@inject HttpClient Http
-@inject Util utility
+@inject HttpUtil _httpUtil
 @inject StateContainer StateContainer
 
 <PageTitle>Add Payslip</PageTitle>
@@ -61,8 +60,7 @@
         _completed = true;
         _message = "";
         _notspinning = false;
-        await utility.RefreshToken();
-        var result = await Http.PostAsJsonAsync("users/AddPayslip", _newpayslip);
+        var result = await _httpUtil.PostAsJsonAsync("users/AddPayslip", _newpayslip);
         _notspinning = true;
         if (result.IsSuccessStatusCode) {
             AddPayslipResponse response = await result.Content.ReadFromJsonAsync<AddPayslipResponse>();

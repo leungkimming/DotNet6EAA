@@ -11,15 +11,19 @@
   <ItemGroup>
     <Compile Remove="DTOs\**" />
     <Compile Remove="Extensions\**" />
+    <Compile Remove="logs\**" />
     <Compile Remove="Migrations\**" />
     <Content Remove="DTOs\**" />
     <Content Remove="Extensions\**" />
+    <Content Remove="logs\**" />
     <Content Remove="Migrations\**" />
     <EmbeddedResource Remove="DTOs\**" />
     <EmbeddedResource Remove="Extensions\**" />
+    <EmbeddedResource Remove="logs\**" />
     <EmbeddedResource Remove="Migrations\**" />
     <None Remove="DTOs\**" />
     <None Remove="Extensions\**" />
+    <None Remove="logs\**" />
     <None Remove="Migrations\**" />
   </ItemGroup>
 

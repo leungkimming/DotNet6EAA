@@ -1,7 +1,6 @@
 ﻿@using Common
-@inject HttpClient Http
+@inject HttpUtil _httpUtil
 @using System.Runtime.InteropServices
-@inject Util utility
 @inherits LayoutComponentBase
 @inject ITelerikStringLocalizer L
 @inject ILocalStorageService LocalStorage
@@ -15,12 +14,24 @@
             <div class="menu-button">
                 <TelerikButton Icon="menu" OnClick="@ToggleMenuDrawer" />
             </div>
-            <div class="title">
-                <h1>.NET 6 Framework</h1>
-            </div>
-            <div class="information" >
-                <label>@_RuntimeInfo?.User</label>
-            </div>
+            <table width="100%" table-layout="fixed">
+                <tr>
+                    <td class="title" width="70%">
+                        <h1>.NET 6 Framework</h1>
+                    </td>
+                    <td class="information" width="6%">
+                      @if (@_RuntimeInfo?.Environment != "Production") {
+                        <label>@_RuntimeInfo?.Environment</label>
+                      }
+                    </td>                
+                    <td class="information" width="4%">
+                        <label>(@_RuntimeInfo?.Build)</label>
+                    </td>
+                    <td class="information"  width="20%">
+                        <label>@_RuntimeInfo?.User</label>
+                    </td>
+                </tr>
+            </table>
             <div class="settings">
                 <TelerikButton Icon="gear" />
             </div>
@@ -48,8 +59,7 @@
     TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
     protected override async Task OnInitializedAsync() {
         await SetDrawerState();
-        await utility.RefreshToken();
-        _RuntimeInfo = await Http.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
         if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
         if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
     }

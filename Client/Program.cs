@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Client;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazored.LocalStorage;
 using Common;
 
@@ -11,7 +9,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped<Util>();
 builder.Services.AddScoped<HttpUtil>();
 //builder.Services.AddScoped<GeneralSearchUtil<GetAllDatasRequest, DTObaseResponse>>();
 builder.Services.AddSingleton<StateContainer>();
