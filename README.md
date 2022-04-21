@@ -39,7 +39,7 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * paste the antiforgery token string onto the X-CSRF-TOKEN-HEADER field
 * fill in API parameters as appropriate and execute
 
-# Please visit wiki pages for more topics
+# Please visit wiki pages for more topics (https://github.com/leungkimming/DotNet6EAA/wiki)
 *  Use of Autofac DI & AutoMapper
 *  Blazor Client WebAssembly with Telerik UI Added
 *  Add SpecFlow
