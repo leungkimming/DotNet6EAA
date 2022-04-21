@@ -41,7 +41,7 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 
 # Please visit wiki pages for more topics
 *  Use of Autofac DI & AutoMapper
-*  Blazor Client WebAssembly Added
+*  Blazor Client WebAssembly with Telerik UI Added
 *  Add SpecFlow
 *  Blazor webassembly client
 *  Domain Event Pattern
@@ -53,4 +53,6 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 *  Logging
 *  Validation
 *  Repository and Eager Loading
+*  Set Parameters in Pipelines
+*  Antiforgery Token Validation
 *  Integration Event Pattern using Service Bus
