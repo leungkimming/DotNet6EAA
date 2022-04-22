@@ -30,7 +30,7 @@ namespace API {
         public async Task<IActionResult> AddSystemParameter([FromBody]AddSystemParameterRequest request) {
             AddDataResponse response;
             request.Refresh(HttpContext.User.Identity.Name,DateTime.Now);
-            response = await _service.AddNewAsync(request);
+            response = await _service.AddSystemParameterAsync(request);
             return Ok(response);
         }
         [HttpPost]
@@ -39,7 +39,15 @@ namespace API {
         public async Task<IActionResult> EditSystemParameter([FromBody] EditSystemParameterRequest request) {
             EditDataResponse response;
             request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
-            response = await _service.EditNewAsync(request);
+            response = await _service.EditSystemParameterAsync(request);
+            return Ok(response);
+        }
+        [HttpGet]
+        [Route("deletesystemparameter")]
+        [AccessCodeAuthorize("SP04")]
+        public async Task<IActionResult> DeleteSystemParameter([FromQuery] DeleteSystemParameterRequest request) {
+            EditDataResponse response;
+            response = await _service.DeleteSystemParameterAsync(request);
             return Ok(response);
         }
     }

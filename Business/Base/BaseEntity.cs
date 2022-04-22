@@ -20,8 +20,10 @@ namespace Business {
             _events = new List<BaseDomainEvent>();
         }
     }
-
-    public abstract class BaseEntity<TKey> : RootEntity {
+    public interface IRowVersionContract {
+        public byte[] RowVersion { get; set; }
+    }
+    public abstract class BaseEntity<TKey> : RootEntity, IRowVersionContract {
 
         public TKey Id { get; set; }
         public byte[] RowVersion { get; set; }

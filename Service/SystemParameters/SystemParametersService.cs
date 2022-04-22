@@ -29,7 +29,7 @@ namespace Service {
             getAllDatasResponse.Datas = systemParameters.Select(_parameters => _mapper.Map<SystemParametersSearchResponse>(_parameters)).ToList();
             return getAllDatasResponse;
         }
-        public async Task<AddDataResponse> AddNewAsync(AddSystemParameterRequest model) {
+        public async Task<AddDataResponse> AddSystemParameterAsync(AddSystemParameterRequest model) {
             AddDataResponse addDataResponse= new AddDataResponse();
             var repository = UnitOfWork.AsyncRepository<SystemParameters>();
             var checkSystemParameter = await repository.GetAsync(x => x.Code == model.Code);
@@ -44,12 +44,22 @@ namespace Service {
             addDataResponse.Message = "Successfully";
             return addDataResponse;
         }
-        public async Task<EditDataResponse> EditNewAsync(EditSystemParameterRequest model) {
+        public async Task<EditDataResponse> EditSystemParameterAsync(EditSystemParameterRequest model) {
             EditDataResponse editDataResponse= new EditDataResponse();
             var repository = UnitOfWork.AsyncRepository<SystemParameters>();
             var systemParameter = await repository.GetAsync(x => x.Id == model.Id);
-            systemParameter.Update(model.Code,model.Description,model.ParameterTypeCode,model.DataTypeCode,model.Value_Text,model.Value_Datetime,model.Value_Decimal,model.Value_Integer);
-            await repository.UpdateAsync(systemParameter);
+            systemParameter.Update(model.Code, model.Description, model.ParameterTypeCode, model.DataTypeCode, model.Value_Text, model.Value_Datetime, model.Value_Decimal, model.Value_Integer);
+            await repository.UpdateWithPreValidationAsync(model, systemParameter);
+            await UnitOfWork.SaveChangesAsync();
+            editDataResponse.IsSuccess = true;
+            editDataResponse.Message = "Successfully";
+            return editDataResponse;
+        }
+        public async Task<EditDataResponse> DeleteSystemParameterAsync(DeleteSystemParameterRequest model) {
+            EditDataResponse editDataResponse= new EditDataResponse();
+            var repository = UnitOfWork.AsyncRepository<SystemParameters>();
+            var systemParameter = await repository.GetAsync(x => x.Id == model.Id);
+            await repository.DeleteAsync(systemParameter);
             await UnitOfWork.SaveChangesAsync();
             editDataResponse.IsSuccess = true;
             editDataResponse.Message = "Successfully";

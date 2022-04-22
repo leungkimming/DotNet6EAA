@@ -78,10 +78,32 @@ namespace Client {
         public async Task UpdateAsync(HttpContent jsonContent, string apiUrl) {
             await PostData(jsonContent, apiUrl);
         }
+        public async Task DeleteAsync(string apiUrl) {
+            Message = "";
+            Notspinning = false;
+            var response = await _httpUtil.GetAsync($"{apiUrl}");
+            Notspinning = true;
+            if (response == null) {
+                Message = "Response data is null";
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode) {
+                AddDataResponse responseDatas=JsonSerializer.Deserialize<AddDataResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            } else {
+                Message = content ?? "Content is null";
+            }
+        }
         public void ShowSuccessNotifications(string message) {
             NotificationComponent.Show(new NotificationModel {
                 Text = message,
                 ThemeColor = "success",
+                CloseAfter = 0
+            });
+        }
+        public void ShowErrorNotifications(string message) {
+            NotificationComponent.Show(new NotificationModel {
+                Text = message,
+                ThemeColor = "error",
                 CloseAfter = 0
             });
         }

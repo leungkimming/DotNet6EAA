@@ -1,4 +1,5 @@
 ﻿@inject ITelerikStringLocalizer L
+@inject NavigationManager NavigationManager
 @namespace Client
 <div class="k-drawer-items">
     <ul role="menubar" aria-orientation="vertical">
@@ -6,15 +7,37 @@
         @foreach(var items in Data.GroupBy(i => i.Group)) {
              @foreach (var item in items)
             {
-                <DrawerNavLink href="@item.Url" Text="@item.Text" Icon="@item.Icon" Match="NavLinkMatch.All" />
+                if (item.Target == MenuTarget.Popup.Code) {
+                    <DrawerNavLink Text="@item.Text" Icon="@item.Icon" Match="NavLinkMatch.All"  @onclick="e=>PopupMenu(item.Url,item.Text)"  />
+
+                } else {
+                <DrawerNavLink href="@item.Url" Text="@item.Text" Icon="@item.Icon" Match="NavLinkMatch.All" target="@item.Target"/>
+                }
             }
             <li class="k-drawer-item k-drawer-separator"></li>
         }       
     </ul>
+    <TelerikDialog @bind-Visible="@_visible" Width="auto" Title="@_title">
+        <DialogContent>
+            @switch (_url) {
+                case "/dotnet6EAA/adduser":
+                            <Client.Pages.NewUser></Client.Pages.NewUser>
+                    break;
+            }
+        </DialogContent>
+        
+    </TelerikDialog>
 </div>
 
 @code {
-
+    private bool _visible { get; set; } = false;
+    private string _title{ get; set; }
+    private string _url{ get; set; }
     [Parameter] public IEnumerable<DrawerItem> Data { get; set; }
+    async Task PopupMenu(string url,string title) {
+        _url = url;
+        _title = title;
+        _visible = true;
+    }
 
 }
