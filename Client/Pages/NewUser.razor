@@ -4,7 +4,7 @@
 @inject HttpUtil _httpUtil
 
 <TelerikForm Model="@_newuser"
-                         Width="auto"
+                         Width="300px"
                          >
                 <FormItems>
                     <FormItem LabelText="User Name" Field="@nameof(_newuser.UserName)" ></FormItem>
@@ -37,58 +37,15 @@
                 </FormButtons>
             </TelerikForm>
 
-@*<EditForm OnValidSubmit="@Send"
-          Model = "@_newuser">
-    <DataAnnotationsValidator />
-    <h1>Add New User</h1>
-    <hr />
-    <ValidationSummary />
-    <table class="table">
-    <tbody>
-        <tr>
-            <td>User name:</td>
-            <td><input @bind="_newuser.UserName" /></td>
-        </tr>
-        <tr>
-            <td>FirstName:</td>
-            <td><input @bind="_newuser.FirstName" /></td>
-        </tr>
-        <tr>
-            <td>LastName:</td>
-            <td><input @bind="_newuser.LastName" /></td>
-        </tr>
-        <tr>
-            <td>Address:</td>
-            <td><input @bind="_newuser.Address" /></td>
-        </tr>
-        <tr>
-            <td>BirthDate (yyyy-mm-dd):</td>
-            <td><InputDate @bind-Value="_newuser.BirthDate" /></td>
-        </tr>
-        <tr>
-            <td>Department:</td>
-            <InputSelect id="department" @bind-Value="_newuser.DepartmentName">
-                    @foreach (var dept in Enums.Departments) {
-                        <option value="@dept.Name">@dept.Name</option>
-                    }
-            </InputSelect>
-        </tr>
-        <tr>
-            <td>Coefficients Salary:</td>
-            <td><input @bind="_newuser.CoefficientsSalary" /></td>
-        </tr>
-        <tr>
-            <td colspan="2"><button type="submit" disabled=@_completed>Submit</button></td>
-        </tr>
-    </tbody>
-</table>
-</EditForm>*@
-<div class="spinner" hidden=@_notspinning ></div>
-
-<p hidden=@(_message == "") style="white-space: pre-line" >@_message</p>
+  <div class="spinner" hidden=@_notspinning></div>
+    <div>
+        <TelerikNotification @ref="_notificationComponent"
+                             HorizontalPosition="@NotificationHorizontalPosition.Center"
+                             VerticalPosition="@NotificationVerticalPosition.Top"></TelerikNotification>
+    </div>
 
 @code {
-
+    private TelerikNotification _notificationComponent { get; set; }
     private AddUserRequest _newuser;
     private string _message;
     private bool _notspinning = true;
@@ -109,8 +66,24 @@
             _message = "Created ID:" + response.Id
                 + "\nUser Name=" + response.UserName
                 + "\nin Department - " + response.DepartmentName;
+            ShowSuccessNotifications(_message);
         } else {
             _message = "Error: " + await result.Content.ReadAsStringAsync();
+            ShowErrorNotifications(_message);
         }
     }
+     public void ShowSuccessNotifications(string message) {
+            _notificationComponent.Show(new NotificationModel {
+                Text = message,
+                ThemeColor = "success",
+                CloseAfter = 0
+            });
+        }
+        public void ShowErrorNotifications(string message) {
+            _notificationComponent.Show(new NotificationModel {
+                Text = message,
+                ThemeColor = "error",
+                CloseAfter = 0
+            });
+        }
 }

@@ -162,7 +162,7 @@
                                                  TextField="Description"
                                                  ValueField="Code"
                                                  DefaultText="Select"
-                                                 Id="IsPaid"
+                                                 Id="IsPaidDropdownlist"
                                                  Width="100%">
                                 <DropDownListSettings>
                                     <DropDownListPopupSettings Height="auto"></DropDownListPopupSettings>
@@ -184,11 +184,10 @@
 
 @code {
     public class SelectedData {
-        public string Code { get; set; }
+        public bool Code { get; set; }
         public string Description { get; set; }
     }
     List<SelectedData> SelectedDatas { get; set; } = new List<SelectedData>();
-    private UserInfoDTO[]? users;
     private GetUserRequest _getUser = new GetUserRequest();
 
     async Task Payslip(UserInfoDTO user) {
@@ -203,12 +202,6 @@
         } else {
             generalSearchUtil.Message = content;
         }
-        //GridState<UserInfoDTO> gridState=new GridState<UserInfoDTO>(){
-        //        ExpandedItems= new List<UserInfoDTO>{
-        //        user
-        //    }
-        //};
-        //await Grid.SetState(gridState);
     }
     async Task AddPayslip(UserInfoDTO user) {
         visible = true;
@@ -255,8 +248,8 @@
     protected override async Task OnInitializedAsync() {
         generalSearchUtil = new GeneralSearchUtil<GetUserRequest, UserInfoDTO>(_httpUtil);
         SelectedDatas=new List<SelectedData>();
-        SelectedDatas.Add(new SelectedData { Code="True",Description="True"});
-        SelectedDatas.Add(new SelectedData { Code="False",Description="False"});
+        SelectedDatas.Add(new SelectedData { Code=true,Description="True"});
+        SelectedDatas.Add(new SelectedData { Code=false,Description="False"});
 
     }
     async Task Search() {

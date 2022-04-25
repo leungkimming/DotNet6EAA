@@ -2,13 +2,16 @@
 /* need to F12, right click reload button, clear cache to force update. Otherwise, always use cache */
 /**/
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+
 .contentbody {
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
     background-color: white;
 }
+
 h1:focus {
     outline: none;
 }
@@ -79,6 +82,7 @@ a, .btn-link {
     left: 55%;
     position: absolute;
 }
+
 @keyframes spin {
     0% {
         transform: rotate(0deg)
@@ -435,14 +439,20 @@ kendo-drawer.k-drawer, kendo-drawer .k-drawer-wrapper {
 .k-drawer-separator {
     background-color: rgba(0,0,0,.08)
 }
+
 .k-card-header {
-background-color:#FF6358 !important;
-color:white !important;
+    background-color: #FF6358 !important;
+    color: white !important;
 }
 
 .div-container {
     padding: 10px 10px 10px 10px
 }
+
 a {
-    text-decoration:none !important;
+    text-decoration: none !important;
+}
+
+.k-notification-group {
+    width: fit-content;
 }

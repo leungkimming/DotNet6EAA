@@ -49,12 +49,17 @@ namespace P6.StoryTest {
             AddPayslipResponse response = await result.Content.ReadFromJsonAsync<AddPayslipResponse>();
             Assert.AreEqual(response.TotalSalary, p0);
         }
-
         [Given(@"I can retrieve user \(""([^""]*)""\)")]
         public async Task GivenICanRetrieveUser(string micl) {
-            UserInfoDTO[]? users = await client.GetFromJsonAsync<UserInfoDTO[]>("users?Search=Micl");
-            Assert.AreEqual(users.Count(), 1);
-            context.Set<UserInfoDTO>(users[0], "AddPayslipUser");
+            GetUserRequest search = new GetUserRequest() {
+                Search = micl,
+                RecordsPerPage = 10,
+                PageNo = 1,
+            };
+            var result = await client.PostAsJsonAsync("users/getuserlist", search);
+            GetAllDatasResponse<UserInfoDTO> users = await result.Content.ReadFromJsonAsync<GetAllDatasResponse<UserInfoDTO>>();
+            Assert.AreEqual(users.TotalCount, 1);
+            context.Set(users.Datas[0], "AddPayslipUser");
         }
 
         [Given(@"I have the following Payslip")]
