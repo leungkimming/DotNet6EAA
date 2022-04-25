@@ -92,15 +92,15 @@ namespace P6.StoryTest.Features
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("CallAPIAddNew")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("1_Initialize")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CallAPI")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("mytag")]
-        public virtual void CallAPIAddNew()
+        public virtual void _1_Initialize()
         {
             string[] tagsOfScenario = new string[] {
                     "mytag"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddNew", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("1_Initialize", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
 #line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -121,58 +121,37 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Field",
-                            "Value"});
-                table1.AddRow(new string[] {
-                            "userName",
-                            "Micl"});
-                table1.AddRow(new string[] {
-                            "firstName",
-                            "Leung"});
-                table1.AddRow(new string[] {
-                            "lastName",
-                            "Michael"});
-                table1.AddRow(new string[] {
-                            "address",
-                            "Kwong Chiu Terrace"});
-                table1.AddRow(new string[] {
-                            "birthDate",
-                            "1961-03-04T00:00:00+08:00"});
-                table1.AddRow(new string[] {
-                            "departmentName",
-                            "IT"});
-                table1.AddRow(new string[] {
-                            "CoefficientsSalary",
-                            "7500"});
 #line 4
- testRunner.Given("I have the following new user:", ((string)(null)), table1, "Given ");
+ testRunner.Given("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 13
- testRunner.And("InitDB", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 14
- testRunner.When("I post this request to the \"users\" operation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 15
- testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-#line 16
- testRunner.And("the response contains username (\"Micl\") and Department (\"IT\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Name",
+                            "Description",
+                            "Manager"});
+                table1.AddRow(new string[] {
+                            "IT",
+                            "IT",
+                            "Mullar"});
+                table1.AddRow(new string[] {
+                            "HR",
+                            "HR",
+                            "Dennis"});
+#line 5
+ testRunner.And("I have the \"Business.Department\" table with audit \"true\"", ((string)(null)), table1, "And ");
 #line hidden
             }
             this.ScenarioCleanup();
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("CallAPIAddPayslip")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("2_AddNewUser")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CallAPI")]
-        public virtual void CallAPIAddPayslip()
+        public virtual void _2_AddNewUser()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("CallAPIAddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 18
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("2_AddNewUser", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 10
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -192,35 +171,145 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 19
- testRunner.Given("I can retrieve user (\"Micl\")", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
                 TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                             "Field",
                             "Value"});
                 table2.AddRow(new string[] {
-                            "date",
-                            "2022-04-09T00:00:00+08:00"});
+                            "userName",
+                            "Micl"});
                 table2.AddRow(new string[] {
+                            "firstName",
+                            "Leung"});
+                table2.AddRow(new string[] {
+                            "lastName",
+                            "Michael"});
+                table2.AddRow(new string[] {
+                            "address",
+                            "Kwong Chiu Terrace"});
+                table2.AddRow(new string[] {
+                            "birthDate",
+                            "1961-03-04T00:00:00+08:00"});
+                table2.AddRow(new string[] {
+                            "departmentName",
+                            "IT"});
+                table2.AddRow(new string[] {
+                            "CoefficientsSalary",
+                            "7500"});
+#line 11
+ testRunner.Given("I have the following \"Common.AddUserRequest\" DTO save as \"U1\"", ((string)(null)), table2, "Given ");
+#line hidden
+#line 20
+ testRunner.When("I post DTO \"U1\" to API \"users\" with status code 200 and response save as \"R1\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 21
+ testRunner.Then("Response \"R1\" contains the \"Common.AddUserResponse\" DTO save as \"R1DTO\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table3.AddRow(new string[] {
+                            "UserName",
+                            "Micl"});
+                table3.AddRow(new string[] {
+                            "DepartmentName",
+                            "IT"});
+#line 22
+ testRunner.And("DTO \"R1DTO\" matches the following table", ((string)(null)), table3, "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("3_AddPayslip")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CallAPI")]
+        public virtual void _3_AddPayslip()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("3_AddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 27
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table4.AddRow(new string[] {
+                            "date",
+                            "CURRENT_DATE-5M"});
+                table4.AddRow(new string[] {
                             "workingDays",
                             "10"});
-                table2.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "bonus",
                             "100"});
-                table2.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "isPaid",
                             "true"});
-#line 20
- testRunner.And("I have the following Payslip", ((string)(null)), table2, "And ");
-#line hidden
-#line 26
- testRunner.When("I post this request to the AddPayslip API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 27
- testRunner.Then("the result is a 200 (\"OK\") response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
 #line 28
- testRunner.And("the response contains TotalSalary (75100)", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("I have the following \"Common.AddPayslipRequest\" DTO save as \"P1\"", ((string)(null)), table4, "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table5.AddRow(new string[] {
+                            "Search",
+                            "Micl"});
+                table5.AddRow(new string[] {
+                            "RecordsPerPage",
+                            "10"});
+                table5.AddRow(new string[] {
+                            "PageNo",
+                            "1"});
+#line 34
+ testRunner.And("I have the following \"Common.GetUserRequest\" DTO save as \"U2\"", ((string)(null)), table5, "And ");
+#line hidden
+#line 39
+ testRunner.When("I post DTO \"U2\" to API \"users/getuserlist\" with status code 200 and response save" +
+                        " as \"R2\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 40
+ testRunner.Then("Response \"R2\" contains the \"Common.GetAllDatasResponse`1[Common.UserInfoDTO]\" DTO" +
+                        " save as \"R2DTO\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 41
+ testRunner.And("I locate user \"Micl\" in DTO \"R2DTO\" and update to DTO \"P1\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 42
+ testRunner.When("I post DTO \"P1\" to API \"users/AddPayslip\" with status code 200 and response save " +
+                        "as \"R3\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 43
+ testRunner.Then("Response \"R3\" contains the \"Common.AddPayslipResponse\" DTO save as \"R3DTO\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Field",
+                            "Value"});
+                table6.AddRow(new string[] {
+                            "TotalSalary",
+                            "75100"});
+                table6.AddRow(new string[] {
+                            "LetterSentDate",
+                            "CURRENT_DATE+0D"});
+#line 44
+ testRunner.And("DTO \"R3DTO\" matches the following table", ((string)(null)), table6, "And ");
 #line hidden
             }
             this.ScenarioCleanup();
