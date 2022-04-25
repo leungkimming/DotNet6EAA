@@ -19,10 +19,11 @@ namespace API {
             _paymentQuery = paymentquery;
         }
 
-        [HttpGet(Name = "GetUserList")]
+        [HttpPost]
+        [Route("getuserlist")]
         [AccessCodeAuthorize("AA01")]
-        public async Task<IActionResult> Get([FromQuery] GetUserRequest request) {
-            var users = await _service.SearchAsync(request);
+        public async Task<IActionResult> Get([FromBody] GetUserRequest request) {
+            GetAllDatasResponse<UserInfoDTO> users = await _service.SearchAsync(request);
             return Ok(users);
         }
 

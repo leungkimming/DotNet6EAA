@@ -64,14 +64,19 @@ namespace Service {
 
             throw new Exception("User not found.");
         }
-        public async Task<List<UserInfoDTO>> SearchAsync(GetUserRequest request) {
+        public async Task<GetAllDatasResponse<UserInfoDTO>> SearchAsync(GetUserRequest request) {
             var x = _httpContext.User;
             var repository = UnitOfWork.UserRepository();
             var users = await repository
-                .ListAsyncwithDept(_ => _.UserName.Contains(request.Search));
+                .ListAsyncwithDeptByPagging(_ => request.Search==null||_.UserName.Contains(request.Search),request.RecordsPerPage,request.PageNo);
+
+            var totalCount=await repository.ListCountAsync(_ => request.Search==null||_.UserName.Contains(request.Search));
 
             var userDTOs = users.Select(_user => _mapper.Map<UserInfoDTO>(_user)).ToList();
-            return userDTOs;
+            GetAllDatasResponse<UserInfoDTO> searchResult = new GetAllDatasResponse<UserInfoDTO>();
+            searchResult.Datas = userDTOs;
+            searchResult.TotalCount = totalCount;
+            return searchResult;
         }
         public async Task<List<PayslipDTO>> SearchAsync(GetPayslipRequest request) {
             var repository = UnitOfWork.AsyncRepository<Payslip>();

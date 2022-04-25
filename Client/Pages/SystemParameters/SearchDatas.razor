@@ -19,22 +19,22 @@
                 </div>
 
                 <div>
-                    <TelerikButton FillMode="@(ThemeConstants.Button.FillMode.Flat)" Icon="@generalSearchUtil.ExpandIcon" OnClick="@generalSearchUtil.ToggleAsync"></TelerikButton>
+                    <TelerikButton FillMode="@(ThemeConstants.Button.FillMode.Flat)" Icon="@_generalSearchUtil.ExpandIcon" OnClick="@_generalSearchUtil.ToggleAsync"></TelerikButton>
                 </div>
             </CardHeader>
-            <TelerikAnimationContainer @ref="@generalSearchUtil.AnimationContainerRef"
+            <TelerikAnimationContainer @ref="@_generalSearchUtil.AnimationContainerRef"
                                        AnimationDuration="300"
                                        AnimationType="@AnimationType.RevealVertical"
                                        ParentInlineStyle="display: block; position: relative;">
 
                 <CardBody>
-                    <TelerikForm Model="@systemParametersSearchRequest"
+                    <TelerikForm Model="@_systemParametersSearchRequest"
                                  Width="auto"
                                  Columns="2" ColumnSpacing="20px">
                         <FormButtons></FormButtons>
                         <FormItems>
-                            <FormItem LabelText="Code" Field="@nameof(systemParametersSearchRequest.Code)"></FormItem>
-                            <FormItem LabelText="Description" Field="@nameof(systemParametersSearchRequest.Description)"></FormItem>
+                            <FormItem LabelText="Code" Field="@nameof(_systemParametersSearchRequest.Code)"></FormItem>
+                            <FormItem LabelText="Description" Field="@nameof(_systemParametersSearchRequest.Description)"></FormItem>
                         </FormItems>
 
                     </TelerikForm>
@@ -45,7 +45,7 @@
 
     <div class="div-container" name="itemsList">
         <TelerikGrid @ref="Grid"
-                     Data="@sourceData"
+                     Data="@_sourceData"
                      ConfirmDelete="true"
                      Pageable="true"
                      Sortable="true"
@@ -55,7 +55,7 @@
                      SelectionMode="GridSelectionMode.Multiple"
                      Navigable="true"
                      OnRead="@ReadItems"
-                     PageSize="@pageSize"
+                     PageSize="@_pageSize"
                      OnCreate="@CreateItem"
                      OnUpdate="@UpdateHandler"
                      OnDelete="@DeleteHandler">
@@ -64,10 +64,8 @@
             </GridToolBar>
             <GridColumns>
                 <GridCommandColumn Width="90px">
-                    <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
-                    <GridCommandButton Command="Edit" Icon="edit"></GridCommandButton>
+                    <GridCommandButton OnClick="@((args)=> SelectedData(args.Item as SystemParametersSearchResponse))" Icon="edit"></GridCommandButton>
                     <GridCommandButton Command="Delete" Icon="delete"></GridCommandButton>
-                    <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
                 </GridCommandColumn>
                 <GridColumn Field=@nameof(SystemParametersSearchResponse.Code) />
                 <GridColumn Field=@nameof(SystemParametersSearchResponse.Description) />
@@ -81,58 +79,118 @@
             </GridColumns>
         </TelerikGrid>
     </div>
-    <p hidden=@(generalSearchUtil.Message == "") style="white-space: pre-line">@generalSearchUtil.Message</p>
-    <div class="spinner" hidden=@generalSearchUtil.Notspinning></div>
-    <div >
-        <TelerikNotification @ref="generalSearchUtil.NotificationComponent"
-                           
+    <div class="spinner" hidden=@_generalSearchUtil.Notspinning></div>
+    <div>
+        <TelerikNotification @ref="_generalSearchUtil.NotificationComponent"
                              HorizontalPosition="@NotificationHorizontalPosition.Center"
                              VerticalPosition="@NotificationVerticalPosition.Top"></TelerikNotification>
     </div>
+    <TelerikDialog @bind-Visible="@_visible" Width="500px" Title="Edit System Parameters">
+        <DialogContent>
+
+            <TelerikForm Model="@_selectedItem"
+                         Width="auto"
+                         Columns="2" ColumnSpacing="20px">
+                <FormButtons></FormButtons>
+                <FormItems>
+                    <FormItem LabelText="Code" Field="@nameof(_selectedItem.Code)" Enabled="false"></FormItem>
+                    <FormItem LabelText="Description" Field="@nameof(_selectedItem.Description)"></FormItem>
+                    <FormItem Field="@nameof(_selectedItem.DataTypeCode)">
+                        <Template>
+                            <label class="k-label k-form-label">Data Type*:</label>
+                            <TelerikDropDownList Data="@_allDataTypes"
+                                                 @bind-Value="@_selectedItem.DataTypeCode"
+                                                 TextField="Description"
+                                                 ValueField="Code"
+                                                 DefaultText="Select Data Type"
+                                                 Id="dataType"
+                                                 Width="100%">
+                                <DropDownListSettings>
+                                    <DropDownListPopupSettings Height="auto"></DropDownListPopupSettings>
+                                </DropDownListSettings>
+                            </TelerikDropDownList>
+                        </Template>
+                    </FormItem>
+                    <FormItem LabelText="Value_Datetime" Field="@nameof(_selectedItem.Value_Datetime)"></FormItem>
+                    <FormItem LabelText="Value_Decimal" Field="@nameof(_selectedItem.Value_Decimal)"></FormItem>
+                    <FormItem LabelText="Value_Integer" Field="@nameof(_selectedItem.Value_Integer)"></FormItem>
+                    <FormItem LabelText="Value_Text" Field="@nameof(_selectedItem.Value_Text)"></FormItem>
+                </FormItems>
+
+            </TelerikForm>
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="@(() => { _visible = false; })">Close</TelerikButton>
+            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@UpdateHandler">Update</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
 </div>
 
 @code {
-
+    public class DataTypeDto {
+        public string Code { get; set; }
+        public string Description { get; set; }
+    }
+    private List<DataTypeDto> _allDataTypes { get; set; } = new List<DataTypeDto>();
+    private bool _visible { get; set; } = false;
+    private SystemParametersSearchResponse _selectedItem { get; set; }
     TelerikGrid<SystemParametersSearchResponse> Grid { get; set; }
-    public SystemParametersSearchRequest systemParametersSearchRequest { get; set; } = new SystemParametersSearchRequest();
-    private List<SystemParametersSearchResponse> sourceData { get; set; }
-    private GetAllDatasResponse<SystemParametersSearchResponse> getAllDatasResponse { get; set; }
-    private GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse> generalSearchUtil { get; set; }
-    private int pageSize = 10;
+    public SystemParametersSearchRequest _systemParametersSearchRequest { get; set; } = new SystemParametersSearchRequest();
+    private List<SystemParametersSearchResponse> _sourceData { get; set; }
+    private GetAllDatasResponse<SystemParametersSearchResponse> _getAllDatasResponse { get; set; }
+    private GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse> _generalSearchUtil { get; set; }
+    private int _pageSize = 10;
     private void OnClear() {
-        systemParametersSearchRequest = new SystemParametersSearchRequest();
+        _systemParametersSearchRequest = new SystemParametersSearchRequest();
     }
 
     protected override async Task OnInitializedAsync() {
-        generalSearchUtil = new GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse>(http);
+        _generalSearchUtil = new GeneralSearchUtil<SystemParametersSearchRequest, SystemParametersSearchResponse>(http);
+        _allDataTypes.Add(new DataTypeDto { Code = DataType.DateTime.Code, Description = DataType.DateTime.Description });
+        _allDataTypes.Add(new DataTypeDto { Code = DataType.Decimal.Code, Description = DataType.Decimal.Description });
+        _allDataTypes.Add(new DataTypeDto { Code = DataType.Integer.Code, Description = DataType.Integer.Description });
+        _allDataTypes.Add(new DataTypeDto { Code = DataType.Text.Code, Description = DataType.Text.Description });
     }
     async Task Search() {
-        await generalSearchUtil.RefreshAsync(Grid);
+        await _generalSearchUtil.RefreshAsync(Grid);
     }
 
     private async Task ReadItems(GridReadEventArgs args) {
-        systemParametersSearchRequest.PageNo = args.Request.Page;
-        systemParametersSearchRequest.RecordsPerPage = args.Request.PageSize;
+        _systemParametersSearchRequest.PageNo = args.Request.Page;
+        _systemParametersSearchRequest.RecordsPerPage = args.Request.PageSize;
 
-        getAllDatasResponse = await generalSearchUtil.SearchAsync(systemParametersSearchRequest, "systemparameters/searchall");
-        args.Data = getAllDatasResponse.Datas;
-        args.Total = getAllDatasResponse.TotalCount;
+        _getAllDatasResponse = await _generalSearchUtil.SearchAsync(_systemParametersSearchRequest, "systemparameters/searchall");
+        args.Data = _getAllDatasResponse.Datas;
+        args.Total = _getAllDatasResponse.TotalCount;
     }
     private async Task CreateItem(GridCommandEventArgs args) {
         var systemParameter = _mapper.Map<AddSystemParameterRequest>(args.Item);
         HttpContent jsonContent = JsonContent.Create(systemParameter);
-        await generalSearchUtil.CreateAsync(jsonContent, "systemparameters/addsystemparameter");
-        generalSearchUtil.ShowSuccessNotifications("Create Success.");
+        await _generalSearchUtil.CreateAsync(jsonContent, "systemparameters/addsystemparameter");
+        _generalSearchUtil.ShowSuccessNotifications("Create Success.");
     }
-    private async Task UpdateHandler(GridCommandEventArgs args) {
-        var systemParameter = _mapper.Map<EditSystemParameterRequest>(args.Item);
+    private async Task UpdateHandler() {
+        var systemParameter = _mapper.Map<EditSystemParameterRequest>(_selectedItem);
         HttpContent jsonContent = JsonContent.Create(systemParameter);
-        await generalSearchUtil.UpdateAsync(jsonContent, "systemparameters/editsystemparameter");
+        await _generalSearchUtil.UpdateAsync(jsonContent, "systemparameters/editsystemparameter");
+        _visible = false;
+        if (string.IsNullOrEmpty(_generalSearchUtil.Message)) {
+            _generalSearchUtil.ShowSuccessNotifications("Update Success.");
+        } else {
+            _generalSearchUtil.ShowErrorNotifications(_generalSearchUtil.Message);
+        }
     }
-
-    public void DeleteHandler(GridCommandEventArgs args) {
-        //ProductService.DeleteProduct((ProductDto)args.Item);
-        //LoadData();
+    void SelectedData(SystemParametersSearchResponse item) {
+        _visible = true;
+        _selectedItem = item;
+    }
+    public async Task DeleteHandler(GridCommandEventArgs args) {
+        await _generalSearchUtil.DeleteAsync("systemparameters/deletesystemparameter?Id=" + ((SystemParametersSearchResponse)args.Item).Id);
+        if (string.IsNullOrEmpty(_generalSearchUtil.Message)) {
+            _generalSearchUtil.ShowSuccessNotifications("Delete Success.");
+        } else {
+            _generalSearchUtil.ShowErrorNotifications(_generalSearchUtil.Message);
+        }
     }
 
 

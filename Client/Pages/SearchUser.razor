@@ -6,146 +6,263 @@
 @inject NavigationManager NavigationManager
 @inject StateContainer StateContainer
 
-<PageTitle>Search User</PageTitle>
-
-<EditForm OnValidSubmit="@Send"
-          Model="@_getUser">
-    <DataAnnotationsValidator />
-    <h1>Search User</h1>
-    <hr />
-    <ValidationSummary />
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>User name contains:</td>
-                <td colspan="2"><input @bind="_getUser.Search" /></td>
-                <td colspan="3"><button type="submit">Search</button></td>
-            </tr>
-        </tbody>
-    </table>
-
-</EditForm>
-@if (users != null) {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>User Name</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Address</th>
-                <th>Birthday</th>
-                <th>Department</th>
-                <th>Daily Rate</th>
-                <th>Payslip</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in users) {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.UserName</td>
-                    <td>@user.FirstName</td>
-                    <td>@user.LastName</td>
-                    <td>@user.Address</td>
-                    <td>@((@user.BirthDate == null)?"":@user.BirthDate.Value.ToString("dd/MM/yyyy"))</td>
-                    <td>@user.DepartmentName</td>
-                    <td>@user.CoefficientsSalary</td>
-                    <td>
-                        <a style="cursor:pointer" @onclick="@(() => Payslip(user))"><u>view</u></a>&nbsp;&nbsp;
-                        <a style="cursor:pointer" @onclick="@(() => AddPayslip(user))"><u>add</u></a>
-@*                        <NavLink class=".btn-link" href=@("addpayslip/" + user)>add</NavLink>*@                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-@if (payslips != null) {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>WorkingDays</th>
-                <th>IsPaid</th>
-                <th>PaymentDate</th>
-                <th>TotalSalary</th>
-                <th>Bonus</th>
-                <th>LetterSentDate</th>
-            </tr>
-        </thead>
-        @if (payslips.Count() == 0) {
-            <tr>
-                <td colspan=7>No Records Found!</td>
-            </tr>
-        }
-        <tbody>
-            @foreach (var payslip in payslips) {
-                <tr>
-                    <td>@payslip.Date.ToString("dd/MM/yyyy")</td>
-                    <td>@payslip.WorkingDays</td>
-                    <td>@payslip.IsPaid</td>
-                    <td>@((@payslip.PaymentDate == null)?"":@payslip.PaymentDate.Value.ToString("dd/MM/yyyy"))</td>
-                    <td>@payslip.TotalSalary</td>
-                    <td>@payslip.Bonus</td>
-                    <td>@((@payslip.LetterSentDate == null)?"":@payslip.LetterSentDate.Value.ToString("dd/MM/yyyy"))</td>
-                </tr>
-                @if (payslip.Letter != "") {
-                    <tr>
-                        <td></td>
-                        <td colspan=6>@payslip.Letter</td>
-                    </tr>
-
-                }
-            }
-        </tbody>
-    </table>
-}
-<p hidden=@(_message == "") style="white-space: pre-line">@_message</p>
-
-
-<div class="spinner" hidden=@_notspinning></div>
-@code {
-    private UserInfoDTO[]? users;
-    private bool _notspinning = true;
-    private PayslipDTO[]? payslips;
-    private GetUserRequest _getUser = new GetUserRequest();
-    private string _message;
-
-    async Task Send() {
-        _message = "";
-
-        _notspinning = false;
-        var response = await _httpUtil.GetAsync("users?Search=" + _getUser.Search);
-        _notspinning = true;
-
-        var content = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode) {
-            users = JsonSerializer.Deserialize<UserInfoDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        } else {
-            _message = content;
-        }
-        //users = await Http.GetFromJsonAsync<UserInfoDTO[]>("users?Search=" + _getUser.Search);
+<style>
+    .custom-icons .k-hierarchy-cell .k-icon.k-i-plus::before {
+        content: "\e005";
     }
+
+    .custom-icons .k-hierarchy-cell .k-icon.k-i-minus::before {
+        content: "\e006";
+    }
+</style>
+
+
+
+@*
+
+    <p hidden=@(_message == "") style="white-space: pre-line">@_message</p>
+
+
+    <div class="spinner" hidden=@_notspinning></div>
+
+*@
+
+<div class="flex-center">
+    <div class="div-container" name="toolBars">
+        <TelerikButton Icon="search" ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@Search"></TelerikButton>
+        <TelerikButton Icon="reset" ButtonType="ButtonType.Button" OnClick="@OnClear"></TelerikButton>
+    </div>
+    <div class="div-container" name="searchingCriteria">
+        <TelerikCard Width="auto">
+            <CardHeader Class="k-hbox justify-space-between">
+                <div>
+                    <CardTitle>Searching Criteria</CardTitle>
+                </div>
+
+                <div>
+                    <TelerikButton FillMode="@(ThemeConstants.Button.FillMode.Flat)" Icon="@generalSearchUtil.ExpandIcon" OnClick="@generalSearchUtil.ToggleAsync"></TelerikButton>
+                </div>
+            </CardHeader>
+            <TelerikAnimationContainer @ref="@generalSearchUtil.AnimationContainerRef"
+                                       AnimationDuration="300"
+                                       AnimationType="@AnimationType.RevealVertical"
+                                       ParentInlineStyle="display: block; position: relative;">
+
+                <CardBody>
+                    <TelerikForm Model="@getUserRequest"
+                                 Width="auto"
+                                 Columns="2" ColumnSpacing="20px">
+                        <FormButtons></FormButtons>
+                        <FormItems>
+                            <FormItem LabelText="User Name" Field="@nameof(_getUser.Search)"></FormItem>
+                        </FormItems>
+
+                    </TelerikForm>
+                </CardBody>
+            </TelerikAnimationContainer>
+        </TelerikCard>
+    </div>
+
+    <div class="div-container" name="itemsList">
+        <TelerikGrid @ref="Grid"
+                     Data="@sourceData"
+                     ConfirmDelete="true"
+                     Pageable="true"
+                     Sortable="true"
+                     Resizable="true"
+                     Reorderable="true"
+                     EditMode="GridEditMode.Popup"
+                     SelectionMode="GridSelectionMode.Multiple"
+                     Navigable="true"
+                     OnRead="@ReadItems"
+                     OnRowExpand="@((args) => Payslip(args.Item as UserInfoDTO))"
+                     PageSize="@pageSize">
+            <GridColumns>
+
+                <GridColumn Field=@nameof(UserInfoDTO.Id) />
+                <GridColumn Field=@nameof(UserInfoDTO.UserName) />
+                <GridColumn Field=@nameof(UserInfoDTO.FirstName) />
+                <GridColumn Field=@nameof(UserInfoDTO.LastName) />
+                <GridColumn Field=@nameof(UserInfoDTO.Address) />
+                <GridColumn Field=@nameof(UserInfoDTO.BirthDate) />
+                <GridColumn Field=@nameof(UserInfoDTO.DepartmentName) />
+                <GridColumn Field=@nameof(UserInfoDTO.CoefficientsSalary) />
+
+                <GridCommandColumn Width="90px" Title="Payslip">
+                    <GridCommandButton OnClick="@((args) => AddPayslip(args.Item as UserInfoDTO))" Icon="add">Add</GridCommandButton>
+                </GridCommandColumn>
+            </GridColumns>
+            <DetailTemplate>
+                @if (context.PayslipDTOs != null) {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>WorkingDays</th>
+                                <th>IsPaid</th>
+                                <th>PaymentDate</th>
+                                <th>TotalSalary</th>
+                                <th>Bonus</th>
+                                <th>LetterSentDate</th>
+                            </tr>
+                        </thead>
+                        @if (!context.PayslipDTOs.Any()) {
+                            <tr>
+                                <td colspan=7>No Records Found!</td>
+                            </tr>
+                        }
+                        <tbody>
+                            @foreach (var payslip in context.PayslipDTOs) {
+                                <tr>
+                                    <td>@payslip.Date.ToString("dd/MM/yyyy")</td>
+                                    <td>@payslip.WorkingDays</td>
+                                    <td>@payslip.IsPaid</td>
+                                    <td>@((@payslip.PaymentDate == null)?"":@payslip.PaymentDate.Value.ToString("dd/MM/yyyy"))</td>
+                                    <td>@payslip.TotalSalary</td>
+                                    <td>@payslip.Bonus</td>
+                                    <td>@((@payslip.LetterSentDate == null)?"":@payslip.LetterSentDate.Value.ToString("dd/MM/yyyy"))</td>
+                                </tr>
+                                @if (payslip.Letter != "") {
+                                    <tr>
+                                        <td></td>
+                                        <td colspan=6>@payslip.Letter</td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            </DetailTemplate>
+        </TelerikGrid>
+    </div>
+    <div class="spinner" hidden=@generalSearchUtil.Notspinning></div>
+    <div>
+        <TelerikNotification @ref="generalSearchUtil.NotificationComponent"
+                             HorizontalPosition="@NotificationHorizontalPosition.Center"
+                             VerticalPosition="@NotificationVerticalPosition.Top"></TelerikNotification>
+    </div>
+
+    <TelerikDialog @bind-Visible="@visible" Width="500px" Title="Add Payslip">
+        <DialogContent>
+
+            <TelerikForm Model="@_newpayslip"
+                         Width="auto"
+                         >
+                <FormButtons></FormButtons>
+                <FormItems>
+                    <FormItem LabelText="Date" Field="@nameof(_newpayslip.Date)" ></FormItem>
+                    <FormItem LabelText="Working Days" Field="@nameof(_newpayslip.WorkingDays)"></FormItem>
+                    <FormItem LabelText="Bonus" Field="@nameof(_newpayslip.Bonus)"></FormItem>
+                    <FormItem Field="@nameof(_newpayslip.IsPaid)">
+                        <Template>
+                            <label class="k-label k-form-label">Is Paid:</label>
+                            <TelerikDropDownList Data="@SelectedDatas"
+                                                 @bind-Value="@_newpayslip.IsPaid"
+                                                 TextField="Description"
+                                                 ValueField="Code"
+                                                 DefaultText="Select"
+                                                 Id="IsPaidDropdownlist"
+                                                 Width="100%">
+                                <DropDownListSettings>
+                                    <DropDownListPopupSettings Height="auto"></DropDownListPopupSettings>
+                                </DropDownListSettings>
+                            </TelerikDropDownList>
+                        </Template>
+                    </FormItem>
+                </FormItems>
+
+            </TelerikForm>
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="@(() => { visible = false; })">Close</TelerikButton>
+            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@SavePayslip">Save</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+</div>
+
+
+@code {
+    public class SelectedData {
+        public bool Code { get; set; }
+        public string Description { get; set; }
+    }
+    List<SelectedData> SelectedDatas { get; set; } = new List<SelectedData>();
+    private GetUserRequest _getUser = new GetUserRequest();
 
     async Task Payslip(UserInfoDTO user) {
-        _message = "";
-
-        _notspinning = false;
+        generalSearchUtil.Message = "";
+        generalSearchUtil.Notspinning = false;
         var response = await _httpUtil.GetAsync("users/GetPayslip?userId=" + user.Id);
-        _notspinning = true;
+        generalSearchUtil.Notspinning = true;
 
         var content = await response.Content.ReadAsStringAsync();
         if (response.IsSuccessStatusCode) {
-            payslips = JsonSerializer.Deserialize<PayslipDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            user.PayslipDTOs = JsonSerializer.Deserialize<PayslipDTO[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         } else {
-            _message = content;
+            generalSearchUtil.Message = content;
         }
-        //payslips = await Http.GetFromJsonAsync<PayslipDTO[]>("users/GetPayslip?userId=" + user.Id);
     }
-    async Task AddPayslip(UserInfoDTO user)
-    {
-        StateContainer.UserInfoDTO = user;
-        NavigationManager.NavigateTo("addpayslip", false);
+    async Task AddPayslip(UserInfoDTO user) {
+        visible = true;
+        _newpayslip = new AddPayslipRequest();
+        _newpayslip.UserDTO = user;
+        _newpayslip.IsPaid = true;
+        _newpayslip.Bonus = 0;
+    }
+    async Task SavePayslip() {
+        generalSearchUtil.Message = "";
+        generalSearchUtil.Notspinning = false;
+        var result = await _httpUtil.PostAsJsonAsync("users/AddPayslip", _newpayslip);
+        generalSearchUtil.Notspinning = true;
+        if (result.IsSuccessStatusCode) {
+            AddPayslipResponse response = await result.Content.ReadFromJsonAsync<AddPayslipResponse>();
+            generalSearchUtil.Message = "Created for User ID:" + response.UserId
+                + "\r\nSalary:" + response.TotalSalary;
+            if (response.LetterSentDate != null) {
+                generalSearchUtil.Message += "\r\nLetter sent on " + response.LetterSentDate.Value.ToString("dd/MM/yyyy")
+                + "\r\nContent:" + response.Letter;
+            }
+            generalSearchUtil.ShowSuccessNotifications(generalSearchUtil.Message);
+
+        } else {
+            generalSearchUtil.Message = "Error: " + await result.Content.ReadAsStringAsync();
+            generalSearchUtil.ShowErrorNotifications(generalSearchUtil.Message);
+        }
+        visible = false;
     }
 
+    private bool visible { get; set; } = false;
+    private AddPayslipRequest _newpayslip { get; set; } = new AddPayslipRequest();
+    TelerikGrid<UserInfoDTO> Grid { get; set; }
+    public GetUserRequest getUserRequest { get; set; } = new GetUserRequest();
+    private List<UserInfoDTO> sourceData { get; set; }
+    private GetAllDatasResponse<UserInfoDTO> getAllDatasResponse { get; set; }
+    private GeneralSearchUtil<GetUserRequest, UserInfoDTO> generalSearchUtil { get; set; }
+    private int pageSize = 10;
+
+    private void OnClear() {
+        getUserRequest = new GetUserRequest();
+    }
+
+    protected override async Task OnInitializedAsync() {
+        generalSearchUtil = new GeneralSearchUtil<GetUserRequest, UserInfoDTO>(_httpUtil);
+        SelectedDatas=new List<SelectedData>();
+        SelectedDatas.Add(new SelectedData { Code=true,Description="True"});
+        SelectedDatas.Add(new SelectedData { Code=false,Description="False"});
+
+    }
+    async Task Search() {
+        await generalSearchUtil.RefreshAsync(Grid);
+
+    }
+
+    private async Task ReadItems(GridReadEventArgs args) {
+        getUserRequest.PageNo = args.Request.Page;
+        getUserRequest.RecordsPerPage = args.Request.PageSize;
+
+        getAllDatasResponse = await generalSearchUtil.SearchAsync(getUserRequest, "users/getuserlist");
+        args.Data = getAllDatasResponse.Datas;
+        args.Total = getAllDatasResponse.TotalCount;
+    }
 }

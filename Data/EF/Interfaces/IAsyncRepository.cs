@@ -1,4 +1,5 @@
 ﻿using Business;
+using Common;
 using System.Linq.Expressions;
 
 namespace Data {
@@ -14,5 +15,8 @@ namespace Data {
         Task<List<T>> ListAsync(Expression<Func<T, bool>> expression);
         Task<int> ListCountAsync(Expression<Func<T, bool>> expression);
         Task<List<T>> ListAsyncByPagging(Expression<Func<T, bool>> expression, int pageSize, int pageNo);
+        IQueryable<T> ListAsyncByPaggingQueryable(Expression<Func<T, bool>> expression, int pageSize, int pageNo);
+        Task<T> UpdateWithPreValidationAsync(DTObase updateRequest, T entity);
+        void PreValidation(DTObase updateRequest, T entity);
     }
 }

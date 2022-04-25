@@ -14,5 +14,6 @@ namespace Common {
         public int? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public float CoefficientsSalary { get; set; }
+        public PayslipDTO[]? PayslipDTOs {get; set;}
     }
 }

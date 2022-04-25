@@ -1,4 +1,5 @@
 ﻿using Business;
+using Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -34,10 +35,26 @@ namespace Data {
         public Task<List<T>> ListAsyncByPagging(Expression<Func<T, bool>> expression, int pageSize, int pageNo) {
             return _dbSet.Where(expression).Skip((pageNo - 1) * pageSize).Take(pageSize).ToListAsync();
         }
+        public IQueryable<T> ListAsyncByPaggingQueryable(Expression<Func<T, bool>> expression, int pageSize, int pageNo) {
+            return _dbSet.Where(expression).Skip((pageNo - 1) * pageSize).Take(pageSize);
+        }
 
         public Task<T> UpdateAsync(T entity) {
             _dbSet.Update(entity);
             return Task.FromResult(entity);
+        }
+
+        public Task<T> UpdateWithPreValidationAsync(DTObase updateRequest, T entity) {
+            PreValidation(updateRequest,entity);
+            return UpdateAsync(entity);
+        }
+        public virtual void PreValidation(DTObase updateRequest,T entity) {
+            if(entity is IRowVersionContract updateEntity) {
+                if (!(entity == null && updateRequest.RowVersion == null) && !updateEntity.RowVersion.SequenceEqual(updateRequest.RowVersion)) {
+                    throw new Exception("Record has already been updated or deleted by another user.");
+                }
+            }
+           
         }
     }
 }

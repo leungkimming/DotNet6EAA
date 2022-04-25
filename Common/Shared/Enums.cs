@@ -8,4 +8,5 @@ namespace Common {
             new Department(2,"HR")
         };
     }
+
 }

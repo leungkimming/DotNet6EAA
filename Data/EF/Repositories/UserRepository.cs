@@ -14,6 +14,10 @@ namespace Data {
                 .Include(User => User.Department)
                 .ToListAsync();
         }
+        public Task<List<User>> ListAsyncwithDeptByPagging(Expression<Func<User, bool>> expression, int pageSize, int pageNo) {
+            return this.ListAsyncByPaggingQueryable(expression, pageSize, pageNo).Include(User => User.Department)
+                .ToListAsync();
+        }
         public Task<User?> GetAsyncWithPayslip(Expression<Func<User, bool>> expression) {
             return _dbSet
                 .Include(User => User.PaySlips)
