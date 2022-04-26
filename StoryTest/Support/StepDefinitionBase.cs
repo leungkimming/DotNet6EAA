@@ -18,12 +18,10 @@ namespace P6.StoryTest {
 
             this.context = context;
             this.webApplicationFactory = new WebAppFactory<Program>(config);
-            this.webApplicationFactory.DefaultUserId = "tester";
+            this.webApplicationFactory.DefaultUserId = "SpecFlow";
 
             // create an http client of the application under test
             client = this.webApplicationFactory.CreateClient();
-            //client.BaseAddress = (new Uri("https://localhost:44355"));
-
         }
 
         public void SetAuthorization(string auth) {

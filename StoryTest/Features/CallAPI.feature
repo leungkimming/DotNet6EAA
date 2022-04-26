@@ -2,6 +2,12 @@
 @mytag
 Scenario: 1_Initialize
 	Given InitDB
+	And I logon as "41776"
+	And have the following access codes
+		| Field | Value |
+		| 1     | AA01  |
+		| 2     | AB01  |
+		| 3     | AC01  |
 	And I have the "Business.Department" table with audit "true"
 		| Name               | Description               | Manager |
 		| IT                 | IT                        | Mullar  |

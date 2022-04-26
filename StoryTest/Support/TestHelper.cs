@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Business;
+using System.Security.Claims;
 using System.Reflection;
 using TechTalk.SpecFlow.Assist;
 using TechTalk.SpecFlow.Assist.ValueRetrievers;
@@ -17,27 +17,33 @@ namespace P6.StoryTest {
         public static ServiceProvider provider { get; set; }
         public static ScenarioContext context { get; set; }
         public static HttpClient client { get; set; }
+        public static List<Claim> claims { get; set; }
+        public static string LogonId { get; set; }
         public static void SetTable<T>(Table table, bool audit) where T : class {
             IEnumerable<T> listOfT = table.CreateSet<T>();
             if (audit) {
                 foreach (var t in listOfT) {
                     ReflectHelper.MakeMethodCall(t, "Refresh", new object[] { 
-                        System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now }
+                        LogonId, DateTime.Now }
                     );
                 }
             }
             using (var scope = provider.CreateScope()) {
-            var db = scope.ServiceProvider.GetRequiredService<Data.EFContext>();
-            DbSet<T> _dbSet = db.Set<T>();
-            _dbSet.AddRange(listOfT);
-            db.SaveChanges();
+                var db = scope.ServiceProvider.GetRequiredService<Data.EFContext>();
+                DbSet<T> _dbSet = db.Set<T>();
+                _dbSet.AddRange(listOfT);
+                db.SaveChanges();
+            }
+        }
+
+        public static void SetClaims(Table table) {
+            claims = new List<Claim>();
+            foreach (var r in table.Rows) {
+                claims.Add(new Claim(ClaimTypes.Role, r["Value"]));
             }
         }
         public static T SetDTO<T>(Table table, string varName) where T : class {
             T dto = table.CreateInstance<T>();
-            ReflectHelper.MakeMethodCall(dto, "Refresh", new object[] {
-                System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now }
-            );
             context.Set<T>(dto, varName);
             return dto;
         }

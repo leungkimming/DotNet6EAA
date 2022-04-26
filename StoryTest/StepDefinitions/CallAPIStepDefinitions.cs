@@ -15,7 +15,7 @@ namespace P6.StoryTest {
         public void ThenILocateUserInDTOAndUpdateToDTO(string userName, string vNameDTO, string vNamePayslip) {
             GetAllDatasResponse<UserInfoDTO> users = context.Get<GetAllDatasResponse<UserInfoDTO>>(vNameDTO);
             AddPayslipRequest payslip = context.Get<AddPayslipRequest>(vNamePayslip);
-            payslip.UserDTO = users.Datas[0];
+            payslip.UserDTO = users.Datas.Where(x => x.UserName == userName).FirstOrDefault();
             context.Set<AddPayslipRequest>(payslip, vNamePayslip);
         }
     }
