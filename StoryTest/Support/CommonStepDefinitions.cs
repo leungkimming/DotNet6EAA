@@ -13,8 +13,6 @@ namespace P6.StoryTest {
         public static ServiceProvider _provider { get; set; }
         public CommonStepDefinitions(
           ScenarioContext context) : base(context) {
-            SetAuthorization("heh.net");
-            SetLogonId("Specflow");
             _provider = TestHelper.provider;
             TestHelper.context = context;
             TestHelper.client = client;
@@ -32,6 +30,19 @@ namespace P6.StoryTest {
                 db.SaveChanges();
             }
         }
+
+        [Given(@"I logon as ""([^""]*)""")]
+        public void GivenILogonAs(string LogonId) {
+            SetLogonId(LogonId);
+            SetAuthorization("Specflow");
+            TestHelper.LogonId = LogonId;
+        }
+
+        [Given(@"have the following access codes")]
+        public void GivenHaveTheFollowingAccessCodes(Table table) {
+            TestHelper.SetClaims(table);
+        }
+
         [Given(@"I have the ""([^""]*)"" table with audit ""([^""]*)""")]
         public void GivenIHaveTheTableWithAudit(string entityName, string @true, Table table) {
             Assembly assem = typeof(RootEntity).Assembly;
