@@ -30,6 +30,13 @@ namespace Data {
             modelBuilder.Entity<Department>().Property(p => p.RowVersion).IsRowVersion();
             modelBuilder.Entity<Department>().Property(p => p.CreateBy).HasMaxLength(400);
             modelBuilder.Entity<Department>().Property(p => p.UpdateBy).HasMaxLength(400);
+            Department depIT = new Department("IT", "IT", "Mullar");
+            depIT.Id = -1;
+            depIT.Refresh(System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now);
+            Department depHR = new Department("HR", "HR", "Dennis");
+            depHR.Id = -2;
+            depHR.Refresh(System.Security.Principal.WindowsIdentity.GetCurrent().Name, DateTime.Now);
+            modelBuilder.Entity<Department>().HasData(depIT, depHR);
 
             modelBuilder.Entity<SystemParameters>().HasIndex(p => p.Code).IsUnique();
             modelBuilder.Entity<SystemParameters>().Property(p => p.RowVersion).IsRowVersion();
