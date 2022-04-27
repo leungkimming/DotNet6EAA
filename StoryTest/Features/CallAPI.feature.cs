@@ -147,13 +147,13 @@ this.ScenarioInitialize(scenarioInfo);
                             "Description",
                             "Manager"});
                 table2.AddRow(new string[] {
-                            "IT",
-                            "IT",
-                            "Mullar"});
+                            "CS",
+                            "CS",
+                            "Raymond"});
                 table2.AddRow(new string[] {
-                            "HR",
-                            "HR",
-                            "Dennis"});
+                            "PA",
+                            "PA",
+                            "Mimmi"});
 #line 11
  testRunner.And("I have the \"Business.Department\" table with audit \"true\"", ((string)(null)), table2, "And ");
 #line hidden
