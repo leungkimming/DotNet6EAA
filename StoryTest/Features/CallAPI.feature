@@ -9,9 +9,9 @@ Scenario: 1_Initialize
 		| 2     | AB01  |
 		| 3     | AC01  |
 	And I have the "Business.Department" table with audit "true"
-		| Name               | Description               | Manager |
-		| IT                 | IT                        | Mullar  |
-		| HR                 | HR                        | Dennis  |
+		| Name | Description | Manager |
+		| CS   | CS          | Raymond |
+		| PA   | PA          | Mimmi   |
 
 Scenario: 2_AddNewUser
 	Given I have the following "Common.AddUserRequest" DTO save as "U1"
