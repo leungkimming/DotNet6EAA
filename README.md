@@ -23,12 +23,11 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * Only for most CRICITAL business processes, failing which will make the whole system down!
 * Must pass before merging to UAT
 ## Steps to run
-* First, View, SQL Server Object Explorer and note down your SQL server instance name e.g. <br>(localdb)\\ProjectsV13
-* Replace the SQL server instance in API project's appsettings.json file e.g. <br> "DDDConnectionString": "Server=(localdb)\\ProjectsV13;Database=DDDSample;Trusted_Connection=True;MultipleActiveResultSets=true"
+* First, View, SQL Server Object Explorer and note down your SQL server instance name e.g. <br>(localdb)\\ProjectModels
+* Replace the SQL server instance in API project's appsettings.json file e.g. <br> "DDDConnectionString": "Server=(localdb)\\ProjectModels;Database=DDDSample;Trusted_Connection=True;MultipleActiveResultSets=true"
+* Add package source https://itdtfs397/DefaultCollection/_packaging/PackageSources_dotnet/nuget/v3/index.json
 * Build the project, ensure all 6 success
-* cd DOS to current folder "Migrator"
-* Create first migration:<br>dotnet ef migrations add ver2 --startup-project ..\API\P1.API.csproj
-* Create DB: <br>dotnet ef database update  --startup-project ..\API\P1.API.csproj
+* Debug Run Express IIS
 ## How to test API using Swagger UI
 * On home page, click the "API Swagger UI"" link
 * press F12 and monitor network
