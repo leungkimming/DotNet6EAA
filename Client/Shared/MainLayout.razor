@@ -15,26 +15,22 @@
             <div class="menu-button">
                 <TelerikButton Icon="menu" OnClick="@ToggleMenuDrawer" />
             </div>
-            <table width="100%" table-layout="fixed">
-                <tr>
-                    <td class="title" width="62%">
-                        <h1>.NET 6 Framework</h1>
-                    </td>
-                    <td class="information" width="8%">
-                      @if (@_RuntimeInfo?.Environment != "Production") {
+             <div class="title">
+                <h1>.NET 6 Framework</h1>
+            </div>
+            <div class="information div-container" >
+                 @if (@_RuntimeInfo?.Environment != "Production") {
                         <label>@_RuntimeInfo?.Environment</label>
                       }
-                    </td>                
-                    <td class="information" width="10%">
-                        <label>(@_RuntimeInfo?.Build)</label>
-                    </td>
-                    <td class="information"  width="20%">
-                        <label>@_RuntimeInfo?.User</label>
-                    </td>
-                </tr>
-            </table>
+            </div>
+            <div class="information div-container">
+                <label>(@_RuntimeInfo?.Build)</label>
+            </div>
+            <div class="information div-container" >
+                <label>@_RuntimeInfo?.User</label>
+            </div>
             <div class="settings">
-                <TelerikButton Icon="gear" />
+                <TelerikButton Icon="gear" OnClick="@GoToRuntimeInfo" />
             </div>
         </div>
     </div>
