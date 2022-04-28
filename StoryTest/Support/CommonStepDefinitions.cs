@@ -43,6 +43,7 @@ namespace P6.StoryTest {
             TestHelper.SetClaims(table);
         }
 
+        [When(@"I have the ""([^""]*)"" table with audit ""([^""]*)""")]
         [Given(@"I have the ""([^""]*)"" table with audit ""([^""]*)""")]
         public void GivenIHaveTheTableWithAudit(string entityName, string @true, Table table) {
             Assembly assem = typeof(RootEntity).Assembly;
@@ -53,6 +54,8 @@ namespace P6.StoryTest {
                 .MakeGenericMethod(entity).Invoke(null, new object[] { table, audit });
 
         }
+
+        [When(@"I have the following ""([^""]*)"" DTO save as ""([^""]*)""")]
         [Given(@"I have the following ""([^""]*)"" DTO save as ""([^""]*)""")]
         public void GivenIHaveTheFollowingDTOSaveAs(string dtoName, string varName, Table table) {
             Assembly assem = typeof(DTObase).Assembly;
