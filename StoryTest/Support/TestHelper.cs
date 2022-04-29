@@ -1,12 +1,9 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Reflection;
 using TechTalk.SpecFlow.Assist;
-using TechTalk.SpecFlow.Assist.ValueRetrievers;
-using System.Net;
-using Common;
+using System.Collections;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -19,21 +16,19 @@ namespace P6.StoryTest {
         public static HttpClient client { get; set; }
         public static List<Claim> claims { get; set; }
         public static string LogonId { get; set; }
-        public static void SetTable<T>(Table table, bool audit) where T : class {
+        public static void SetTable<T>(Table table, bool audit, string varName) where T : class {
             IEnumerable<T> listOfT = table.CreateSet<T>();
             if (audit) {
-                foreach (var t in listOfT) {
-                    ReflectHelper.MakeMethodCall(t, "Refresh", new object[] { 
-                        LogonId, DateTime.Now }
-                    );
+                foreach (T t in listOfT) {
+                    t.GetType().GetMethod("Refresh").Invoke(t,
+                        new object[] {LogonId, DateTime.Now });
                 }
             }
-            using (var scope = provider.CreateScope()) {
-                var db = scope.ServiceProvider.GetRequiredService<Data.EFContext>();
-                DbSet<T> _dbSet = db.Set<T>();
-                _dbSet.AddRange(listOfT);
-                db.SaveChanges();
-            }
+            var db = provider.GetRequiredService<Data.EFContext>();
+            DbSet<T> _dbSet = db.Set<T>();
+            _dbSet.AddRange(listOfT);
+            db.SaveChanges();
+            context.Set(_dbSet.ToArray(), varName);
         }
 
         public static void SetClaims(Table table) {
@@ -98,6 +93,19 @@ namespace P6.StoryTest {
                 context.Set(users, vNameDTO);
             }
             return ((int)response.StatusCode);
+        }
+
+        public static bool CompareList<T, K>(Table table, T dto, string varName) where T : class where K : class {
+            bool anymatch = false;
+
+            foreach (K row in (IEnumerable)dto) {
+                anymatch = Compare<K>(table, row);
+                if (anymatch) {
+                    context.Set<K>(row, varName);
+                    break;
+                }
+            }
+            return anymatch;
         }
     }
 }

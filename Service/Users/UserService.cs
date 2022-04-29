@@ -28,7 +28,7 @@ namespace Service {
             var user = _mapper.Map<User>(model);
 
             if (dept != null) {
-                user.AddDepartment(dept);
+                user.JoinDepartment(dept);
             }
 
             await repository.AddAsync(user);
@@ -46,7 +46,7 @@ namespace Service {
                 if (StructuralComparisons.StructuralComparer.Compare(user.RowVersion, model.UserDTO.RowVersion) != 0) {
                     throw new RecordVersionException();
                 }
-                var payslip = user.AddPayslip(model.Date.Value
+                var payslip = user.IssuePayslip(model.Date.Value
                     , model.WorkingDays.Value
                     , model.Bonus
                     , model.IsPaid.Value);
@@ -78,6 +78,16 @@ namespace Service {
             searchResult.TotalCount = totalCount;
             return searchResult;
         }
+        public async Task<List<UserInfoDTO>> SearchAsyncV1(GetUserRequestV1 request) {
+            var x = _httpContext.User;
+            var repository = UnitOfWork.UserRepository();
+            var users = await repository
+                .ListAsyncwithDept(_ => _.UserName.Contains(request.Search));
+
+            var userDTOs = users.Select(_user => _mapper.Map<UserInfoDTO>(_user)).ToList();
+            return userDTOs;
+        }
+
         public async Task<List<PayslipDTO>> SearchAsync(GetPayslipRequest request) {
             var repository = UnitOfWork.AsyncRepository<Payslip>();
             var payslips = await repository

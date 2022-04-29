@@ -6,12 +6,12 @@ using Data;
 
 namespace Service {
     public class OnPayslipAddedDomainEventHandler
-        : INotificationHandler<OnPayslipAddedDomainEvent> {
+        : INotificationHandler<OnPayslipIssuedDomainEvent> {
         public IUnitOfWork _unitOfWork;
         public OnPayslipAddedDomainEventHandler(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
-        public async Task Handle(OnPayslipAddedDomainEvent notification, CancellationToken cancellationToken) {
+        public async Task Handle(OnPayslipIssuedDomainEvent notification, CancellationToken cancellationToken) {
             string letter = $"To: {notification.Payslip.User.Address} \n"
                + $"Dear {notification.Payslip.User.UserName} \n"
                + $"Your Salary, amount to {notification.Payslip.TotalSalary} "

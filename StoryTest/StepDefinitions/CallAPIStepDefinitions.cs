@@ -10,13 +10,6 @@ namespace P6.StoryTest {
         public CallAPIStepDefinitions(
           ScenarioContext context) : base(context) {
         }
-
-        [Then(@"I locate user ""([^""]*)"" in DTO ""([^""]*)"" and update to DTO ""([^""]*)""")]
-        public void ThenILocateUserInDTOAndUpdateToDTO(string userName, string vNameDTO, string vNamePayslip) {
-            GetAllDatasResponse<UserInfoDTO> users = context.Get<GetAllDatasResponse<UserInfoDTO>>(vNameDTO);
-            AddPayslipRequest payslip = context.Get<AddPayslipRequest>(vNamePayslip);
-            payslip.UserDTO = users.Datas.Where(x => x.UserName == userName).FirstOrDefault();
-            context.Set<AddPayslipRequest>(payslip, vNamePayslip);
-        }
+    // write your specific step definitions that the common generic libraries do not support
     }
 }

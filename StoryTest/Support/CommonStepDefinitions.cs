@@ -1,11 +1,7 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Business;
 using System.Reflection;
-using TechTalk.SpecFlow.Assist;
 using Common;
-using Newtonsoft.Json;
 
 namespace P6.StoryTest {
     [Binding]
@@ -43,15 +39,14 @@ namespace P6.StoryTest {
             TestHelper.SetClaims(table);
         }
 
-        [When(@"I have the ""([^""]*)"" table with audit ""([^""]*)""")]
-        [Given(@"I have the ""([^""]*)"" table with audit ""([^""]*)""")]
-        public void GivenIHaveTheTableWithAudit(string entityName, string @true, Table table) {
+        [Given(@"I have the ""([^""]*)"" table with audit ""([^""]*)"" save as ""([^""]*)""")]
+        public void GivenIHaveTheTableWithAudit(string entityName, string @true, string varName, Table table) {
             Assembly assem = typeof(RootEntity).Assembly;
             Type entity = assem.GetType(entityName);
             bool audit = Boolean.Parse(@true);
 
             typeof(TestHelper).GetMethod(nameof(TestHelper.SetTable))
-                .MakeGenericMethod(entity).Invoke(null, new object[] { table, audit });
+                .MakeGenericMethod(entity).Invoke(null, new object[] { table, audit, varName });
 
         }
 
@@ -76,6 +71,7 @@ namespace P6.StoryTest {
             Assert.AreEqual(statusCode, ((int)response.StatusCode));
         }
 
+        [When(@"Response ""([^""]*)"" contains the ""([^""]*)"" DTO save as ""([^""]*)""")]
         [Then(@"Response ""([^""]*)"" contains the ""([^""]*)"" DTO save as ""([^""]*)""")]
         public async Task ThenResponseContainsTheDTOSaveAs(string vNameResponse, string dtoName, string vNameDTO) {
             context.TryGetValue(vNameResponse, out HttpResponseMessage response);
@@ -107,6 +103,22 @@ namespace P6.StoryTest {
             await task.ConfigureAwait(false);
 
             Assert.AreEqual(statusCode, (task.Result));
+        }
+
+        [Given(@"DTO ""([^""]*)"" should contain a record save as ""([^""]*)"" that matches the following table")]
+        [When(@"DTO ""([^""]*)"" should contain a record save as ""([^""]*)"" that matches the following table")]
+        [Then(@"DTO ""([^""]*)"" should contain a record save as ""([^""]*)"" that matches the following table")]
+        public void ThenDTOShouldContainARecordThatMatchesTheFollowingTable(string vNameDTO, string varName, Table table) {
+            context.TryGetValue(vNameDTO, out var dto);
+            Type type = dto.GetType();
+            if (type.IsArray) {
+                Type innerType = type.GetElementType();
+                bool match = (bool)typeof(TestHelper).GetMethod(nameof(TestHelper.CompareList))
+                    .MakeGenericMethod(new Type[] { type, innerType }).Invoke(null, new object[] { table, dto, varName });
+                Assert.IsTrue(match);
+            } else {
+                Assert.IsTrue(false);
+            }
         }
     }
 }

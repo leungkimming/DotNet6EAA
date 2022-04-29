@@ -31,6 +31,7 @@ namespace API {
             builder.RegisterType<UserService>().AsSelf();
             builder.RegisterType<SystemParametersService>().AsSelf();
             builder.RegisterType<PaymentQuery>().As<IPaymentQuery>();
+            builder.RegisterType<DepartmentQuery>().As<IDepartmentQuery>();
 
             builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
                 .AsImplementedInterfaces();

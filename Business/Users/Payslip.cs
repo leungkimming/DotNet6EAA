@@ -24,7 +24,7 @@ namespace Business {
         public string? Letter { get; private set; }
         public virtual User User { get; private set; }
 
-        public void Pay(float coefficientsSalary) {
+        public void CalculatePay(float coefficientsSalary) {
             if (IsPaid)
                 throw new Exception("This Payslip has been paid.");
 

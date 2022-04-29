@@ -35,12 +35,11 @@ namespace Business {
             CoefficientsSalary = coefficientsSalary;
         }
 
-        public void AddDepartment(Department department) {
+        public void JoinDepartment(Department department) {
             Department = department;
-            //DepartmentId = departmentId;
         }
 
-        public Payslip AddPayslip(DateTime date
+        public Payslip IssuePayslip(DateTime date
             , float workingDays
             , decimal bonus
             , bool isPaid
@@ -52,13 +51,13 @@ namespace Business {
 
             var payslip = new Payslip(this.Id, date, workingDays, bonus);
             if (isPaid) {
-                payslip.Pay(this.CoefficientsSalary);
+                payslip.CalculatePay(this.CoefficientsSalary);
             }
 
             PaySlips.Add(payslip);
 
             if (isPaid && Address != null && payslip.TotalSalary > 0) {
-                var addEvent = new OnPayslipAddedDomainEvent()
+                var addEvent = new OnPayslipIssuedDomainEvent()
                 {
                     Payslip = payslip
                 };

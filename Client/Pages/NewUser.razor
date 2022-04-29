@@ -1,5 +1,6 @@
 ﻿@page "/adduser"
 @using Common
+@using System.Text.Json
 
 @inject HttpUtil _httpUtil
 
@@ -17,10 +18,10 @@
                     <FormItem Field="@nameof(_newuser.DepartmentName)">
                         <Template>
                             <label class="k-label k-form-label">Department:</label>
-                            <TelerikDropDownList Data="@Enums.Departments"
+                            <TelerikDropDownList Data="@deps"
                                                  @bind-Value="@_newuser.DepartmentName"
-                                                 TextField="Name"
-                                                 ValueField="Name"
+                                                 TextField="DepartmentName"
+                                                 ValueField="DepartmentName"
                                                  DefaultText="Select"
                                                  Id="DepartmentName"
                                                  Width="100%">
@@ -50,9 +51,18 @@
     private string _message;
     private bool _notspinning = true;
     private bool _completed = false;
+    private Dep[] deps;
 
     protected override async Task OnInitializedAsync() {
         _newuser = new AddUserRequest();
+        var response = await _httpUtil.GetAsync("users/GetDepartmentList");
+        var content = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode) {
+            deps = JsonSerializer.Deserialize<Dep[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        } else {
+            _message = "Error: " + await response.Content.ReadAsStringAsync();
+            ShowErrorNotifications(_message);
+        }
         _newuser.DepartmentName = "IT";
     }
     async Task Send() {

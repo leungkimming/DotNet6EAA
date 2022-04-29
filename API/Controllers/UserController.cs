@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service;
 using Data;
 using System.Net;
+using Business;
 
 namespace API {
     [ApiController]
@@ -11,12 +12,22 @@ namespace API {
         private readonly UserService _service;
         private readonly ILogger<UserController> _logger;
         private readonly IPaymentQuery _paymentQuery;
+        private readonly IDepartmentQuery _departmentQuery;
 
         public UserController(ILogger<UserController> logger
-            , UserService service, IPaymentQuery paymentquery) {
+            , UserService service, IPaymentQuery paymentquery,
+            IDepartmentQuery _departmentquery) {
             _service = service;
             _logger = logger;
             _paymentQuery = paymentquery;
+            _departmentQuery = _departmentquery;
+        }
+
+        [HttpGet(Name = "GetUserList")]
+        [AccessCodeAuthorize("AA01")]
+        public async Task<IActionResult> Get([FromQuery] GetUserRequestV1 request) {
+            var users = await _service.SearchAsyncV1(request);
+            return Ok(users);
         }
 
         [HttpPost]
@@ -58,6 +69,14 @@ namespace API {
             var paymentSummary = await _paymentQuery.GetPaymentOfFrequentWorkersAsync(days);
 
             return Ok(paymentSummary);
+        }
+        [HttpGet("GetDepartmentList")]
+        [AccessCodeAuthorize("AA01")]
+        [ProducesResponseType(typeof(IEnumerable<Dep>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<Dep>>> GetDepartments() {
+            IEnumerable<Dep> departmentList = await _departmentQuery.GetDepartmentsAsync();
+
+            return Ok(departmentList);
         }
     }
 }

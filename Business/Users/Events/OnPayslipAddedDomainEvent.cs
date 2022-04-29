@@ -1,6 +1,6 @@
 ﻿
 namespace Business {
-    public class OnPayslipAddedDomainEvent : BaseDomainEvent {
+    public class OnPayslipIssuedDomainEvent : BaseDomainEvent {
         public Payslip Payslip { get; set; }
     }
 }

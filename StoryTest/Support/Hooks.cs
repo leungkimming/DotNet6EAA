@@ -23,6 +23,8 @@ namespace P6.StoryTest {
 
             TechTalk.SpecFlow.Assist.Service.Instance.ValueRetrievers.Register(new NullValueRetriever("<null>"));
             TechTalk.SpecFlow.Assist.Service.Instance.ValueRetrievers.Register(new DateTimeValueRetrieverEx());
+            TechTalk.SpecFlow.Assist.Service.Instance.ValueRetrievers.Register(new ChildObjectValueRetriever(
+                testRunner.ScenarioContext));
         }
     }
     public class DateTimeValueRetrieverEx : IValueRetriever {
@@ -32,8 +34,7 @@ namespace P6.StoryTest {
             int adjust = 0;
             string unit = "";
 
-            //var list = Regex.Matches(value, @"([a-z_A-Z]+)([0-9 -+]+)(\D)($)");
-            Match list = Regex.Match(value, @"(?<key>[a-zA-Z_]{12})(?<adj>[0-9+-]{2})(?<unit>[A-Z]{1})");
+            Match list = Regex.Match(value, @"(?<key>[a-zA-Z_]{12})(?<adj>[0-9+-]{2,})(?<unit>[A-Z]{1})");
             if (list.Success) {
                 match = list.Groups["key"].Value;
                 adjust = int.Parse(list.Groups["adj"].Value);
@@ -83,6 +84,35 @@ namespace P6.StoryTest {
         public bool CanRetrieve(KeyValuePair<string, string> keyValuePair, Type targetType, Type propertyType) {
             return (propertyType == typeof(DateTime) ||
                     propertyType == typeof(Nullable<DateTime>));
+        }
+    }
+    public class ChildObjectValueRetriever : IValueRetriever {
+        private readonly ScenarioContext scenarioContext;
+        private string vname = "";
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChildObjectValueRetriever"/> class.
+        /// </summary>
+        /// <param name="scenarioContext">The ambient scenario context.</param>
+        public ChildObjectValueRetriever(ScenarioContext scenarioContext) {
+            this.scenarioContext = scenarioContext;
+        }
+
+        /// <inheritdoc/>
+        public bool CanRetrieve(KeyValuePair<string, string> keyValuePair, Type targetType, Type propertyType) {
+            Match list = Regex.Match(keyValuePair.Value, @"(@{)(?<vname>[0-9a-zA-Z_]{1,})}");
+            if (list.Success) {
+                vname = list.Groups["vname"].Value;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public object Retrieve(KeyValuePair<string, string> keyValuePair, Type targetType, Type propertyType) {
+            var obj = TestHelper.context.Get<object>(vname);
+            return TestHelper.context.Get<object>(vname);
         }
     }
 }
