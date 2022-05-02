@@ -38,20 +38,21 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 * paste the antiforgery token string onto the X-CSRF-TOKEN-HEADER field
 * fill in API parameters as appropriate and execute
 
-# Please visit wiki pages for more topics (https://github.com/leungkimming/DotNet6EAA/wiki)
-*  Use of Autofac DI & AutoMapper
+# Please visit this project's wiki pages for more topics
 *  Blazor Client WebAssembly with Telerik UI Added
-*  Add SpecFlow
-*  Blazor webassembly client
+*  Low Code SpecFlow Story Test
+*  DDD Rich Domain Design
 *  Domain Event Pattern
 *  Global Exception Handling
 *  Negotiate Authentication and Policy-based Authorization
 *  Add Data Migration Project
 *  Concurrency Control
 *  CQRS Pattern
+*  Hosting .NET6 Blazor in subsite
 *  Logging
 *  Validation
 *  Repository and Eager Loading
 *  Set Parameters in Pipelines
 *  Antiforgery Token Validation
+*  Telerik Report
 *  Integration Event Pattern using Service Bus

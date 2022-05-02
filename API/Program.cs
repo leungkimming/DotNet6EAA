@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using Microsoft.AspNetCore.Server.IIS;
+using Telerik.Reporting.Services;
+using Telerik.Reporting.Cache.File;
+
 // Uncomment to enable NServiceBus
 //using NServiceBus;
 //using Messages;
@@ -98,8 +101,13 @@ builder.Services.AddAntiforgery(options => {
 });
 
 // for Blazor wasm hosting
-builder.Services.AddRazorPages();
-
+builder.Services.AddRazorPages().AddNewtonsoftJson();
+builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration
+{
+    Storage = new FileStorage(),
+    ReportSourceResolver = new UriReportSourceResolver(
+                        System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Reports"))
+});
 // for IIS hosting
 builder.WebHost.UseIIS();
 

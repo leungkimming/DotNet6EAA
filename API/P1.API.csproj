@@ -39,6 +39,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="16.0.22.225" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +52,8 @@
   <ItemGroup>
 	<InternalsVisibleTo Include="P6.StoryTest" />
   </ItemGroup>
+	
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/azure-iot-edge-deployment-template-4.0.json" /></VisualStudio></ProjectExtensions>
 
   <!-- Uncomment ItemGroup to enable NServiceBus -->
    <!--<ItemGroup>

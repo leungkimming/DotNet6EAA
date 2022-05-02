@@ -1,0 +1,23 @@
+﻿@page "/Report"
+@using Telerik.ReportViewer.Blazor
+<PageTitle>Report</PageTitle>
+<style>
+    #rv1 {
+        position: relative;
+        width: 1000px;
+        height: 800px;
+    }
+</style>
+
+<ReportViewer ViewerId="rv1"
+              PageMode="@PageMode.SinglePage"
+              ServiceUrl="./reports"
+              ReportSource="@(new ReportSourceOptions()
+                              {
+                                  Report = "FrequentUsers.trdp"
+                              })"
+              Parameters="@(new ParametersOptions { Editors = new EditorsOptions { MultiSelect = EditorType.ComboBox, SingleSelect = EditorType.ComboBox } })"
+              ScaleMode="@ScaleMode.FitPageWidth" />
+@code {
+
+}
