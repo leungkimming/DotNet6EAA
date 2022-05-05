@@ -4,6 +4,7 @@ using Data;
 using Service;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using DocumentProcessing;
 
 namespace API {
     public class RegisterModule : Module {
@@ -50,6 +51,9 @@ namespace API {
             builder.RegisterType<AuthorizationResultTransformer>().As<IAuthorizationMiddlewareResultHandler>()
                 .SingleInstance();
             //builder.RegisterType<JWTUtil>().As<IJWTUtil>().SingleInstance();
+            builder.RegisterType<PdfProcessing>().As<IPdfProcessing>();
+            builder.RegisterType<WordProcessing>().As<IWordProcessing>();
+            builder.RegisterType<SpreadProcessing>().As<ISpreadProcessing>();
         }
     }
 

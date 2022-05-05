@@ -1,0 +1,26 @@
+﻿@page "/documentprocessing"
+@inject HttpUtil _httpUtil
+<h3>Document Processing</h3>
+
+<TelerikButton OnClick="@ExportPDF">Export PDF</TelerikButton>
+<TelerikButton OnClick="@MergePDF">Merge PDF</TelerikButton>
+<TelerikButton OnClick="@ExportDocx">Export Docx</TelerikButton>
+<TelerikButton OnClick="@ExportXlsx">Export Xlsx</TelerikButton>
+@code {
+    public async Task ExportPDF() {
+        var response = await _httpUtil.GetAsync("documentprocessing/exporttopdf");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+    public async Task MergePDF() {
+        var response = await _httpUtil.GetAsync("documentprocessing/mergepdf");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+    public async Task ExportDocx() {
+        var response = await _httpUtil.GetAsync("documentprocessing/exporttodocx");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+    public async Task ExportXlsx() {
+        var response = await _httpUtil.GetAsync("documentprocessing/exporttoxlsx");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+}
