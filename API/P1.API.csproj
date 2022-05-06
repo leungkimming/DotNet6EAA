@@ -53,6 +53,12 @@
 	<InternalsVisibleTo Include="P6.StoryTest" />
   </ItemGroup>
 	
+  <ItemGroup>
+    <None Update="Reports\FrequentUsers.trdp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+	
   <!-- Uncomment ItemGroup to enable NServiceBus -->
    <!--<ItemGroup>
 	  <PackageReference Include="NServiceBus" Version="7.7.0" />

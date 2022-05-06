@@ -16,8 +16,9 @@
                               {
                                   Report = "FrequentUsers.trdp"
                               })"
-              Parameters="@(new ParametersOptions { Editors = new EditorsOptions { MultiSelect = EditorType.ComboBox, SingleSelect = EditorType.ComboBox } })"
-              ScaleMode="@ScaleMode.FitPageWidth" />
+              Parameters="@(new ParametersOptions { Editors = new EditorsOptions { MultiSelect = EditorType.ListView, SingleSelect = EditorType.ComboBox } })"
+              ScaleMode="@ScaleMode.FitPageWidth"
+              ParametersAreaPosition="@ParametersAreaPosition.Right"/>
 @code {
 
 }

@@ -68,6 +68,10 @@ builder.Services.AddSwaggerGen(c => {
                 new string[] {}
         }
     });
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    c.IgnoreObsoleteActions();
+    c.IgnoreObsoleteProperties();
+    c.CustomSchemaIds(type => type.FullName);
 });
 
 // Authentication, authorization, Antiforgery Token

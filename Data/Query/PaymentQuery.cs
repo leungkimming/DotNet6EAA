@@ -29,7 +29,7 @@ namespace Data {
         private List<PaymentSummary> MapOrderItems(dynamic result) {
             List<PaymentSummary> Summary = new List<PaymentSummary>();
             string currentUser = null;
-            PaymentSummary user = null;
+            PaymentSummary user = new PaymentSummary();
 
             foreach (dynamic item in result) {
                 if (currentUser != item.UserName) {
