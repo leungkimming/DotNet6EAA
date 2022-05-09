@@ -30,13 +30,16 @@ public class DocumentProcessingController : ControllerBase {
     private readonly string pdfDocumentName = "Sample Document.pdf";
     private readonly string wordDocumentName = "Sample Document";
     private readonly string xlsxDocumentName = "Sample Document.xlsx";
+    private readonly string zipName="ZipArchive.zip";
     private readonly IPdfProcessing _pdfProcessing;
     private readonly IWordProcessing _wordProcessing;
     private readonly ISpreadProcessing _spreadProcessing;
-    public DocumentProcessingController(IPdfProcessing pdfProcessing, IWordProcessing wordProcessing, ISpreadProcessing spreadProcessing) {
+    private readonly IZipProcessing _zipProcessing;
+    public DocumentProcessingController(IPdfProcessing pdfProcessing, IWordProcessing wordProcessing, ISpreadProcessing spreadProcessing, IZipProcessing zipProcessing) {
         _pdfProcessing = pdfProcessing;
         _wordProcessing = wordProcessing;
         _spreadProcessing = spreadProcessing;
+        _zipProcessing = zipProcessing;
     }
     [HttpGet]
     [Route("exporttopdf")]
@@ -67,7 +70,7 @@ public class DocumentProcessingController : ControllerBase {
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToDocx() {
         var document = DocumentGenerator.CreateFlowDocument();
-        _wordProcessing.ExportToWord(sampleDataPath, wordDocumentName,DocumentFormat.docx, document);
+        _wordProcessing.ExportToWord(sampleDataPath, wordDocumentName, DocumentFormat.docx, document);
         return Ok("Export Success");
     }
     [HttpGet]
@@ -77,6 +80,14 @@ public class DocumentProcessingController : ControllerBase {
         Workbook workbook = DocumentGenerator.CreateWorkbook();
         _spreadProcessing.ExportToXlsx(sampleDataPath, xlsxDocumentName, workbook);
         return Ok("Export Success");
+    }
+    [HttpGet]
+    [Route("createzip")]
+    [AccessCodeAuthorize("AA01")]
+    public async Task<IActionResult> CreateZip() {
+        string[] files = Directory.GetFiles(RootDirectory);
+        _zipProcessing.CreateZip(zipName, files);
+        return Ok("Zip Success");
     }
 }
 

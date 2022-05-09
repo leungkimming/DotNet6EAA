@@ -6,6 +6,7 @@
 <TelerikButton OnClick="@MergePDF">Merge PDF</TelerikButton>
 <TelerikButton OnClick="@ExportDocx">Export Docx</TelerikButton>
 <TelerikButton OnClick="@ExportXlsx">Export Xlsx</TelerikButton>
+<TelerikButton OnClick="@CreateZip">Create Zip</TelerikButton>
 @code {
     public async Task ExportPDF() {
         var response = await _httpUtil.GetAsync("documentprocessing/exporttopdf");
@@ -21,6 +22,10 @@
     }
     public async Task ExportXlsx() {
         var response = await _httpUtil.GetAsync("documentprocessing/exporttoxlsx");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+     public async Task CreateZip() {
+        var response = await _httpUtil.GetAsync("documentprocessing/createzip");
         var content = await response.Content.ReadAsStringAsync();
     }
 }

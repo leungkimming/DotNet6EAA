@@ -54,6 +54,7 @@ namespace API {
             builder.RegisterType<PdfProcessing>().As<IPdfProcessing>();
             builder.RegisterType<WordProcessing>().As<IWordProcessing>();
             builder.RegisterType<SpreadProcessing>().As<ISpreadProcessing>();
+            builder.RegisterType<ZipProcessing>().As<IZipProcessing>();
         }
     }
 
