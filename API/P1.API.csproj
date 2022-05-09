@@ -47,6 +47,7 @@
     <PackageReference Include="Telerik.Documents.Fixed" Version="2022.1.217" />
     <PackageReference Include="Telerik.Documents.Flow" Version="2022.1.217" />
     <PackageReference Include="Telerik.Documents.Spreadsheet" Version="2022.1.217" />
+    <PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="16.0.22.225" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,7 +61,13 @@
   <ItemGroup>
 	<InternalsVisibleTo Include="P6.StoryTest" />
   </ItemGroup>
-
+	
+  <ItemGroup>
+    <None Update="Reports\FrequentUsers.trdp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+	
   <!-- Uncomment ItemGroup to enable NServiceBus -->
    <!--<ItemGroup>
 	  <PackageReference Include="NServiceBus" Version="7.7.0" />
