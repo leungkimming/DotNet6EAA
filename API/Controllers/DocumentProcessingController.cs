@@ -1,14 +1,14 @@
 ﻿using API;
 using DocumentProcessing;
+using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Net.Http.Headers;
 using Telerik.Documents.Common.Model;
 using Telerik.Documents.Core.Fonts;
 using Telerik.Documents.Media;
 using Telerik.Documents.Primitives;
-using Telerik.Windows.Documents.Extensibility;
-using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
-using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf.Export;
 using Telerik.Windows.Documents.Fixed.Model;
 using Telerik.Windows.Documents.Fixed.Model.ColorSpaces;
 using Telerik.Windows.Documents.Fixed.Model.Editing;
@@ -19,10 +19,11 @@ using Telerik.Windows.Documents.Flow.Model.Editing;
 using Telerik.Windows.Documents.Flow.Model.Styles;
 using Telerik.Windows.Documents.Spreadsheet.Model;
 using Telerik.Windows.Documents.Spreadsheet.Utilities;
+using Telerik.Zip;
 
 [ApiController]
 [Route("documentprocessing")]
-[IgnoreAntiforgeryToken]
+[Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
 public class DocumentProcessingController : ControllerBase {
 
     public static readonly string RootDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -35,6 +36,7 @@ public class DocumentProcessingController : ControllerBase {
     private readonly IWordProcessing _wordProcessing;
     private readonly ISpreadProcessing _spreadProcessing;
     private readonly IZipProcessing _zipProcessing;
+    private static readonly List<FileDetails> _uploadedFiles =new List<FileDetails>();
     public DocumentProcessingController(IPdfProcessing pdfProcessing, IWordProcessing wordProcessing, ISpreadProcessing spreadProcessing, IZipProcessing zipProcessing) {
         _pdfProcessing = pdfProcessing;
         _wordProcessing = wordProcessing;
@@ -89,6 +91,39 @@ public class DocumentProcessingController : ControllerBase {
         _zipProcessing.CreateZip(zipName, files);
         return Ok("Zip Success");
     }
+    [HttpPost]
+    [Route("uploadfiles")]
+    [AccessCodeAuthorize("AA01")]
+    public async Task<IActionResult> UploadFiles(IEnumerable<IFormFile> files) {
+        if (files != null) {
+            var file=files.FirstOrDefault();
+            if (file == null) {
+                return new NotFoundResult();
+            }
+            FileDetails fileDetails= new FileDetails();
+            fileDetails.Name = ContentDispositionHeaderValue.Parse(file.ContentDisposition)?.FileName?.ToString()?.Trim('"') ?? "";
+            fileDetails.Data = fileDetails.ReadToEnd(file.OpenReadStream());
+            _uploadedFiles.Add(fileDetails);
+        }
+        return new OkResult();
+    }
+    [HttpGet]
+    [Route("zipfiles")]
+    [AccessCodeAuthorize("AA01")]
+    public async Task<IActionResult> ZipFiles(string password) {
+        DeflateSettings compressionSettings = new DeflateSettings();
+        compressionSettings.CompressionLevel = CompressionLevel.Best;
+        compressionSettings.HeaderType = CompressedStreamHeader.ZLib;
+        DefaultEncryptionSettings encryptionSettings = new DefaultEncryptionSettings();
+        encryptionSettings.Password = password;
+        Dictionary<string, Stream> zipArchiveFiles=new Dictionary<string, Stream>();
+        foreach (var fileItem in _uploadedFiles) {
+            zipArchiveFiles[fileItem.Name] = new MemoryStream(fileItem.Data);
+        }
+        _zipProcessing.CreateZip(zipName, zipArchiveFiles, entryNameEncoding: null, compressionSettings, encryptionSettings);
+        return new OkResult();
+    }
+
 }
 
 
@@ -525,4 +560,50 @@ public class Products {
                    rnd.Next(1, 9),
                    dates[rnd.Next(9)]);
     }
+}
+public class FileDetails {
+    public string Name { get; set; }
+    public byte[] Data { get; set; }
+    public byte[] ReadToEnd(System.IO.Stream stream) {
+        long originalPosition = 0;
+
+        if (stream.CanSeek) {
+            originalPosition = stream.Position;
+            stream.Position = 0;
+        }
+
+        try {
+            byte[] readBuffer = new byte[4096];
+
+            int totalBytesRead = 0;
+            int bytesRead;
+
+            while ((bytesRead = stream.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0) {
+                totalBytesRead += bytesRead;
+
+                if (totalBytesRead == readBuffer.Length) {
+                    int nextByte = stream.ReadByte();
+                    if (nextByte != -1) {
+                        byte[] temp = new byte[readBuffer.Length * 2];
+                        Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+                        Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+                        readBuffer = temp;
+                        totalBytesRead++;
+                    }
+                }
+            }
+
+            byte[] buffer = readBuffer;
+            if (readBuffer.Length != totalBytesRead) {
+                buffer = new byte[totalBytesRead];
+                Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+            }
+            return buffer;
+        } finally {
+            if (stream.CanSeek) {
+                stream.Position = originalPosition;
+            }
+        }
+    }
+
 }

@@ -1,13 +1,41 @@
 ﻿@page "/documentprocessing"
 @inject HttpUtil _httpUtil
+
 <h3>Document Processing</h3>
 
-<TelerikButton OnClick="@ExportPDF">Export PDF</TelerikButton>
-<TelerikButton OnClick="@MergePDF">Merge PDF</TelerikButton>
-<TelerikButton OnClick="@ExportDocx">Export Docx</TelerikButton>
-<TelerikButton OnClick="@ExportXlsx">Export Xlsx</TelerikButton>
-<TelerikButton OnClick="@CreateZip">Create Zip</TelerikButton>
+<TelerikButton OnClick="@ExportPDF" Icon="file-pdf" Title="Export PDF"></TelerikButton>
+<TelerikButton OnClick="@MergePDF" Icon="file-ascx" Title="Merge PDF"></TelerikButton>
+<TelerikButton OnClick="@ExportDocx" Icon="file-word" Title="Export Docx"></TelerikButton>
+<TelerikButton OnClick="@ExportXlsx" Icon="file-excel" Title="Export Xlsx"></TelerikButton>
+<TelerikButton OnClick="@CreateZip" Icon="file-zip" Title="Create Zip"></TelerikButton>
+<div class="k-form k-form-horizontal div-container">
+    <label>Zip Files Demo</label>
+    <div class="k-form-field-wrap">
+        <TelerikUpload SaveUrl="@SaveUrl"
+                       AllowedExtensions="@AllowedExtensions"
+                       AutoUpload="false"
+                       MinFileSize="@MinFileSize"
+                       MaxFileSize="@MaxFileSize"
+                       Multiple="true"
+                       OnUpload="@UploadHandler"
+        >
+        </TelerikUpload>
+        <div class="k-form-hint">Accepted files: <strong>DOCX, PDF, JPG and PNG</strong></div>
+        <div calss="div-container">
+            <TelerikTextBox Width="200px" Value="@Password" Title="Password" ValueChanged="@PasswordChanged" PlaceHolder="Password for protect."></TelerikTextBox>
+            <TelerikButton OnClick="@ZipFiles" Icon="file-zip" Title="Zip all uploaded files."></TelerikButton>
+        </div>
+        
+    </div>
+</div>
+
+
 @code {
+
+    public string Password{ get; set; }
+    public async Task PasswordChanged(string value) {
+        Password = value;
+    }
     public async Task ExportPDF() {
         var response = await _httpUtil.GetAsync("documentprocessing/exporttopdf");
         var content = await response.Content.ReadAsStringAsync();
@@ -24,8 +52,20 @@
         var response = await _httpUtil.GetAsync("documentprocessing/exporttoxlsx");
         var content = await response.Content.ReadAsStringAsync();
     }
-     public async Task CreateZip() {
+    public async Task CreateZip() {
         var response = await _httpUtil.GetAsync("documentprocessing/createzip");
+        var content = await response.Content.ReadAsStringAsync();
+    }
+    public string SaveUrl => "documentprocessing/uploadfiles";
+    public List<string> AllowedExtensions { get; set; } = new List<string>() { ".docx", ".pdf", ".jpg", ".png" };
+    public int MinFileSize { get; set; } = 1024;
+    public int MaxFileSize { get; set; } = 4 * 1024 * 1024;
+    public async Task UploadHandler(UploadEventArgs e) {
+        e.RequestHeaders = new Dictionary<string, object>();
+        await _httpUtil.RefreshToken(e.RequestHeaders);
+    }
+    public async Task ZipFiles() {
+        var response = await _httpUtil.GetAsync($"documentprocessing/zipfiles?password={Password}");
         var content = await response.Content.ReadAsStringAsync();
     }
 }

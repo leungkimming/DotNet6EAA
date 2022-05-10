@@ -4,19 +4,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-//using Telerik.Windows.Zip.Extensions;
 using Telerik.Zip;
 
 namespace DocumentProcessing {
-    public class ZipProcessing: IZipProcessing {
-        public ZipProcessing() { 
+    public class ZipProcessing : IZipProcessing {
+        public ZipProcessing() {
         }
         public void CreateZip(string zipFileName, string[] zipArchiveFiles) {
             using (Stream stream = File.Open(zipFileName, FileMode.Create)) {
                 CreateZip(stream, zipFileName, zipArchiveFiles);
             }
         }
-        public void CreateZip(Stream stream, string zipFileName,string[] zipArchiveFiles) {
+        public void CreateZip(Stream stream, string zipFileName, string[] zipArchiveFiles) {
             using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, false, null)) {
                 foreach (string file in zipArchiveFiles) {
                     string sourceFileName = file;
@@ -43,26 +42,27 @@ namespace DocumentProcessing {
             };
             Process.Start(psi);
         }
-        public void ExtractZip(string zipFilePath,string zipFileName, string destinationFolder) {
-            //string zipFile = Path.Combine(zipFilePath, zipFileName);
-
-            //if (Directory.Exists(destinationFolder)) {
-            //    Directory.Delete(destinationFolder, recursive: true);
-            //}
-
-            //ZipFile.ExtractToDirectory(zipFile, destinationFolder);
-
-            //Console.WriteLine("Listing files in: " + destinationFolder);
-            //foreach (string fileName in Directory.EnumerateFiles(destinationFolder)) {
-            //    Console.WriteLine(Path.GetFileName(fileName));
-            //}
-
-            //ProcessStartInfo psi = new ProcessStartInfo()
-            //{
-            //    FileName = destinationFolder,
-            //    UseShellExecute = true
-            //};
-            //Process.Start(psi);
+        public void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles) {
+            CreateZip(zipFileName, zipArchiveFiles, entryNameEncoding: null, compressionSettings: null, encryptionSettings: null);
+        }
+        public void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles, Encoding? entryNameEncoding, CompressionSettings? compressionSettings, EncryptionSettings? encryptionSettings) {
+            using (Stream stream = File.Open(zipFileName, FileMode.Create)) {
+                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, false, entryNameEncoding, compressionSettings, encryptionSettings)) {
+                    foreach (var file in zipArchiveFiles) {
+                        ZipArchiveEntry entry;
+                        using (entry = archive.CreateEntry(file.Key)) {
+                            using (Stream entryStream = entry.Open()) {
+                                file.Value.CopyTo(entryStream);
+                            }
+                        }
+                    }
+                }
+                ProcessStartInfo psi = new ProcessStartInfo(){
+                    FileName = zipFileName,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
         }
     }
 }

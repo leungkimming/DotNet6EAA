@@ -65,6 +65,7 @@ namespace Client {
             Notspinning = true;
             if (response == null) {
                 Message = "Response data is null";
+                return;
             }
             var content = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode) {
@@ -85,6 +86,7 @@ namespace Client {
             Notspinning = true;
             if (response == null) {
                 Message = "Response data is null";
+                return;
             }
             var content = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode) {
