@@ -30,7 +30,7 @@ namespace DocumentProcessing {
 
                 string selectedFormat = documentFormat.ToString();
 
-                IFormatProvider<RadFlowDocument> formatProvider = null;
+                IFormatProvider<RadFlowDocument> formatProvider;
                 switch (selectedFormat) {
                     case "docx":
                         formatProvider = new DocxFormatProvider();
@@ -44,17 +44,15 @@ namespace DocumentProcessing {
                     case "html":
                         formatProvider = new HtmlFormatProvider();
                         break;
+                    default:
+                        formatProvider = new DocxFormatProvider();
+                        break;
                 }
                 string path = Path.Combine(filePath, $"{resultFile}.{selectedFormat}");
                 using (FileStream stream = File.OpenWrite(path)) {
                     formatProvider.Export(flowDocument, stream);
                 }
 
-                ProcessStartInfo psi = new ProcessStartInfo(){
-                    FileName = path,
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
             }
         }
     }

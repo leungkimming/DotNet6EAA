@@ -33,24 +33,21 @@ namespace DocumentProcessing {
             FixedExtensibilityManager.FontsProvider = fontsProvider;
             PdfFormatProvider formatProvider = new PdfFormatProvider();
             formatProvider.ExportSettings.ImageQuality = ImageQuality.High;
-            this.PrepareDirectory(filePath, resultFile);
-            using (FileStream stream = File.OpenWrite(resultFile)) {
-                RadFixedDocument document = generatedDocument as RadFixedDocument;
+            var resultPath=Path.Combine(filePath,resultFile);
+            using (FileStream stream = File.OpenWrite(resultPath)) {
+                RadFixedDocument? document = generatedDocument as RadFixedDocument;
                 formatProvider.Export(document, stream);
             }
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                FileName = resultFile,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
         }
         public void AddWaterMark(object generatedDocument, WaterMark waterMark) {
             if (generatedDocument == null) {
                 throw new ArgumentNullException(nameof(generatedDocument));
             }
-            RadFixedDocument document = generatedDocument as RadFixedDocument;
-            foreach(RadFixedPage page in document.Pages) {
+            RadFixedDocument? document = generatedDocument as RadFixedDocument;
+            if (document == null) {
+               return;
+            }
+            foreach (RadFixedPage page in document.Pages) {
                 AddWatermarkText(page, waterMark);
             }
            
@@ -68,13 +65,6 @@ namespace DocumentProcessing {
                 }
                
             }
-
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                FileName = resultFile,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
         }
         private void AddWatermarkText(RadFixedPage page,WaterMark waterMark) {
             FixedContentEditor editor = new FixedContentEditor(page);
@@ -90,15 +80,6 @@ namespace DocumentProcessing {
             editor.Position.Rotate(angle);
             editor.Position.Translate(0, page.Size.Width);
             editor.DrawBlock(block, new Size(page.Size.Width / Math.Abs(Math.Sin(angle)), double.MaxValue));
-        }
-        private void PrepareDirectory(string filePath, string resultFile) {
-            if (Directory.Exists(filePath)) {
-                if (File.Exists(resultFile)) {
-                    File.Delete(resultFile);
-                }
-            } else {
-                Directory.CreateDirectory(filePath);
-            }
         }
     }
 }

@@ -12,10 +12,10 @@ namespace DocumentProcessing {
         }
         public void CreateZip(string zipFileName, string[] zipArchiveFiles) {
             using (Stream stream = File.Open(zipFileName, FileMode.Create)) {
-                CreateZip(stream, zipFileName, zipArchiveFiles);
+                CreateZip(stream, zipArchiveFiles);
             }
         }
-        public void CreateZip(Stream stream, string zipFileName, string[] zipArchiveFiles) {
+        public void CreateZip(Stream stream, string[] zipArchiveFiles) {
             using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, false, null)) {
                 foreach (string file in zipArchiveFiles) {
                     string sourceFileName = file;
@@ -35,12 +35,6 @@ namespace DocumentProcessing {
                     }
                 }
             }
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                FileName = zipFileName,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
         }
         public void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles) {
             CreateZip(zipFileName, zipArchiveFiles, entryNameEncoding: null, compressionSettings: null, encryptionSettings: null);
@@ -57,11 +51,6 @@ namespace DocumentProcessing {
                         }
                     }
                 }
-                ProcessStartInfo psi = new ProcessStartInfo(){
-                    FileName = zipFileName,
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
             }
         }
     }

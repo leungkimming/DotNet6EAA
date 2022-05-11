@@ -10,7 +10,7 @@ namespace DocumentProcessing {
     internal class FontsProvider : FontsProviderBase {
         private readonly string fontFolder = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
 
-        public override byte[] GetFontData(FontProperties fontProperties) {
+        public override byte[]? GetFontData(FontProperties fontProperties) {
             string fontFamilyName = fontProperties.FontFamilyName;
             bool isItalic = fontProperties.FontStyle == FontStyles.Italic;
             bool isBold = fontProperties.FontWeight == FontWeights.Bold;

@@ -18,11 +18,6 @@ namespace DocumentProcessing {
                 using (FileStream stream = File.OpenWrite(path)) {
                     formatProvider.Export(telerikWook, stream);
                 }
-                ProcessStartInfo psi = new ProcessStartInfo(){
-                    FileName = path,
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
             }
 
         }

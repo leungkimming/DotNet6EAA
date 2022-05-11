@@ -3,6 +3,7 @@ using DocumentProcessing;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http.Headers;
 using Telerik.Documents.Common.Model;
@@ -27,7 +28,7 @@ using Telerik.Zip;
 public class DocumentProcessingController : ControllerBase {
 
     public static readonly string RootDirectory = AppDomain.CurrentDomain.BaseDirectory;
-    private static readonly string sampleDataPath = RootDirectory + "/SampleData/";
+    private static readonly string sampleDataPath = System.IO.Path.Combine(RootDirectory,"SampleData");
     private readonly string pdfDocumentName = "Sample Document.pdf";
     private readonly string wordDocumentName = "Sample Document";
     private readonly string xlsxDocumentName = "Sample Document.xlsx";
@@ -54,6 +55,13 @@ public class DocumentProcessingController : ControllerBase {
         waterMark.Angle = -45;
         _pdfProcessing.AddWaterMark(document, waterMark);
         _pdfProcessing.ExportToPDF(sampleDataPath, pdfDocumentName, document);
+        string path = System.IO.Path.Combine(sampleDataPath, pdfDocumentName);
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = path,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return Ok("Export Success");
     }
     [HttpGet]
@@ -64,7 +72,14 @@ public class DocumentProcessingController : ControllerBase {
         List<object> documentList=new List<object>();
         documentList.Add(document);
         documentList.Add(document);
-        _pdfProcessing.MergePDF(sampleDataPath + pdfDocumentName, documentList);
+        string path = System.IO.Path.Combine(sampleDataPath, $"Merge {pdfDocumentName}");
+        _pdfProcessing.MergePDF(path, documentList);
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = path,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return Ok("Merge and Export Success");
     }
     [HttpGet]
@@ -73,6 +88,13 @@ public class DocumentProcessingController : ControllerBase {
     public async Task<IActionResult> ExportToDocx() {
         var document = DocumentGenerator.CreateFlowDocument();
         _wordProcessing.ExportToWord(sampleDataPath, wordDocumentName, DocumentFormat.docx, document);
+        string path = System.IO.Path.Combine(sampleDataPath, $"{wordDocumentName}.docx");
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = path,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return Ok("Export Success");
     }
     [HttpGet]
@@ -81,6 +103,13 @@ public class DocumentProcessingController : ControllerBase {
     public async Task<IActionResult> ExportToXlsx() {
         Workbook workbook = DocumentGenerator.CreateWorkbook();
         _spreadProcessing.ExportToXlsx(sampleDataPath, xlsxDocumentName, workbook);
+        string path = System.IO.Path.Combine(sampleDataPath, xlsxDocumentName);
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = path,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return Ok("Export Success");
     }
     [HttpGet]
@@ -89,6 +118,12 @@ public class DocumentProcessingController : ControllerBase {
     public async Task<IActionResult> CreateZip() {
         string[] files = Directory.GetFiles(RootDirectory);
         _zipProcessing.CreateZip(zipName, files);
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = zipName,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return Ok("Zip Success");
     }
     [HttpPost]
@@ -121,6 +156,12 @@ public class DocumentProcessingController : ControllerBase {
             zipArchiveFiles[fileItem.Name] = new MemoryStream(fileItem.Data);
         }
         _zipProcessing.CreateZip(zipName, zipArchiveFiles, entryNameEncoding: null, compressionSettings, encryptionSettings);
+        ProcessStartInfo psi = new ProcessStartInfo()
+            {
+            FileName = zipName,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
         return new OkResult();
     }
 
