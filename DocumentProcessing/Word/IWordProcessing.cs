@@ -5,5 +5,6 @@ using System.Text;
 namespace DocumentProcessing {
     public interface IWordProcessing {
         void ExportToWord(string filePath, string resultFile, DocumentFormat documentFormat, object generatedDocument);
+        byte[]? GetWordByte(DocumentFormat documentFormat, object generatedDocument);
     }
 }

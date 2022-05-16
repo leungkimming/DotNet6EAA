@@ -27,12 +27,7 @@ using Telerik.Zip;
 [Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
 public class DocumentProcessingController : ControllerBase {
 
-    public static readonly string RootDirectory = AppDomain.CurrentDomain.BaseDirectory;
-    private static readonly string sampleDataPath = System.IO.Path.Combine(RootDirectory,"SampleData");
-    private readonly string pdfDocumentName = "Sample Document.pdf";
-    private readonly string wordDocumentName = "Sample Document";
-    private readonly string xlsxDocumentName = "Sample Document.xlsx";
-    private readonly string zipName="ZipArchive.zip";
+    public static readonly string currentUserTempPath = System.IO.Path.GetTempPath();
     private readonly IPdfProcessing _pdfProcessing;
     private readonly IWordProcessing _wordProcessing;
     private readonly ISpreadProcessing _spreadProcessing;
@@ -48,95 +43,71 @@ public class DocumentProcessingController : ControllerBase {
     [Route("exporttopdf")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToPDF() {
-        var document = DocumentGenerator.CreateDocument();
-        WaterMark waterMark = new WaterMark();
-        waterMark.Text = "Water Mark Demo";
-        waterMark.Transparency = 100;
-        waterMark.Angle = -45;
-        _pdfProcessing.AddWaterMark(document, waterMark);
-        _pdfProcessing.ExportToPDF(sampleDataPath, pdfDocumentName, document);
-        string path = System.IO.Path.Combine(sampleDataPath, pdfDocumentName);
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = path,
-            UseShellExecute = true
+        RadFixedDocument? document = DocumentGenerator.CreateDocument();
+        WaterMark waterMark = new WaterMark {
+            Text = "Water Mark Demo",
+            Transparency = 100,
+            Angle = -45
         };
-        Process.Start(psi);
-        return Ok("Export Success");
+        _pdfProcessing.AddWaterMark(document, waterMark);
+        var pdfFile = _pdfProcessing.GetPDFByte(document);
+        return File(pdfFile, "application/pdf");
     }
     [HttpGet]
     [Route("mergepdf")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> MergePDF() {
-        var document = DocumentGenerator.CreateDocument();
-        List<object> documentList=new List<object>();
-        documentList.Add(document);
-        documentList.Add(document);
-        string path = System.IO.Path.Combine(sampleDataPath, $"Merge {pdfDocumentName}");
-        _pdfProcessing.MergePDF(path, documentList);
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = path,
-            UseShellExecute = true
+        RadFixedDocument? document = DocumentGenerator.CreateDocument();
+        List<object> documentList = new List<object> {
+            document,
+            document
         };
-        Process.Start(psi);
-        return Ok("Merge and Export Success");
+        var pdfFile = _pdfProcessing.MergePDFToByte(documentList);
+        return File(pdfFile, "application/pdf");
     }
     [HttpGet]
     [Route("exporttodocx")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToDocx() {
-        var document = DocumentGenerator.CreateFlowDocument();
-        _wordProcessing.ExportToWord(sampleDataPath, wordDocumentName, DocumentFormat.docx, document);
-        string path = System.IO.Path.Combine(sampleDataPath, $"{wordDocumentName}.docx");
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = path,
-            UseShellExecute = true
-        };
-        Process.Start(psi);
-        return Ok("Export Success");
+        RadFlowDocument? document = DocumentGenerator.CreateFlowDocument();
+        var wordFile =_wordProcessing.GetWordByte(DocumentFormat.docx, document);
+        if (wordFile == null) {
+            return NotFound();
+        }
+        return File(wordFile, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     }
     [HttpGet]
     [Route("exporttoxlsx")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToXlsx() {
         Workbook workbook = DocumentGenerator.CreateWorkbook();
-        _spreadProcessing.ExportToXlsx(sampleDataPath, xlsxDocumentName, workbook);
-        string path = System.IO.Path.Combine(sampleDataPath, xlsxDocumentName);
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = path,
-            UseShellExecute = true
-        };
-        Process.Start(psi);
-        return Ok("Export Success");
+        var excelFile =_spreadProcessing.GetXlsxByte(workbook);
+        if (excelFile == null) {
+            return NotFound();
+        }
+        return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
     [HttpGet]
     [Route("createzip")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> CreateZip() {
-        string[] files = Directory.GetFiles(RootDirectory);
-        _zipProcessing.CreateZip(zipName, files);
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = zipName,
-            UseShellExecute = true
-        };
-        Process.Start(psi);
-        return Ok("Zip Success");
+        string[] files = Directory.GetFiles(currentUserTempPath).Take(20).ToArray();
+        using MemoryStream stream = new MemoryStream();
+        var zipFile =_zipProcessing.GetZipBytes(stream, files);
+        return File(zipFile, "application/x-zip-compressed");
     }
     [HttpPost]
     [Route("uploadfiles")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> UploadFiles(IEnumerable<IFormFile> files) {
         if (files != null) {
-            var file=files.FirstOrDefault();
+            IFormFile? file =files.FirstOrDefault();
             if (file == null) {
                 return new NotFoundResult();
             }
-            FileDetails fileDetails= new FileDetails();
-            fileDetails.Name = ContentDispositionHeaderValue.Parse(file.ContentDisposition)?.FileName?.ToString()?.Trim('"') ?? "";
+            FileDetails fileDetails = new FileDetails {
+                Name = ContentDispositionHeaderValue.Parse(file.ContentDisposition)?.FileName?.ToString()?.Trim('"') ?? ""
+            };
             fileDetails.Data = fileDetails.ReadToEnd(file.OpenReadStream());
             _uploadedFiles.Add(fileDetails);
         }
@@ -146,23 +117,19 @@ public class DocumentProcessingController : ControllerBase {
     [Route("zipfiles")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ZipFiles(string password) {
-        DeflateSettings compressionSettings = new DeflateSettings();
-        compressionSettings.CompressionLevel = CompressionLevel.Best;
-        compressionSettings.HeaderType = CompressedStreamHeader.ZLib;
-        DefaultEncryptionSettings encryptionSettings = new DefaultEncryptionSettings();
-        encryptionSettings.Password = password;
+        DeflateSettings compressionSettings = new DeflateSettings {
+            CompressionLevel = CompressionLevel.Best,
+            HeaderType = CompressedStreamHeader.ZLib
+        };
+        DefaultEncryptionSettings encryptionSettings = new DefaultEncryptionSettings {
+            Password = password
+        };
         Dictionary<string, Stream> zipArchiveFiles=new Dictionary<string, Stream>();
-        foreach (var fileItem in _uploadedFiles) {
+        foreach (FileDetails? fileItem in _uploadedFiles) {
             zipArchiveFiles[fileItem.Name] = new MemoryStream(fileItem.Data);
         }
-        _zipProcessing.CreateZip(zipName, zipArchiveFiles, entryNameEncoding: null, compressionSettings, encryptionSettings);
-        ProcessStartInfo psi = new ProcessStartInfo()
-            {
-            FileName = zipName,
-            UseShellExecute = true
-        };
-        Process.Start(psi);
-        return new OkResult();
+        var zipFile = _zipProcessing.GetZipBytes(zipArchiveFiles, entryNameEncoding: null, compressionSettings, encryptionSettings);
+        return File(zipFile, "application/x-zip-compressed");
     }
 
 }
@@ -255,8 +222,9 @@ public static class DocumentGenerator {
         editor.GraphicProperties.StrokeThickness = 1;
         editor.GraphicProperties.StrokeColor = new RgbColor(91, 155, 223);
 
-        PathGeometry funnel = new PathGeometry();
-        funnel.FillRule = FillRule.EvenOdd;
+        PathGeometry funnel = new PathGeometry {
+            FillRule = FillRule.EvenOdd
+        };
         figure = funnel.Figures.AddPathFigure();
         figure.IsClosed = true;
         figure.StartPoint = new Point(164, 245);
@@ -435,7 +403,7 @@ public static class DocumentGenerator {
         workbook.Sheets.Add(SheetType.Worksheet);
 
         Worksheet worksheet = workbook.ActiveWorksheet;
-        var products=new Products().GetData(20).ToList();
+        List<Product>? products =new Products().GetData(20).ToList();
         PrepareInvoiceDocument(worksheet, products.Count);
 
         int currentRow = IndexRowItemStart + 1;
@@ -505,76 +473,64 @@ public class Product {
     private double subTotal;
 
     public Product(int id, string name, double unitPrice, int quantity, DateTime date) {
-        this.ID = id;
-        this.Name = name;
-        this.UnitPrice = unitPrice;
-        this.Quantity = quantity;
-        this.Date = date;
-        this.SubTotal = this.quantity * this.unitPrice;
+        ID = id;
+        Name = name;
+        UnitPrice = unitPrice;
+        Quantity = quantity;
+        Date = date;
+        SubTotal = this.quantity * this.unitPrice;
     }
 
     public int ID {
-        get {
-            return this.id;
-        }
+        get => id;
         set {
-            if (this.id != value) {
-                this.id = value;
+            if (id != value) {
+                id = value;
             }
         }
     }
 
     public string Name {
-        get {
-            return this.name;
-        }
+        get => name;
         set {
-            if (this.name != value) {
-                this.name = value;
+            if (name != value) {
+                name = value;
             }
         }
     }
 
     public double UnitPrice {
-        get {
-            return this.unitPrice;
-        }
+        get => unitPrice;
         set {
-            if (this.unitPrice != value) {
-                this.unitPrice = value;
+            if (unitPrice != value) {
+                unitPrice = value;
             }
         }
     }
 
     public int Quantity {
-        get {
-            return this.quantity;
-        }
+        get => quantity;
         set {
-            if (this.quantity != value) {
-                this.quantity = value;
+            if (quantity != value) {
+                quantity = value;
             }
         }
     }
 
     public DateTime Date {
-        get {
-            return this.date;
-        }
+        get => date;
         set {
-            if (this.date != value) {
-                this.date = value;
+            if (date != value) {
+                date = value;
             }
         }
     }
 
     public double SubTotal {
-        get {
-            return this.subTotal;
-        }
+        get => subTotal;
         set {
-            if (this.subTotal != value) {
-                this.subTotal = value;
+            if (subTotal != value) {
+                subTotal = value;
             }
         }
     }

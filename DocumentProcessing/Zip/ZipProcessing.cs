@@ -36,6 +36,11 @@ namespace DocumentProcessing {
                 }
             }
         }
+        public byte[] GetZipBytes(MemoryStream stream, string[] zipArchiveFiles) {
+            CreateZip(stream, zipArchiveFiles);
+            var fileData = DataConverter.StreamToByte(stream);
+            return fileData;
+        }
         public void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles) {
             CreateZip(zipFileName, zipArchiveFiles, entryNameEncoding: null, compressionSettings: null, encryptionSettings: null);
         }
@@ -51,6 +56,22 @@ namespace DocumentProcessing {
                         }
                     }
                 }
+            }
+        }
+        public byte[] GetZipBytes(Dictionary<string, Stream> zipArchiveFiles, Encoding? entryNameEncoding, CompressionSettings? compressionSettings, EncryptionSettings? encryptionSettings) {           
+            using (MemoryStream stream = new MemoryStream()) {
+                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, false, entryNameEncoding, compressionSettings, encryptionSettings)) {
+                    foreach (var file in zipArchiveFiles) {
+                        ZipArchiveEntry entry;
+                        using (entry = archive.CreateEntry(file.Key)) {
+                            using (Stream entryStream = entry.Open()) {
+                                file.Value.CopyTo(entryStream);
+                            }
+                        }
+                    }
+                }               
+                var fileData = DataConverter.StreamToByte(stream);
+                return fileData;
             }
         }
     }

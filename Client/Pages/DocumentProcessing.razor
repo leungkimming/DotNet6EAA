@@ -1,5 +1,7 @@
 ﻿@page "/documentprocessing"
+@using System.Diagnostics
 @inject HttpUtil _httpUtil
+@inject IJSRuntime JsRuntime
 
 <h3>Document Processing</h3>
 
@@ -17,44 +19,58 @@
                        MinFileSize="@MinFileSize"
                        MaxFileSize="@MaxFileSize"
                        Multiple="true"
-                       OnUpload="@UploadHandler"
-        >
+                       OnUpload="@UploadHandler">
         </TelerikUpload>
         <div class="k-form-hint">Accepted files: <strong>DOCX, PDF, JPG and PNG</strong></div>
         <div calss="div-container">
             <TelerikTextBox Width="200px" Value="@Password" Title="Password" ValueChanged="@PasswordChanged" PlaceHolder="Password for protect."></TelerikTextBox>
             <TelerikButton OnClick="@ZipFiles" Icon="file-zip" Title="Zip all uploaded files."></TelerikButton>
         </div>
-        
+
     </div>
 </div>
-
+<div class="loader-container">
+    <TelerikLoader Class="loader-indicator" Type="@LoaderType.InfiniteSpinner" Size="@(ThemeConstants.Loader.Size.Large)" Visible="@IsLoad"></TelerikLoader>
+</div>
 
 @code {
-
-    public string Password{ get; set; }
+    public bool IsLoad { get; set; } = false;
+    public string Password { get; set; }
     public async Task PasswordChanged(string value) {
         Password = value;
     }
     public async Task ExportPDF() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync("documentprocessing/exporttopdf");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/pdf", "Sample Document.pdf");
     }
+
     public async Task MergePDF() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync("documentprocessing/mergepdf");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/pdf", "Merge Sample Document.pdf");
     }
     public async Task ExportDocx() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync("documentprocessing/exporttodocx");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Sample Document.docx");
     }
     public async Task ExportXlsx() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync("documentprocessing/exporttoxlsx");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Sample Document.xlsx");
+
     }
     public async Task CreateZip() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync("documentprocessing/createzip");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/x-zip-compressed", "Sample Document.zip");
+
     }
     public string SaveUrl => "documentprocessing/uploadfiles";
     public List<string> AllowedExtensions { get; set; } = new List<string>() { ".docx", ".pdf", ".jpg", ".png" };
@@ -65,7 +81,17 @@
         await _httpUtil.RefreshToken(e.RequestHeaders);
     }
     public async Task ZipFiles() {
+        IsLoad = true;
         var response = await _httpUtil.GetAsync($"documentprocessing/zipfiles?password={Password}");
-        var content = await response.Content.ReadAsStringAsync();
+        var fileData = await response.Content.ReadAsByteArrayAsync();
+        Save(fileData, "application/x-zip-compressed", "ZipDemo.zip");
+    }
+    public void Save(byte[] byteData, string mimeType, string fileName) {
+        if (byteData == null) {
+            return;
+        }
+        var fileBase64=Convert.ToBase64String(byteData);
+        JsRuntime.InvokeVoidAsync("saveFile", fileBase64, mimeType, fileName);
+        IsLoad = false;
     }
 }

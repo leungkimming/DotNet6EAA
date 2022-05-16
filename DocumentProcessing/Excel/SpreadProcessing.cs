@@ -21,5 +21,15 @@ namespace DocumentProcessing {
             }
 
         }
+        public byte[]? GetXlsxByte(object workbook) {
+            if (workbook is Workbook telerikWook) {
+                IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
+                using MemoryStream stream = new MemoryStream();
+                formatProvider.Export(telerikWook, stream);
+                var fileData = DataConverter.StreamToByte(stream);
+                return fileData;
+            }
+            return null;
+        }
     }
 }

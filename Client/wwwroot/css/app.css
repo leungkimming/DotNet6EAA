@@ -455,3 +455,14 @@ a {
 .k-notification-group {
     width: fit-content;
 }
+.loader-size-title {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.loader-container {
+    text-align: center;
+    width: 100%;
+    display: inline-table;
+    padding-top: 10px;
+}

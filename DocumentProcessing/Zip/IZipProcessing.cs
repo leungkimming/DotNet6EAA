@@ -10,5 +10,7 @@ namespace DocumentProcessing {
         void CreateZip(Stream stream, string[] zipArchiveFiles);
         void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles);
         void CreateZip(string zipFileName, Dictionary<string, Stream> zipArchiveFiles, Encoding? entryNameEncoding, CompressionSettings? compressionSettings, EncryptionSettings? encryptionSettings);
+        byte[] GetZipBytes(MemoryStream stream, string[] zipArchiveFiles);
+        byte[] GetZipBytes(Dictionary<string, Stream> zipArchiveFiles, Encoding? entryNameEncoding, CompressionSettings? compressionSettings, EncryptionSettings? encryptionSettings);
     }
 }

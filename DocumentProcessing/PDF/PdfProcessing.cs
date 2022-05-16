@@ -21,11 +21,11 @@ namespace DocumentProcessing {
         public byte Transparency { get; set; }
         public int Angle { get; set; }
     }
-    public class PdfProcessing: IPdfProcessing {
+    public class PdfProcessing : IPdfProcessing {
         public PdfProcessing() {
 
         }
-        public void ExportToPDF(string filePath,string resultFile, object generatedDocument) {
+        public void ExportToPDF(string filePath, string fileName, object generatedDocument) {
             if (generatedDocument == null) {
                 throw new ArgumentNullException(nameof(generatedDocument));
             }
@@ -33,11 +33,26 @@ namespace DocumentProcessing {
             FixedExtensibilityManager.FontsProvider = fontsProvider;
             PdfFormatProvider formatProvider = new PdfFormatProvider();
             formatProvider.ExportSettings.ImageQuality = ImageQuality.High;
-            var resultPath=Path.Combine(filePath,resultFile);
+            var resultPath=Path.Combine(filePath,fileName);
             using (FileStream stream = File.OpenWrite(resultPath)) {
                 RadFixedDocument? document = generatedDocument as RadFixedDocument;
                 formatProvider.Export(document, stream);
             }
+        }
+        public byte[] GetPDFByte(object generatedDocument) {
+            if (generatedDocument == null) {
+                throw new ArgumentNullException(nameof(generatedDocument));
+            }
+            FontsProviderBase fontsProvider = new FontsProvider();
+            FixedExtensibilityManager.FontsProvider = fontsProvider;
+            PdfFormatProvider formatProvider = new PdfFormatProvider();
+            formatProvider.ExportSettings.ImageQuality = ImageQuality.High;
+            using MemoryStream stream = new MemoryStream();
+            RadFixedDocument? document = generatedDocument as RadFixedDocument;
+            formatProvider.Export(document, stream);
+            var fileData = DataConverter.StreamToByte(stream);
+            return fileData;
+
         }
         public void AddWaterMark(object generatedDocument, WaterMark waterMark) {
             if (generatedDocument == null) {
@@ -45,28 +60,40 @@ namespace DocumentProcessing {
             }
             RadFixedDocument? document = generatedDocument as RadFixedDocument;
             if (document == null) {
-               return;
+                return;
             }
             foreach (RadFixedPage page in document.Pages) {
                 AddWatermarkText(page, waterMark);
             }
-           
+
         }
-        public void MergePDF(string resultFile,List<object> documentList) {
+        public void MergePDF(string resultFile, List<object> documentList) {
             if (File.Exists(resultFile)) {
                 File.Delete(resultFile);
             }
+
             using (PdfStreamWriter fileWriter = new PdfStreamWriter(File.OpenWrite(resultFile))) {
-                foreach(RadFixedDocument document in documentList) {
+                foreach (RadFixedDocument document in documentList) {
                     foreach (RadFixedPage page in document.Pages) {
                         fileWriter.WritePage(page);
                     }
 
                 }
-               
             }
         }
-        private void AddWatermarkText(RadFixedPage page,WaterMark waterMark) {
+        public byte[] MergePDFToByte(List<object> documentList) {
+            using MemoryStream stream = new MemoryStream();
+            RadFixedDocument mergeDocument = new RadFixedDocument();
+            PdfFormatProvider formatProvider = new PdfFormatProvider();
+            formatProvider.ExportSettings.ImageQuality = ImageQuality.High;
+            foreach (RadFixedDocument document in documentList) {
+                mergeDocument.Merge(document);
+            }
+            formatProvider.Export(mergeDocument, stream);
+            var fileData = DataConverter.StreamToByte(stream);
+            return fileData;
+        }
+        private void AddWatermarkText(RadFixedPage page, WaterMark waterMark) {
             FixedContentEditor editor = new FixedContentEditor(page);
 
             Block block = new Block();
