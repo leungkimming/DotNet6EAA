@@ -6,7 +6,7 @@ using System.Text;
 namespace DocumentProcessing {
     public static class DataConverter {
         public static byte[] StreamToByte(MemoryStream stream) {
-            return stream.GetBuffer();
+            return stream.ToArray();
         }
     }
 }
