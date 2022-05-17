@@ -1,5 +1,4 @@
 ﻿using Common;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -7,6 +6,7 @@ using Service;
 namespace API {
     [ApiController]
     [Route("systemparameters")]
+    [Authorize]
     public class SystemParametersController : ControllerBase {
         private readonly SystemParametersService _service;
         private readonly ILogger<UserController> _logger;

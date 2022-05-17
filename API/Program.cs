@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.HttpSys;
@@ -11,6 +10,8 @@ using Data;
 using Microsoft.AspNetCore.Server.IIS;
 using Telerik.Reporting.Services;
 using Telerik.Reporting.Cache.File;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 
 // Uncomment to enable NServiceBus
 //using NServiceBus;
@@ -75,29 +76,40 @@ builder.Services.AddSwaggerGen(c => {
 });
 
 // Authentication, authorization, Antiforgery Token
-builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
-builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme);
-if (!builder.Environment.IsDevelopment()) {
-    builder.WebHost.UseHttpSys(options => {
-        options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
-        options.Authentication.AllowAnonymous = false;
+if (builder.Configuration.GetSection("AzureAd").GetValue(typeof(bool), "IsEnable").ToString().ToLower() == "true") {
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+} else {
+
+    builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
+    builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
+    if (!builder.Environment.IsDevelopment()) {
+        builder.WebHost.UseHttpSys(options => {
+            options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;
+            options.Authentication.AllowAnonymous = false;
+        });
+    }
+
+    if (builder.Environment.IsEnvironment("SpecFlow")) {
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer();
+    } else {
+        builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+           .AddNegotiate();
+        builder.Services.AddMvc(options => {
+            options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
+        });
+    }
+    builder.Services.AddAuthorization(options => {
+        options.FallbackPolicy = options.DefaultPolicy;
     });
 }
 
-if (builder.Environment.IsEnvironment("SpecFlow")) {
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer();
-} else {
-    builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-       .AddNegotiate();
-    builder.Services.AddMvc(options => {
-        options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
-    });
-}
-builder.Services.AddAuthorization(options => {
-    options.FallbackPolicy = options.DefaultPolicy;
+
+builder.Services.AddMvc(options => {
+    options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
 });
+
 
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
 builder.Services.AddAntiforgery(options => {

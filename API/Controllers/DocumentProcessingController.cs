@@ -1,6 +1,5 @@
 ﻿using API;
 using DocumentProcessing;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -24,7 +23,7 @@ using Telerik.Zip;
 
 [ApiController]
 [Route("documentprocessing")]
-[Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
+[Authorize]
 public class DocumentProcessingController : ControllerBase {
 
     public static readonly string currentUserTempPath = System.IO.Path.GetTempPath();

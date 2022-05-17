@@ -4,12 +4,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Service;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API;
 
 [Route("Login")]
 [ApiController]
 [IgnoreAntiforgeryToken]
+[AllowAnonymous]
 public class LoginController : ControllerBase {
     private IConfiguration _conf { get; set; }
     private readonly IJWTUtil jwtUtil;
