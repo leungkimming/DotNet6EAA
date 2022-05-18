@@ -118,8 +118,7 @@ builder.Services.AddAntiforgery(options => {
 
 // for Blazor wasm hosting
 builder.Services.AddRazorPages().AddNewtonsoftJson();
-builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration
-{
+builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration {
     Storage = new FileStorage(),
     ReportSourceResolver = new UriReportSourceResolver(
                         System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Reports"))

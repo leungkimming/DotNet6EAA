@@ -26,7 +26,6 @@ using Telerik.Zip;
 [Authorize]
 public class DocumentProcessingController : ControllerBase {
 
-    public static readonly string currentUserTempPath = System.IO.Path.GetTempPath();
     private readonly IPdfProcessing _pdfProcessing;
     private readonly IWordProcessing _wordProcessing;
     private readonly ISpreadProcessing _spreadProcessing;
@@ -85,15 +84,6 @@ public class DocumentProcessingController : ControllerBase {
             return NotFound();
         }
         return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    }
-    [HttpGet]
-    [Route("createzip")]
-    [AccessCodeAuthorize("AA01")]
-    public async Task<IActionResult> CreateZip() {
-        string[] files = Directory.GetFiles(currentUserTempPath).Take(20).ToArray();
-        using MemoryStream stream = new MemoryStream();
-        var zipFile =_zipProcessing.GetZipBytes(stream, files);
-        return File(zipFile, "application/x-zip-compressed");
     }
     [HttpPost]
     [Route("uploadfiles")]

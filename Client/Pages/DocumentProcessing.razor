@@ -9,7 +9,6 @@
 <TelerikButton OnClick="@MergePDF" Icon="file-ascx" Title="Merge PDF"></TelerikButton>
 <TelerikButton OnClick="@ExportDocx" Icon="file-word" Title="Export Docx"></TelerikButton>
 <TelerikButton OnClick="@ExportXlsx" Icon="file-excel" Title="Export Xlsx"></TelerikButton>
-<TelerikButton OnClick="@CreateZip" Icon="file-zip" Title="Create Zip"></TelerikButton>
 <div class="k-form k-form-horizontal div-container">
     <label>Zip Files Demo</label>
     <div class="k-form-field-wrap">
@@ -63,13 +62,6 @@
         var response = await _httpUtil.GetAsync("documentprocessing/exporttoxlsx");
         var fileData = await response.Content.ReadAsByteArrayAsync();
         Save(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Sample Document.xlsx");
-
-    }
-    public async Task CreateZip() {
-        IsLoad = true;
-        var response = await _httpUtil.GetAsync("documentprocessing/createzip");
-        var fileData = await response.Content.ReadAsByteArrayAsync();
-        Save(fileData, "application/x-zip-compressed", "Sample Document.zip");
 
     }
     public string SaveUrl => "documentprocessing/uploadfiles";

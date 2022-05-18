@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 @* @Body and other code will be present here depending on your project *@
 
-
+@inject ConfigUtil _configUtil
 
 <TelerikRootComponent>
     <div class="header">
@@ -28,14 +28,19 @@
             </div>
             <div class="information div-container">
                 <label>
-                    <AuthorizeView>
+                    @if (_configUtil.IsEnableAAD) {
+                      <AuthorizeView>
                         <Authorized>
                             @context.User.Identity?.Name
                         </Authorized>
                         <NotAuthorized>
                             <a href="authentication/login">Log in</a>
                         </NotAuthorized>
-                    </AuthorizeView>
+                        </AuthorizeView>
+                    } else {
+                        @_RuntimeInfo?.User
+                    }
+
                 </label>
             </div>
             <div class="settings">
@@ -62,7 +67,6 @@
     private RuntimeInfo _RuntimeInfo;
     bool Expanded { get; set; }
     TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
-    
     protected override async Task OnInitializedAsync() {
         try {
             await SetDrawerState();
