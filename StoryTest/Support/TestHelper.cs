@@ -45,6 +45,7 @@ namespace P6.StoryTest {
 
         public async static Task PostAPI<T>(string vNameDTO, string apiRoute, string vNameResponse) where T : class {
             T request = context.Get<T>(vNameDTO);
+            await RefreshToken();
             var response = await client.PostAsJsonAsync(apiRoute, request);
             context.Set(response, vNameResponse);
         }
@@ -85,6 +86,7 @@ namespace P6.StoryTest {
             return match;
         }
         public async static Task<int> GetAPI<T>(string apiRoute, string vNameDTO) where T : class {
+            await RefreshToken();
             var response = await client.GetAsync(apiRoute);
             var content = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode) {
@@ -106,6 +108,15 @@ namespace P6.StoryTest {
                 }
             }
             return anymatch;
+        }
+
+        private async static Task RefreshToken()
+        {
+            var testResult = await client.GetAsync("Login");
+            var cookies = testResult.Headers.GetValues("Set-Cookie").ToList();
+            var token = cookies.Single(x => x.StartsWith("XSRF-TOKEN"))?.Substring($"{"XSRF-TOKEN"}=".Length).Split(";")[0];
+            client.DefaultRequestHeaders.Remove("X-CSRF-TOKEN-HEADER");
+            client.DefaultRequestHeaders.Add("X-CSRF-TOKEN-HEADER", token);
         }
     }
 }

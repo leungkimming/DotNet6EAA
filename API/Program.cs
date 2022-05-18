@@ -91,10 +91,10 @@ if (builder.Environment.IsEnvironment("SpecFlow")) {
 } else {
     builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
        .AddNegotiate();
-    builder.Services.AddMvc(options => {
-        options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
-    });
 }
+builder.Services.AddMvc(options => {
+    options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
+});
 builder.Services.AddAuthorization(options => {
     options.FallbackPolicy = options.DefaultPolicy;
 });
