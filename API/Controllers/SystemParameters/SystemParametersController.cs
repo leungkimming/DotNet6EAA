@@ -27,7 +27,6 @@ namespace API {
         [HttpPost]
         [Route("addsystemparameter")]
         [AccessCodeAuthorize("SP02")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSystemParameter([FromBody]AddSystemParameterRequest request) {
             AddDataResponse response;
             request.Refresh(HttpContext.User.Identity.Name,DateTime.Now);
@@ -37,7 +36,6 @@ namespace API {
         [HttpPost]
         [Route("editsystemparameter")]
         [AccessCodeAuthorize("SP03")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSystemParameter([FromBody] EditSystemParameterRequest request) {
             EditDataResponse response;
             request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
@@ -47,7 +45,6 @@ namespace API {
         [HttpGet]
         [Route("deletesystemparameter")]
         [AccessCodeAuthorize("SP04")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSystemParameter([FromQuery] DeleteSystemParameterRequest request) {
             EditDataResponse response;
             response = await _service.DeleteSystemParameterAsync(request);

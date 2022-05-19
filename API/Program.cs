@@ -96,26 +96,20 @@ if (builder.Configuration.GetSection("AzureAd").GetValue(typeof(bool), "IsEnable
     } else {
         builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
            .AddNegotiate();
-        builder.Services.AddMvc(options => {
-            options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
-        });
     }
     builder.Services.AddAuthorization(options => {
         options.FallbackPolicy = options.DefaultPolicy;
     });
 }
-
-
-builder.Services.AddMvc(options => {
-    options.Filters.Add<ValidateAntiForgeryTokenAttribute>();
-});
-
-
+if (!builder.Environment.IsEnvironment("SpecFlow")) { 
+    builder.Services.AddMvc(options => {
+        options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+    });
+}
 builder.Services.AddSingleton<IJWTUtil, JWTUtil>();
 builder.Services.AddAntiforgery(options => {
     options.HeaderName = "X-CSRF-TOKEN-HEADER";
 });
-
 // for Blazor wasm hosting
 builder.Services.AddRazorPages().AddNewtonsoftJson();
 builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration {
