@@ -28,28 +28,36 @@ public class LoginController : ControllerBase {
     public async Task<IActionResult> Get() {
         JwtSecurityToken jwtToken;
         string token;
+        AuthResult authResult;
 
-        if (HttpContext.User.Identity.Name == "" || HttpContext.User.Identity.Name == null) {
+        if (HttpContext.User.Identity!.Name == "" || HttpContext.User.Identity.Name == null) {
             throw new InvalidUserException();
         }
 
         if (jwtUtil.ValidateToken(HttpContext.Request, out jwtToken, out token)) {
-            return Ok(new AuthResult() {
+            if (HttpContext.User.Identity.Name == jwtToken.Claims
+                .Where(c => c.Type == ClaimTypes.Name)
+                .Select(c => c.Value).SingleOrDefault()) {
+                Array.ForEach(jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role)
+                    .ToArray(), c => ((ClaimsIdentity)HttpContext.User.Identity).AddClaim(c));
+            }
+            authResult = new AuthResult() {
                 Token = token,
                 Success = true,
                 RefreshToken = ""
-            });
+            };
+        } else {
+            List<Claim>? claims = _service.GetUserClaims(HttpContext.User.Identity.Name);
+
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)HttpContext.User.Identity;
+            Array.ForEach(claims.Where(c => c.Type == ClaimTypes.Role).ToArray(),
+                c => claimsIdentity.AddClaim(c));
+            authResult = jwtUtil.GenerateJwtToken(HttpContext.User.Identity.Name, claims);
         }
 
-        List<Claim>? claims = _service.GetUserClaims(HttpContext.User.Identity.Name);
-
-        ClaimsIdentity claimsIdentity = (ClaimsIdentity)HttpContext.User.Identity;
-        Array.ForEach(claims.Where(c => c.Type == ClaimTypes.Role).ToArray(),
-            c => claimsIdentity.AddClaim(c));
-
         AntiforgeryTokenSet? tokens = antiforgery.GetAndStoreTokens(HttpContext);
-        HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken, new CookieOptions() { HttpOnly = false });
+        HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!, new CookieOptions() { HttpOnly = false });
 
-        return Ok(jwtUtil.GenerateJwtToken(HttpContext.User.Identity.Name, claims));
+        return Ok(authResult);
     }
 }

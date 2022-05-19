@@ -8,6 +8,7 @@ using Business;
 namespace API {
     [ApiController]
     [Route("users")]
+    [AutoValidateAntiforgeryToken]
     public class UserController : ControllerBase {
         private readonly UserService _service;
         private readonly ILogger<UserController> _logger;
@@ -40,7 +41,6 @@ namespace API {
 
         [HttpPost(Name = "AddNewUser")]
         [AccessCodeAuthorize("AB01")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add([FromBody] AddUserRequest request) {
             AddUserResponse response;
             request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
@@ -50,7 +50,6 @@ namespace API {
 
         [HttpPost("Addpayslip")]
         [AccessCodeAuthorize("AC01")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPayslip([FromBody] AddPayslipRequest request) {
             AddPayslipResponse _response;
             request.Refresh(HttpContext.User.Identity.Name, DateTime.Now);
