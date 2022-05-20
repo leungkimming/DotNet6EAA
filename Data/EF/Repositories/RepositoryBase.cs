@@ -45,16 +45,14 @@ namespace Data {
         }
 
         public Task<T> UpdateWithPreValidationAsync(DTObase updateRequest, T entity) {
-            PreValidation(updateRequest,entity);
+            PreValidation(updateRequest, entity);
             return UpdateAsync(entity);
         }
-        public virtual void PreValidation(DTObase updateRequest,T entity) {
-            if(entity is IRowVersionContract updateEntity) {
-                if (!(entity == null && updateRequest.RowVersion == null) && !updateEntity.RowVersion.SequenceEqual(updateRequest.RowVersion)) {
-                    throw new Exception("Record has already been updated or deleted by another user.");
-                }
+        public virtual void PreValidation(DTObase updateRequest, T entity) {
+            if (entity is IRowVersionContract updateEntity && updateRequest.RowVersion != null && !updateEntity.RowVersion.SequenceEqual(updateRequest.RowVersion)) {
+                throw new Exception("Record has already been updated or deleted by another user.");
             }
-           
+
         }
     }
 }
