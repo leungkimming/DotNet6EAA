@@ -39,12 +39,17 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Telerik.Documents.Core" Version="2022.1.217" />
+    <PackageReference Include="Telerik.Documents.Fixed" Version="2022.1.217" />
+    <PackageReference Include="Telerik.Documents.Flow" Version="2022.1.217" />
+    <PackageReference Include="Telerik.Documents.Spreadsheet" Version="2022.1.217" />
     <PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="16.0.22.225" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj" />
     <ProjectReference Include="..\Data\P3.Data.csproj" />
+    <ProjectReference Include="..\DocumentProcessing\P8.DocumentProcessing.csproj" />
     <ProjectReference Include="..\Migrator\P7.Migrator.csproj" />
     <ProjectReference Include="..\Service\P2.Service.csproj" />
   </ItemGroup>

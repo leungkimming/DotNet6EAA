@@ -13,6 +13,7 @@
     <link href="Client.styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor/css/kendo-theme-default/all.css" />
     <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js" defer></script>
+    <script src="js/download-upload-files.js"></script>
 </head>
 
 <body>
@@ -25,15 +26,17 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
-        function getCookie(cname) {
-            var decodedCookie = decodeURIComponent(document.cookie);
-            var ca = decodedCookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var arr = ca[i].split('=');
-                if (arr[0] == cname)
-                    return arr[1]
+        function getCookie(name) {
+            if (!document.cookie) {
+                return null;
             }
-            return "";
+            const xsrfCookies = document.cookie.split(';')
+                .map(c => c.trim())
+                .filter(c => c.startsWith(name + '='));
+            if (xsrfCookies.length === 0) {
+                return null;
+            }
+            return decodeURIComponent(xsrfCookies[0].split('=')[1]);
         }
     </script>
     <script src="_content/telerik.reportviewer.blazor/interop.js" defer></script>
