@@ -147,11 +147,10 @@
         <DialogContent>
 
             <TelerikForm Model="@_newpayslip"
-                         Width="auto"
-                         >
+                         Width="auto">
                 <FormButtons></FormButtons>
                 <FormItems>
-                    <FormItem LabelText="Date" Field="@nameof(_newpayslip.Date)" ></FormItem>
+                    <FormItem LabelText="Date" Field="@nameof(_newpayslip.Date)"></FormItem>
                     <FormItem LabelText="Working Days" Field="@nameof(_newpayslip.WorkingDays)"></FormItem>
                     <FormItem LabelText="Bonus" Field="@nameof(_newpayslip.Bonus)"></FormItem>
                     <FormItem Field="@nameof(_newpayslip.IsPaid)">
@@ -190,6 +189,15 @@
     List<SelectedData> SelectedDatas { get; set; } = new List<SelectedData>();
     private GetUserRequest _getUser = new GetUserRequest();
 
+    private bool visible { get; set; } = false;
+    private AddPayslipRequest _newpayslip { get; set; } = new AddPayslipRequest();
+    TelerikGrid<UserInfoDTO> Grid { get; set; }
+    public GetUserRequest getUserRequest { get; set; } = new GetUserRequest();
+    private List<UserInfoDTO> sourceData { get; set; }
+    private GetAllDatasResponse<UserInfoDTO> getAllDatasResponse { get; set; }
+    private GeneralSearchUtil<GetUserRequest, UserInfoDTO> generalSearchUtil { get; set; }
+    private int pageSize = 10;
+
     async Task Payslip(UserInfoDTO user) {
         generalSearchUtil.Message = "";
         generalSearchUtil.Notspinning = false;
@@ -215,8 +223,10 @@
         generalSearchUtil.Notspinning = false;
         var result = await _httpUtil.PostAsJsonAsync("users/AddPayslip", _newpayslip);
         generalSearchUtil.Notspinning = true;
+        int userID=0;
         if (result.IsSuccessStatusCode) {
             AddPayslipResponse response = await result.Content.ReadFromJsonAsync<AddPayslipResponse>();
+            userID = response?.UserId ?? 0;
             generalSearchUtil.Message = "Created for User ID:" + response.UserId
                 + "\r\nSalary:" + response.TotalSalary;
             if (response.LetterSentDate != null) {
@@ -230,16 +240,24 @@
             generalSearchUtil.ShowErrorNotifications(generalSearchUtil.Message);
         }
         visible = false;
+        await EnsureOnlyCurrentRowExpanded(userID);
     }
-
-    private bool visible { get; set; } = false;
-    private AddPayslipRequest _newpayslip { get; set; } = new AddPayslipRequest();
-    TelerikGrid<UserInfoDTO> Grid { get; set; }
-    public GetUserRequest getUserRequest { get; set; } = new GetUserRequest();
-    private List<UserInfoDTO> sourceData { get; set; }
-    private GetAllDatasResponse<UserInfoDTO> getAllDatasResponse { get; set; }
-    private GeneralSearchUtil<GetUserRequest, UserInfoDTO> generalSearchUtil { get; set; }
-    private int pageSize = 10;
+    async Task EnsureOnlyCurrentRowExpanded(int userID) {
+        
+        // use the current grid state to keep filters, sorts, paging and so on
+        var currItem =  getAllDatasResponse.Datas.FirstOrDefault(i=>i.Id == userID) as UserInfoDTO;
+        if (currItem == null) {
+            return;
+        }
+        var state = Grid.GetState();
+        bool isCurrItemExpanded = state.ExpandedItems.Any(x => x.Id == userID);
+        if (isCurrItemExpanded) {
+            state.ExpandedItems.Remove(currItem);
+        } else {
+            state.ExpandedItems.Add(currItem);
+        }
+        await Grid.SetState(state);
+    }
 
     private void OnClear() {
         getUserRequest = new GetUserRequest();
@@ -247,14 +265,14 @@
 
     protected override async Task OnInitializedAsync() {
         generalSearchUtil = new GeneralSearchUtil<GetUserRequest, UserInfoDTO>(_httpUtil);
-        SelectedDatas=new List<SelectedData>();
-        SelectedDatas.Add(new SelectedData { Code=true,Description="True"});
-        SelectedDatas.Add(new SelectedData { Code=false,Description="False"});
+        SelectedDatas = new List<SelectedData>();
+        SelectedDatas.Add(new SelectedData { Code = true, Description = "True" });
+        SelectedDatas.Add(new SelectedData { Code = false, Description = "False" });
+       
 
     }
     async Task Search() {
         await generalSearchUtil.RefreshAsync(Grid);
-
     }
 
     private async Task ReadItems(GridReadEventArgs args) {
@@ -264,5 +282,6 @@
         getAllDatasResponse = await generalSearchUtil.SearchAsync(getUserRequest, "users/getuserlist");
         args.Data = getAllDatasResponse.Datas;
         args.Total = getAllDatasResponse.TotalCount;
+
     }
 }
