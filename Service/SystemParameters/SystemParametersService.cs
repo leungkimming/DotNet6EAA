@@ -49,6 +49,7 @@ namespace Service {
             var repository = UnitOfWork.AsyncRepository<SystemParameters>();
             var systemParameter = await repository.GetAsync(x => x.Id == model.Id);
             systemParameter.Update(model.Code, model.Description, model.ParameterTypeCode, model.DataTypeCode, model.Value_Text, model.Value_Datetime, model.Value_Decimal, model.Value_Integer);
+            systemParameter.Refresh(model.UpdateBy ?? "system", model.UpdateTime ?? DateTime.Now);
             await repository.UpdateWithPreValidationAsync(model, systemParameter);
             await UnitOfWork.SaveChangesAsync();
             editDataResponse.IsSuccess = true;

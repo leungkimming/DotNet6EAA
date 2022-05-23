@@ -1,0 +1,11 @@
+﻿@page "/Error/{ErrorType}"
+@if (ErrorType == ErrorConstant.AuthorizationError.Code) {
+    <h1 style="align-content:center">You don't has permission for this action, please contact administractor.</h1>
+}
+else{
+    <h1 style="align-content:center">System error, please contact administractor.</h1>
+}
+
+@code {
+    [Parameter] public string ErrorType { get; set; }
+}
