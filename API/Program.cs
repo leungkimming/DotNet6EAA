@@ -77,7 +77,6 @@ builder.Services.AddSwaggerGen(c => {
 // Authentication, authorization, Antiforgery Token
 builder.Services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
 builder.Services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme);
 if (!builder.Environment.IsDevelopment()) {
     builder.WebHost.UseHttpSys(options => {
         options.Authentication.Schemes = AuthenticationSchemes.Negotiate | AuthenticationSchemes.NTLM;

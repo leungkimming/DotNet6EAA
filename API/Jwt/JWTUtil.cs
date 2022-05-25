@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Common;
 using Business;
+using Microsoft.Extensions.Primitives;
 
 namespace API {
     public class JWTUtil : IJWTUtil {
@@ -35,7 +36,7 @@ namespace API {
         }
 
         public bool ValidateToken(HttpRequest request, out JwtSecurityToken jwtToken, out string token) {
-            var tokens = request.Headers["X-UserRoles"];
+            StringValues tokens = request.Cookies["X-UserRoles"];
             if (tokens.Any()) {
                 token = tokens[0];
                 try {
@@ -67,7 +68,9 @@ namespace API {
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = tokenHandler.WriteToken(token);
-
+            if (jwtToken.Length > (4096 - 13)) { //limit - cookie key
+                throw new CookieSizeExceedLimitException();
+            }
             var refreshToken = new RefreshToken()
             {
                 JwtId = token.Id,

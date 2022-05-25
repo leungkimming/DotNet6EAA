@@ -27,6 +27,11 @@ namespace Common {
         {
         }
     }
+    public class CookieSizeExceedLimitException : Exception {
+        public CookieSizeExceedLimitException()
+            : base("Cookie Size Exceed Limit") {
+        }
+    }
     public class SystemParameterAlreadyExistException : Exception {
         public SystemParameterAlreadyExistException() { }
 
