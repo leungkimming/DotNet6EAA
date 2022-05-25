@@ -168,6 +168,7 @@
         HttpContent jsonContent = JsonContent.Create(systemParameter);
         await _generalSearchUtil.CreateAsync(jsonContent, "systemparameters/addsystemparameter");
         _generalSearchUtil.ShowSuccessNotifications("Create Success.");
+         await Search();
     }
     private async Task UpdateHandler() {
         var systemParameter = _mapper.Map<EditSystemParameterRequest>(_selectedItem);
@@ -176,9 +177,11 @@
         _visible = false;
         if (string.IsNullOrEmpty(_generalSearchUtil.Message)) {
             _generalSearchUtil.ShowSuccessNotifications("Update Success.");
+
         } else {
             _generalSearchUtil.ShowErrorNotifications(_generalSearchUtil.Message);
         }
+        await Search();
     }
     void SelectedData(SystemParametersSearchResponse item) {
         _visible = true;
@@ -191,6 +194,7 @@
         } else {
             _generalSearchUtil.ShowErrorNotifications(_generalSearchUtil.Message);
         }
+         await Search();
     }
 
 

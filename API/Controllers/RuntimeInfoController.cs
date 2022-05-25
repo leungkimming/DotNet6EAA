@@ -3,15 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 
 namespace API;
 
 [ApiController]
 [Route("RuntimeInfo")]
-[Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
 [IgnoreAntiforgeryToken]
 public class RuntimeInfoController : ControllerBase {
     private IConfiguration _conf { get; set; }

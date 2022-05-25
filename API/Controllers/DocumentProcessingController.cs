@@ -1,8 +1,6 @@
 ﻿using API;
 using DocumentProcessing;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http.Headers;
 using Telerik.Documents.Common.Model;
@@ -23,7 +21,6 @@ using Telerik.Zip;
 
 [ApiController]
 [Route("documentprocessing")]
-[Authorize]
 public class DocumentProcessingController : ControllerBase {
 
     private readonly IPdfProcessing _pdfProcessing;

@@ -112,7 +112,7 @@ namespace P6.StoryTest {
 
         private async static Task RefreshToken()
         {
-            var testResult = await client.GetAsync("Login");
+            var testResult = await client.GetAsync("Login?force=false");
             var cookies = testResult.Headers.GetValues("Set-Cookie").ToList();
             var token = cookies.Single(x => x.StartsWith("XSRF-TOKEN"))?.Substring($"{"XSRF-TOKEN"}=".Length).Split(";")[0];
             client.DefaultRequestHeaders.Remove("X-CSRF-TOKEN-HEADER");
