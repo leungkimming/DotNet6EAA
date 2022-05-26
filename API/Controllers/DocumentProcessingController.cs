@@ -78,7 +78,7 @@ public class DocumentProcessingController : ControllerBase {
     [Route("exporttoxlsx")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToXlsx() {
-        Workbook workbook = DocumentGenerator.CreateWorkbook();
+        using Workbook workbook = DocumentGenerator.CreateWorkbook();
         var excelFile =_spreadProcessing.GetXlsxByte(workbook);
         if (excelFile == null) {
             return NotFound();
@@ -390,7 +390,6 @@ public static class DocumentGenerator {
     public static Workbook CreateWorkbook() {
         Workbook workbook = new Workbook();
         workbook.Sheets.Add(SheetType.Worksheet);
-
         Worksheet worksheet = workbook.ActiveWorksheet;
         List<Product>? products =new Products().GetData(20).ToList();
         PrepareInvoiceDocument(worksheet, products.Count);
