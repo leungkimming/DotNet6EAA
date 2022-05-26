@@ -27,7 +27,7 @@ public class DocumentProcessingController : ControllerBase {
     private readonly IWordProcessing _wordProcessing;
     private readonly ISpreadProcessing _spreadProcessing;
     private readonly IZipProcessing _zipProcessing;
-    private static readonly List<FileDetails> _uploadedFiles =new List<FileDetails>();
+    private static readonly List<FileDetails> _uploadedFiles = new List<FileDetails>();
     public DocumentProcessingController(IPdfProcessing pdfProcessing, IWordProcessing wordProcessing, ISpreadProcessing spreadProcessing, IZipProcessing zipProcessing) {
         _pdfProcessing = pdfProcessing;
         _wordProcessing = wordProcessing;
@@ -65,7 +65,7 @@ public class DocumentProcessingController : ControllerBase {
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToDocx() {
         RadFlowDocument? document = DocumentGenerator.CreateFlowDocument();
-        var wordFile =_wordProcessing.GetWordByte(DocumentFormat.docx, document);
+        var wordFile = _wordProcessing.GetWordByte(DocumentFormat.docx, document);
         if (wordFile == null) {
             return NotFound();
         }
@@ -75,8 +75,8 @@ public class DocumentProcessingController : ControllerBase {
     [Route("exporttoxlsx")]
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> ExportToXlsx() {
-        Workbook workbook = DocumentGenerator.CreateWorkbook();
-        var excelFile =_spreadProcessing.GetXlsxByte(workbook);
+        using Workbook workbook = DocumentGenerator.CreateWorkbook();
+        var excelFile = _spreadProcessing.GetXlsxByte(workbook);
         if (excelFile == null) {
             return NotFound();
         }
@@ -87,7 +87,7 @@ public class DocumentProcessingController : ControllerBase {
     [AccessCodeAuthorize("AA01")]
     public async Task<IActionResult> UploadFiles(IEnumerable<IFormFile> files) {
         if (files != null) {
-            IFormFile? file =files.FirstOrDefault();
+            IFormFile? file = files.FirstOrDefault();
             if (file == null) {
                 return new NotFoundResult();
             }
@@ -110,7 +110,7 @@ public class DocumentProcessingController : ControllerBase {
         DefaultEncryptionSettings encryptionSettings = new DefaultEncryptionSettings {
             Password = password
         };
-        Dictionary<string, Stream> zipArchiveFiles=new Dictionary<string, Stream>();
+        Dictionary<string, Stream> zipArchiveFiles = new Dictionary<string, Stream>();
         foreach (FileDetails? fileItem in _uploadedFiles) {
             zipArchiveFiles[fileItem.Name] = new MemoryStream(fileItem.Data);
         }
@@ -385,24 +385,24 @@ public static class DocumentGenerator {
         editor.MoveToParagraphStart(header.Blocks.AddParagraph());
     }
     public static Workbook CreateWorkbook() {
-        Workbook workbook = new Workbook();
-        workbook.Sheets.Add(SheetType.Worksheet);
+        using (Workbook workbook = new Workbook()) {
+            workbook.Sheets.Add(SheetType.Worksheet);
+            Worksheet worksheet = workbook.ActiveWorksheet;
+            List<Product>? products = new Products().GetData(20).ToList();
+            PrepareInvoiceDocument(worksheet, products.Count);
 
-        Worksheet worksheet = workbook.ActiveWorksheet;
-        List<Product>? products =new Products().GetData(20).ToList();
-        PrepareInvoiceDocument(worksheet, products.Count);
+            int currentRow = IndexRowItemStart + 1;
+            foreach (Product product in products) {
+                worksheet.Cells[currentRow, 0].SetValue(product.Name);
+                worksheet.Cells[currentRow, IndexColumnQuantity].SetValue(product.Quantity);
+                worksheet.Cells[currentRow, IndexColumnUnitPrice].SetValue(product.UnitPrice);
+                worksheet.Cells[currentRow, IndexColumnSubTotal].SetValue(product.SubTotal);
 
-        int currentRow = IndexRowItemStart + 1;
-        foreach (Product product in products) {
-            worksheet.Cells[currentRow, 0].SetValue(product.Name);
-            worksheet.Cells[currentRow, IndexColumnQuantity].SetValue(product.Quantity);
-            worksheet.Cells[currentRow, IndexColumnUnitPrice].SetValue(product.UnitPrice);
-            worksheet.Cells[currentRow, IndexColumnSubTotal].SetValue(product.SubTotal);
+                currentRow++;
+            }
 
-            currentRow++;
+            return workbook;
         }
-
-        return workbook;
     }
     private static void PrepareInvoiceDocument(Worksheet worksheet, int itemsCount) {
         int lastItemIndexRow = IndexRowItemStart + itemsCount;
