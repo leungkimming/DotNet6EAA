@@ -84,6 +84,7 @@
         }
         var fileBase64=Convert.ToBase64String(byteData);
         JsRuntime.InvokeVoidAsync("saveFile", fileBase64, mimeType, fileName);
+        JsRuntime.InvokeVoidAsync("savetoMAUI", fileBase64, mimeType, fileName);
         IsLoad = false;
     }
 }

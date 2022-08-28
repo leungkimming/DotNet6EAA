@@ -7,6 +7,7 @@ using Telerik.Documents.Common.Model;
 using Telerik.Documents.Core.Fonts;
 using Telerik.Documents.Media;
 using Telerik.Documents.Primitives;
+using Telerik.Windows.Documents.Extensibility;
 using Telerik.Windows.Documents.Fixed.Model;
 using Telerik.Windows.Documents.Fixed.Model.ColorSpaces;
 using Telerik.Windows.Documents.Fixed.Model.Editing;
@@ -135,6 +136,8 @@ public static class DocumentGenerator {
 
 
     public static RadFixedDocument CreateDocument() {
+        FontsProviderBase fontsProvider = new FontsProvider();
+        FixedExtensibilityManager.FontsProvider = fontsProvider;
         RadFixedDocument document = new RadFixedDocument();
         RadFixedPage page = document.Pages.AddPage();
         page.Size = new Size(600, 800);
@@ -158,9 +161,9 @@ public static class DocumentGenerator {
         block.GraphicProperties.FillColor = RgbColors.Black;
         block.HorizontalAlignment = HorizontalAlignment.Left;
         block.TextProperties.FontSize = 14;
-        block.TextProperties.TrySetFont(new FontFamily("Calibri"), FontStyles.Italic, FontWeights.Bold);
+        block.TextProperties.TrySetFont(new FontFamily("Helvetica"), FontStyles.Italic, FontWeights.Bold);
         block.InsertText("Document Processing");
-        block.TextProperties.TrySetFont(new FontFamily("Calibri"));
+        block.TextProperties.TrySetFont(new FontFamily("Helvetica"));
         block.InsertText(" is a document processing library that enables your application to import and export files to and from PDF format. The document model is entirely independent from UI and allows you to generate sleek documents with differently formatted text, images, shapes and more.");
 
         editor.DrawBlock(block, new Size(maxWidth, double.PositiveInfinity));
@@ -238,7 +241,7 @@ public static class DocumentGenerator {
     }
     private static void CenterText(FixedContentEditor editor, string text) {
         Block block = new Block();
-        block.TextProperties.TrySetFont(new FontFamily("Calibri"));
+        block.TextProperties.TrySetFont(new FontFamily("Times-Roman"));
         block.HorizontalAlignment = HorizontalAlignment.Center;
         block.VerticalAlignment = Telerik.Windows.Documents.Fixed.Model.Editing.Flow.VerticalAlignment.Center;
         block.GraphicProperties.FillColor = RgbColors.White;
@@ -254,7 +257,7 @@ public static class DocumentGenerator {
 
         Block block = new Block();
         block.TextProperties.FontSize = 11;
-        block.TextProperties.TrySetFont(new FontFamily("Arial"));
+        block.TextProperties.TrySetFont(new FontFamily("Times-Roman"));
         block.InsertText("A wizard's job is to vex ");
         using (block.GraphicProperties.Save()) {
             block.GraphicProperties.FillColor = new RgbColor(255, 146, 208, 80);
@@ -269,7 +272,7 @@ public static class DocumentGenerator {
 
         block = new Block();
         block.TextProperties.FontSize = 11;
-        block.TextProperties.TrySetFont(new FontFamily("Trebuchet MS"));
+        block.TextProperties.TrySetFont(new FontFamily("Times-Roman"));
         block.InsertText("A wizard's job is to vex chumps ");
         using (block.TextProperties.Save()) {
             block.TextProperties.UnderlinePattern = Telerik.Windows.Documents.Fixed.Model.Editing.Flow.UnderlinePattern.Single;
@@ -284,7 +287,7 @@ public static class DocumentGenerator {
         editor.Position.Translate(defaultLeftIndent, currentTopOffset);
         block = new Block();
         block.TextProperties.FontSize = 11;
-        block.TextProperties.TrySetFont(new FontFamily("Algerian"));
+        block.TextProperties.TrySetFont(new FontFamily("Helvetica"));
         block.InsertText("A ");
         using (block.TextProperties.Save()) {
             block.TextProperties.UnderlinePattern = Telerik.Windows.Documents.Fixed.Model.Editing.Flow.UnderlinePattern.Single;
@@ -298,17 +301,17 @@ public static class DocumentGenerator {
         currentTopOffset += defaultLineHeight;
         editor.Position.Translate(defaultLeftIndent, currentTopOffset);
 
-        editor.TextProperties.TrySetFont(new FontFamily("Lucida Calligraphy"));
+        editor.TextProperties.TrySetFont(new FontFamily("Helvetica"));
         editor.DrawText("A wizard's job is to vex chumps quickly in fog.", new Size(maxWidth, double.PositiveInfinity));
 
         currentTopOffset += defaultLineHeight + 2;
         editor.Position.Translate(defaultLeftIndent, currentTopOffset);
         block = new Block();
         block.TextProperties.FontSize = 11;
-        block.TextProperties.TrySetFont(new FontFamily("Consolas"));
+        block.TextProperties.TrySetFont(new FontFamily("Courier"));
         block.InsertText("A wizard's job is to vex chumps ");
         using (block.TextProperties.Save()) {
-            block.TextProperties.TrySetFont(new FontFamily("Consolas"), FontStyles.Normal, FontWeights.Bold);
+            block.TextProperties.TrySetFont(new FontFamily("Courier"), FontStyles.Normal, FontWeights.Bold);
             block.InsertText("quickly");
         }
 
@@ -317,7 +320,7 @@ public static class DocumentGenerator {
 
         currentTopOffset += defaultLineHeight;
         editor.Position.Translate(defaultLeftIndent, currentTopOffset);
-        editor.TextProperties.TrySetFont(new FontFamily("Arial"));
+        editor.TextProperties.TrySetFont(new FontFamily("Courier"));
 
         editor.DrawText("Document testing", new Size(maxWidth, double.PositiveInfinity));
 
@@ -331,6 +334,8 @@ public static class DocumentGenerator {
 
     }
     public static RadFlowDocument CreateFlowDocument() {
+        FontsProviderBase fontsProvider = new FontsProvider();
+        FixedExtensibilityManager.FontsProvider = fontsProvider;
         RadFlowDocument document = new RadFlowDocument();
         RadFlowDocumentEditor editor = new RadFlowDocumentEditor(document);
         editor.ParagraphFormatting.TextAlignment.LocalValue = Alignment.Justified;
@@ -385,6 +390,8 @@ public static class DocumentGenerator {
         editor.MoveToParagraphStart(header.Blocks.AddParagraph());
     }
     public static Workbook CreateWorkbook() {
+        FontsProviderBase fontsProvider = new FontsProvider();
+        FixedExtensibilityManager.FontsProvider = fontsProvider;
         using (Workbook workbook = new Workbook()) {
             workbook.Sheets.Add(SheetType.Worksheet);
             Worksheet worksheet = workbook.ActiveWorksheet;

@@ -7,7 +7,7 @@ using Telerik.Windows.Documents.Core.Fonts;
 using Telerik.Windows.Documents.Extensibility;
 
 namespace DocumentProcessing {
-    internal class FontsProvider : FontsProviderBase {
+    public class FontsProvider : FontsProviderBase {
         private readonly string fontFolder = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
 
         public override byte[]? GetFontData(FontProperties fontProperties) {
@@ -15,10 +15,10 @@ namespace DocumentProcessing {
             bool isItalic = fontProperties.FontStyle == FontStyles.Italic;
             bool isBold = fontProperties.FontWeight == FontWeights.Bold;
 
-            if (fontFamilyName == "Algerian") {
-                return this.GetFontDataFromFontFolder("ALGER.TTF");
-            } else if (fontFamilyName == "Arial") {
+            if (fontFamilyName == "Arial") {
                 return this.GetFontDataFromFontFolder("arial.ttf");
+            } else if (fontFamilyName == "Algerian") {
+                return this.GetFontDataFromFontFolder("ALGER.TTF");
             } else if (fontFamilyName == "Calibri" && isItalic && isBold) {
                 return this.GetFontDataFromFontFolder("calibriz.ttf");
             } else if (fontFamilyName == "Calibri") {

@@ -98,7 +98,7 @@ namespace DocumentProcessing {
 
             Block block = new Block();
             block.TextProperties.FontSize = 80;
-            block.TextProperties.TrySetFont(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold);
+            block.TextProperties.TrySetFont(new FontFamily("Times-Roman"), FontStyles.Normal, FontWeights.Bold);
             block.HorizontalAlignment = Telerik.Windows.Documents.Fixed.Model.Editing.Flow.HorizontalAlignment.Center;
             block.GraphicProperties.FillColor = new RgbColor(waterMark.Transparency, 255, 0, 0);
             block.InsertText(waterMark.Text);
