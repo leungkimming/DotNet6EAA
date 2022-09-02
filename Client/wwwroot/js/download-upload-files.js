@@ -14,7 +14,7 @@
             });
     }
     window.savetoMAUI = function (bytesBase64, mimeType, fileName) {
-        invokeCSharpAction("Download:" + fileName + ",mimeType:" + mimeType + ",base64:" + bytesBase64);
+        invokeMAUIAction("Download:" + fileName + ",mimeType:" + mimeType + ",base64:" + bytesBase64);
     }
 
     // provides file content for files selected in JS to C# without saving on the server

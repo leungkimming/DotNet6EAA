@@ -54,11 +54,14 @@
     private RuntimeInfo _RuntimeInfo;
     bool Expanded { get; set; }
     TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
+    static string? MAUI_Environment;
+
     protected override async Task OnInitializedAsync() {
         await SetDrawerState();
         _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
         if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
         if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
+        MAUI_Environment = _RuntimeInfo.Configuration;
     }
     #region Menu Drawer
     async Task SetDrawerState() {
@@ -81,7 +84,14 @@
         await LocalStorage.SetItemAsync("drawerState", value);
     }
     async Task GoToRuntimeInfo() {
-         NavigationManager.NavigateTo("runtimeinfo");
+        NavigationManager.NavigateTo("runtimeinfo");
+    }
+    [JSInvokable]
+    public static string? getEnvironment(int mode) {
+        if (mode != 1) { 
+            return ""; 
+        }
+        return MAUI_Environment;
     }
     #endregion
 }
