@@ -3,13 +3,12 @@
 @inject HttpUtil _httpUtil
 @using System.Runtime.InteropServices
 @inject IJSRuntime JS
-@implements IAsyncDisposable
 
 <PageTitle>Index</PageTitle>
 <h1>Welcome</h1>
 <input BackgroundColor="Transparent" Placeholder="Enter your Message"  
     @bind="parm" Margin="4,0" x:Name="Url" PlaceholderColor="Gray" />
-<button class="btn btn-primary" @onclick="CallMAUITask">Call Maui</button>
+<button class="btn btn-primary" @onclick="CallMAUITask">FingerPrint</button>
 <p>Return from MAUI: @result</p>
 
 @code {
@@ -17,24 +16,7 @@
     private string? result;
     private string parm = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if (firstRender) {
-            module = await JS.InvokeAsync<IJSObjectReference>("import",
-                "./scripts.js");
-        }
-    }
-
     private async Task CallMAUITask() {
-        result = await CallMAUI("getToken", 10, parm);
-    }
-
-    public async ValueTask<string?> CallMAUI(string method, int timeout, string message) =>
-        module is not null ?
-            await module.InvokeAsync<string>("callMAUIJS", method, timeout, message) : null;
-
-    async ValueTask IAsyncDisposable.DisposeAsync() {
-        if (module is not null) {
-            await module.DisposeAsync();
-        }
+        result = await JS.InvokeAsync<string>("callMAUIJS","getFingerPrint", 60, parm);
     }
 }
