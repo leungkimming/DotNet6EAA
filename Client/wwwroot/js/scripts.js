@@ -2,7 +2,7 @@
 var _promiseId = "";
 var callTimeout = null;
 
-export function callMAUIJS(method, timeout, message) {
+function callMAUIJS(method, timeout, message) {
     if (timeout > 0) {
         callTimeout = setTimeout(timesup, timeout * 1000);
     }
@@ -53,7 +53,7 @@ function createPromise(method, args) {
         try {
             // call native function
             const parms = { method: method, promiseId: promiseId, args: args };
-            invokeMAUIAction("callMAUI:" + JSON.stringify(parms) );
+            invokeMAUIAction("callMAUI:" + JSON.stringify(parms));
             //var tempdebug = generateUUID();
         }
         catch (exception) {
