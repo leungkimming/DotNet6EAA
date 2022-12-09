@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Service {
     public class SystemParametersService : BaseService {
@@ -21,10 +22,13 @@ namespace Service {
 
             var repository = UnitOfWork.SystemParametersRepository();
             GetAllDatasResponse<SystemParametersSearchResponse> getAllDatasResponse=new GetAllDatasResponse<SystemParametersSearchResponse>();
-            var systemParameters = await repository
-                .ListAsyncByPagging(_ => request.Code==null||_.Code.Contains(request.Code),request.RecordsPerPage,request.PageNo);
+            List<Expression<Func<SystemParameters, bool>>?> whereExpressions = new List<Expression<Func<SystemParameters, bool>>?>{
+                repository.GetStringLikeExpression("Code", request.Code),
+            };
+            var systemParameters = await repository.ListAsyncByExpandingSortingPaging(whereExpressions, null, null, request.Sort, request.PageNo, request.RecordsPerPage);
+
             getAllDatasResponse.TotalCount = await repository
-               .ListCountAsync(_ => request.Code == null || _.Code.Contains(request.Code));
+               .ListCountAsync(whereExpressions);
 
             getAllDatasResponse.Datas = systemParameters.Select(_parameters => _mapper.Map<SystemParametersSearchResponse>(_parameters)).ToList();
             return getAllDatasResponse;
@@ -50,7 +54,7 @@ namespace Service {
             var systemParameter = await repository.GetAsync(x => x.Id == model.Id);
             systemParameter.Update(model.Code, model.Description, model.ParameterTypeCode, model.DataTypeCode, model.Value_Text, model.Value_Datetime, model.Value_Decimal, model.Value_Integer);
             systemParameter.Refresh(model.UpdateBy ?? "system", model.UpdateTime ?? DateTime.Now);
-            await repository.UpdateWithPreValidationAsync(model, systemParameter);
+            await repository.ConcurrencyUpdateAsync(model.RowVersion, systemParameter);
             await UnitOfWork.SaveChangesAsync();
             editDataResponse.IsSuccess = true;
             editDataResponse.Message = "Successfully";

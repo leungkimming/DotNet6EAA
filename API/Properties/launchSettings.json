@@ -29,7 +29,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:44355;http://localhost:28225",
+      "applicationUrl": "https://localhost:44355;http://localhost:28225;https://192.168.0.30:44355",
       "dotnetRunMessages": true
     }
   }

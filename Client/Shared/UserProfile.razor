@@ -1,0 +1,35 @@
+﻿@inject HttpUtil _httpUtil
+@inject ILocalStorageService LocalStorage
+@inject IUserRoleAuthorization _userRoleAuthorization
+
+<div class="information div-container">
+                        @if (_RuntimeInfo?.Environment != "Production") {
+                            <label>@_RuntimeInfo?.Environment</label>
+                        }
+                    </div>
+                    <div class="information div-container">
+                        <label>@_RuntimeInfo?.Build</label>
+                    </div>
+                    <div class="information div-container">
+                        <label>@_RuntimeInfo?.User</label>
+                    </div>
+@code {
+    [Parameter] public EventCallback OnToggle { get; set; }
+    private RuntimeInfo _RuntimeInfo;
+    static string? MAUI_Environment;
+
+    protected override async Task OnInitializedAsync() {
+        _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
+        MAUI_Environment = _RuntimeInfo.Configuration;
+        await LocalStorage.SetItemAsync("RuntimeInfo", _RuntimeInfo);
+        await _userRoleAuthorization.SetAccessCodesAsync();
+        await OnToggle.InvokeAsync();
+    }
+    [JSInvokable]
+    public static string? getEnvironment(int mode) {
+        if (mode != 1) { 
+            return ""; 
+        }
+        return MAUI_Environment;
+    }
+}

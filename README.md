@@ -55,4 +55,5 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 *  Set Parameters in Pipelines
 *  Antiforgery Token Validation
 *  Telerik Report
+*  Telerik Document & Zip
 *  Integration Event Pattern using Service Bus

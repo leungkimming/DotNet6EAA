@@ -20,6 +20,7 @@ const string AllowCors = "AllowCors";
 const string CORS_ORIGINS = "CorsOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
+AppSettings appSettings = new AppSettings(builder.Configuration);
 // Windows Event logging
 builder.Logging.ClearProviders();
 builder.Logging.AddEventLog(eventLogSettings => {
@@ -35,7 +36,7 @@ builder.Services.AddCors(option => option.AddPolicy(
 // Autofac
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(cbuilder
-    => cbuilder.RegisterModule(new API.RegisterModule(builder.Configuration.GetConnectionString("DDDConnectionString"))));
+    => cbuilder.RegisterModule(new API.RegisterModule(appSettings)));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Service.UserProfile).Assembly);
@@ -47,7 +48,7 @@ builder.Services.AddControllersWithViews(); // default PropertyNameCaseInsensiti
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = appSettings.Swagger.Version });
     c.OperationFilter<CustomHeaderSwaggerAttribute>();
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
         Name = "Authorization",
@@ -105,8 +106,7 @@ builder.Services.AddAntiforgery(options => {
 
 // for Blazor wasm hosting
 builder.Services.AddRazorPages().AddNewtonsoftJson();
-builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration
-{
+builder.Services.AddSingleton<IReportServiceConfiguration>(sp => new ReportServiceConfiguration {
     Storage = new FileStorage(),
     ReportSourceResolver = new UriReportSourceResolver(
                         System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Reports"))

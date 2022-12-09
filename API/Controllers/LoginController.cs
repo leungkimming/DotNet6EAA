@@ -33,7 +33,8 @@ public class LoginController : ControllerBase {
             sRefreshToken = "",
             TokenExpiry = null,
             Success = true,
-            Message = ""
+            Message = "",
+            CSRF_TOKEN = ""
         };
 
         if (HttpContext.User.Identity!.Name == "" || HttpContext.User.Identity.Name == null) {
@@ -64,7 +65,7 @@ public class LoginController : ControllerBase {
 
         AntiforgeryTokenSet? tokens = antiforgery.GetAndStoreTokens(HttpContext);
         HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!, new CookieOptions() { HttpOnly = false });
-
+        refreshTokenDTO.CSRF_TOKEN = tokens.RequestToken!;
         return Ok(refreshTokenDTO);
     }
 }

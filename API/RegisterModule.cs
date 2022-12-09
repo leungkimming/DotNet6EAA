@@ -5,16 +5,20 @@ using Service;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using DocumentProcessing;
+using Common;
 
 namespace API {
     public class RegisterModule : Module {
-        public string _dbconstr { get; }
+        public AppSettings appSettings { get; }
 
-        public RegisterModule(string dbconstr) {
-            this._dbconstr = dbconstr;
+        public RegisterModule(AppSettings appSettings) {
+            this.appSettings = appSettings;
         }
         protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+            builder.Register<AppSettings>((ctx) => {
+                return this.appSettings;
+            }).As<IAppSettings>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SystemParametersRepository>().As<ISystemParametersRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DepartmentRepository>().As<IDepartmentRepository>().InstancePerLifetimeScope();
@@ -23,12 +27,13 @@ namespace API {
             builder.Register(c => {
                 var options = new DbContextOptionsBuilder<EFContext>();
                 options.UseLoggerFactory(c.Resolve<ILoggerFactory>()).EnableSensitiveDataLogging();
-                options.UseSqlServer(_dbconstr, b => b.MigrationsAssembly("P7.Migrator"));
+                options.UseSqlServer(appSettings.ConnectionString, b => b.MigrationsAssembly("P7.Migrator"));
                 return options.Options;
             }).InstancePerLifetimeScope();
             builder.RegisterType<EFContext>()
                   .AsSelf()
                   .InstancePerLifetimeScope();
+            builder.RegisterType<GridCommon2Service>().AsSelf();
             builder.RegisterType<UserService>().AsSelf();
             builder.RegisterType<SystemParametersService>().AsSelf();
             builder.RegisterType<PaymentQuery>().As<IPaymentQuery>();

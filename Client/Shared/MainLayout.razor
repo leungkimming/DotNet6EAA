@@ -5,6 +5,7 @@
 @inject ITelerikStringLocalizer L
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
+@inject MenuComponent MenuComponent
 
 @* @Body and other code will be present here depending on your project *@
 
@@ -18,17 +19,7 @@
              <div class="title">
                 <h1>.NET 6 Framework</h1>
             </div>
-            <div class="information div-container" >
-                 @if (@_RuntimeInfo?.Environment != "Production") {
-                        <label>@_RuntimeInfo?.Environment</label>
-                      }
-            </div>
-            <div class="information div-container">
-                <label>(@_RuntimeInfo?.Build)</label>
-            </div>
-            <div class="information div-container" >
-                <label>@_RuntimeInfo?.User</label>
-            </div>
+            <UserProfile OnToggle="ToggleMenuDrawer"></UserProfile>
             <div class="settings">
                 <TelerikButton Icon="gear" OnClick="@GoToRuntimeInfo" />
             </div>
@@ -37,7 +28,7 @@
     <TelerikDrawer @ref="MenuDrawer"
                    Expanded="@Expanded"
                    ExpandedChanged="((bool newValue) => ExpandedChangedHandler(newValue))"
-                   Width="280px" Data="DrawerMenu.MenuItems" Mode="DrawerMode.Push" Position="DrawerPosition.Left" >
+                   Width="280px" Data="MenuComponent.GetMenuItems()" Mode="DrawerMode.Push" Position="DrawerPosition.Left" >
         <Template>
             <DrawTemplate Data="context"></DrawTemplate>
         </Template>
@@ -51,47 +42,34 @@
 
 
 @code {
-    private RuntimeInfo _RuntimeInfo;
     bool Expanded { get; set; }
     TelerikDrawer<DrawerItem> MenuDrawer { get; set; }
-    static string? MAUI_Environment;
-
     protected override async Task OnInitializedAsync() {
         await SetDrawerState();
-        _RuntimeInfo = await _httpUtil.GetFromJsonAsync<RuntimeInfo>("RuntimeInfo");
-        if (_RuntimeInfo.SQLConnection == null) { _RuntimeInfo.SQLConnection = "N/A"; }
-        if (_RuntimeInfo.User == null) { _RuntimeInfo.User = "N/A"; }
-        MAUI_Environment = _RuntimeInfo.Configuration;
     }
     #region Menu Drawer
     async Task SetDrawerState() {
-        var hasKey = await LocalStorage.ContainKeyAsync("drawerState");
-        if (hasKey) {
-            Expanded = await LocalStorage.GetItemAsync<bool>("drawerState");
-        } else {
-            Expanded = true;
-        }
+        await LocalStorage.SetItemAsync("drawerState", false);
+        Expanded = false;
     }
     async Task ToggleMenuDrawer() {
-        if (Expanded) {
+        var expanded = await LocalStorage.GetItemAsync<bool>("drawerState");
+        if (expanded) {
             await MenuDrawer.CollapseAsync();
         } else {
             await MenuDrawer.ExpandAsync();
         }
+        await LocalStorage.SetItemAsync("drawerState", !expanded);
     }
     async Task ExpandedChangedHandler(bool value) {
+        if (MenuDrawer.Data.Count() == 0) {
+             MenuDrawer.Data = MenuComponent.GetMenuItems();
+        }
         Expanded = value;
         await LocalStorage.SetItemAsync("drawerState", value);
     }
     async Task GoToRuntimeInfo() {
-        NavigationManager.NavigateTo("runtimeinfo");
-    }
-    [JSInvokable]
-    public static string? getEnvironment(int mode) {
-        if (mode != 1) { 
-            return ""; 
-        }
-        return MAUI_Environment;
+         NavigationManager.NavigateTo("runtimeinfo");
     }
     #endregion
 }

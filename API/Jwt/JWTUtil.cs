@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Common;
 using Business;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Logging;
 
 namespace API {
     public class JWTUtil : IJWTUtil {
@@ -12,7 +13,9 @@ namespace API {
         private EncryptingCredentials encryptingCredentials { get; set; }
         private TokenValidationParameters validationParm { get; set; }
         private JwtSecurityTokenHandler tokenHandler { get; set; }
-        public JWTUtil(IConfiguration config) {
+        private readonly ILogger<JWTUtil> _logger;
+        public JWTUtil(IConfiguration config, ILogger<JWTUtil> logger) {
+            _logger = logger;
             var signingKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:SigningKey").Value);
             var encryptKey = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:EncryptKey").Value);
             validationParm = new TokenValidationParameters {
@@ -39,15 +42,18 @@ namespace API {
             StringValues tokens = request.Cookies["X-UserRoles"];
             if (tokens.Any()) {
                 token = tokens[0];
+                if (string.IsNullOrEmpty(token)) {
+                    throw new JWTException("token is null");
+                }
                 try {
                     tokenHandler.ValidateToken(token, validationParm,
-                        out SecurityToken validatedToken);
+                            out SecurityToken validatedToken);
                     jwtToken = (JwtSecurityToken)validatedToken;
 
                     if (jwtToken.ValidTo.Subtract(DateTime.UtcNow) < new TimeSpan(0, 0, 10)) {
                         return false;
                     }
-                } catch (Exception ex) {
+                } catch (SecurityTokenExpiredException) {
                     jwtToken = null;
                     return false;
                 }

@@ -9,10 +9,12 @@ using System.Collections;
 
 namespace Service {
     public class UserService : BaseService {
+        private readonly GridCommon2Service _gridCommon2Service;
         public UserService(IUnitOfWork unitOfWork,
             ILogger<UserService> logger,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor) {
+            IHttpContextAccessor httpContextAccessor, GridCommon2Service gridCommon2Service) : base(unitOfWork, logger, mapper, httpContextAccessor) {
+            _gridCommon2Service = gridCommon2Service;
         }
 
         public async Task<AddUserResponse> AddNewAsync(AddUserRequest model) {
@@ -97,8 +99,24 @@ namespace Service {
             return payslipDTOs;
         }
         public List<Claim> GetUserClaims(string userId) {
-            return new List<Claim> {
+            var userClaim=new List<Claim>{
                 new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.UserData, "{StaffId=41776"),
+                new Claim(ClaimTypes.UserData, "{Section=DIA"),
+                new Claim(ClaimTypes.UserData, "{DateJoin=20220406")
+            };
+            try {
+                UserProfileDto userProfile = this._gridCommon2Service.GetUserProfile("ditasdasd").Result;
+                if (userProfile.AccessCodes != null && userProfile.AccessCodes.Count() > 0) {
+                    foreach (var accessCdoe in userProfile.AccessCodes) {
+                        userClaim.Add(new Claim(ClaimTypes.Role, accessCdoe));
+                    }
+                    return userClaim;
+                }
+            } catch (Exception ex) {
+               //Just for debug 
+            }          
+            var mockRoles=new List<Claim> {
                 new Claim(ClaimTypes.Role, "AA01"),
                 new Claim(ClaimTypes.Role, "AB01"),
                 new Claim(ClaimTypes.Role, "AC01"),
@@ -106,11 +124,10 @@ namespace Service {
                 new Claim(ClaimTypes.Role, "SP02"),
                 new Claim(ClaimTypes.Role, "SP03"),
                 new Claim(ClaimTypes.Role, "SP04"),
-                new Claim(ClaimTypes.Role, "RA01"),
-                new Claim(ClaimTypes.UserData, "{StaffId=41776"),
-                new Claim(ClaimTypes.UserData, "{Section=DIA"),
-                new Claim(ClaimTypes.UserData, "{DateJoin=20220406")
+                new Claim(ClaimTypes.Role, "RA01")
             };
+            userClaim.AddRange(mockRoles);
+            return userClaim;
         }
     }
 }

@@ -1,0 +1,9 @@
+<Project>
+    <PropertyGroup>
+        <DefaultItemExcludesInProjectFolder>$(DefaultItemExcludesInProjectFolder);packages.lock.json</DefaultItemExcludesInProjectFolder>
+	    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        <RestorePackagesPath>C:\temp\.nuget\packages</RestorePackagesPath>
+    </PropertyGroup>
+</Project>

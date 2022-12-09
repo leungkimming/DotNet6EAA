@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor/css/kendo-theme-default/all.css" />
     <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js" defer></script>
     <script src="js/download-upload-files.js"></script>
+    <script src="js/scripts.js"></script>
 </head>
 
 <body>
@@ -25,20 +26,6 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>
-        function getCookie(name) {
-            if (!document.cookie) {
-                return null;
-            }
-            const xsrfCookies = document.cookie.split(';')
-                .map(c => c.trim())
-                .filter(c => c.startsWith(name + '='));
-            if (xsrfCookies.length === 0) {
-                return null;
-            }
-            return decodeURIComponent(xsrfCookies[0].split('=')[1]);
-        }
-    </script>
     <script src="_content/telerik.reportviewer.blazor/interop.js" defer></script>
 </body>
 

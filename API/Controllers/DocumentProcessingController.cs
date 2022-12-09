@@ -103,14 +103,17 @@ public class DocumentProcessingController : ControllerBase {
     [HttpGet]
     [Route("zipfiles")]
     [AccessCodeAuthorize("AA01")]
-    public async Task<IActionResult> ZipFiles(string password) {
+    public async Task<IActionResult> ZipFiles(string? password) {
         DeflateSettings compressionSettings = new DeflateSettings {
             CompressionLevel = CompressionLevel.Best,
             HeaderType = CompressedStreamHeader.ZLib
         };
-        DefaultEncryptionSettings encryptionSettings = new DefaultEncryptionSettings {
-            Password = password
-        };
+        DefaultEncryptionSettings encryptionSettings = null;
+        if (!string.IsNullOrEmpty(password)) {
+            encryptionSettings = new DefaultEncryptionSettings {
+                Password = password
+            };
+        }
         Dictionary<string, Stream> zipArchiveFiles = new Dictionary<string, Stream>();
         foreach (FileDetails? fileItem in _uploadedFiles) {
             zipArchiveFiles[fileItem.Name] = new MemoryStream(fileItem.Data);

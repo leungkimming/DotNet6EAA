@@ -53,16 +53,12 @@ namespace Client {
         }
         public async Task RefreshToken() {
             var refreshToken = await _http.GetFromJsonAsync<RefreshTokenResponse>("Login?force=false") ?? null;
-
-            var token = await _jSRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
             _http.DefaultRequestHeaders.Remove("X-CSRF-TOKEN-HEADER");
-            _http.DefaultRequestHeaders.Add("X-CSRF-TOKEN-HEADER", token);
+            _http.DefaultRequestHeaders.Add("X-CSRF-TOKEN-HEADER", refreshToken!.CSRF_TOKEN);
         }
         public async Task RefreshToken(Dictionary<string, object> requestHeaders) {
             var refreshToken = await _http.GetFromJsonAsync<RefreshTokenResponse>("Login?force=false") ?? null;
-
-            var token = await _jSRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
-            requestHeaders.Add("X-CSRF-TOKEN-HEADER", token);
+            requestHeaders.Add("X-CSRF-TOKEN-HEADER", refreshToken!.CSRF_TOKEN);
         }
     }
 }

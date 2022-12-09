@@ -12,6 +12,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<HttpUtil>();
 //builder.Services.AddScoped<GeneralSearchUtil<GetAllDatasRequest, DTObaseResponse>>();
 builder.Services.AddSingleton<StateContainer>();
+builder.Services.AddScoped<IUserRoleAuthorization, UserRoleAuthorization>();
+builder.Services.AddScoped<MenuComponent>();
 // register the Telerik services
 builder.Services.AddTelerikBlazor();
 builder.Services.AddBlazoredLocalStorage();

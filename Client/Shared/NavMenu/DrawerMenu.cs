@@ -1,4 +1,6 @@
-﻿using Common;
+﻿using Blazored.LocalStorage;
+using Common;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Client {
     public sealed class MenuTarget : ConstantBase<MenuTarget> {
@@ -9,17 +11,36 @@ namespace Client {
             : base(code, description) {
         }
     }
-    public static class DrawerMenu {
-        public static IEnumerable<DrawerItem> MenuItems =>
-        new List<DrawerItem>
-            {
-                new DrawerItem{ Text = "Home", Icon = "home", Url="/dotnet6EAA/", Group = "home"},
-                new DrawerItem{ Text = "Add User", Icon = "dollar", Url="/dotnet6EAA/adduser", Group = "app"},
-                new DrawerItem{ Text = "Search User", Icon = "dollar", Url="/dotnet6EAA/searchuser", Group = "app"},
-                new DrawerItem{ Text = "Report", Icon = "dollar", Url="/dotnet6EAA/Report", Group = "app"},
-                new DrawerItem{ Text = "System Parameters", Icon = "tell-a-friend", Url="/dotnet6EAA/systemparameters/searchdatas", Group = "app"},
-                new DrawerItem{ Text = "Document Processing", Icon = "tell-a-friend", Url="/dotnet6EAA/documentprocessing", Group = "app"},
-                new DrawerItem{ Text = "Swagger UI", Icon="gear", Url="/dotnet6EAA/swagger/index.html",Group="settings",Target= MenuTarget.Blank.Code},
-           };
+    public class MenuComponent {
+        private IUserRoleAuthorization _userRoleAuthorization;
+        private IList<DrawerItem> drawerItems;
+        private IConfiguration _config;
+        public MenuComponent(IUserRoleAuthorization userRoleAuthorization, IConfiguration config) {
+            _userRoleAuthorization = userRoleAuthorization;
+            drawerItems = new List<DrawerItem>();
+            _config = config;
+        }
+        public IList<DrawerItem> GetMenuItems() {
+            AddItem("*", "Home", "home", "/dotnet6EAA/", "home", MenuTarget.Self.Code);
+            AddItem("SP01/SP02/SP03/SP04/", "System Parameters", "tell-a-friend", "/dotnet6EAA/systemparameters/searchdatas", "app", MenuTarget.Self.Code);
+            AddItem("AA01", "Document Processing", "tell-a-friend", "/dotnet6EAA/documentprocessing", "app", MenuTarget.Self.Code);
+            AddItem("AA01/AC01", "Search User", "dollar", "/dotnet6EAA/searchuser", "app", MenuTarget.Self.Code);
+            AddItem("AB01", "Add User", "dollar", "/dotnet6EAA/adduser", "app", MenuTarget.Self.Code);
+            AddItem("RA01", "Report", "dollar", "/dotnet6EAA/Report", "app", MenuTarget.Self.Code);
+            AddItem("*", "Swagger UI", "gear", "/dotnet6EAA/swagger/index.html", "settings", MenuTarget.Blank.Code);
+            return drawerItems;
+        }
+
+        private void AddItem(string accesscode, string description, string icon, string url, string group, string target) {
+            if (drawerItems.Any(x => x.Text == description)) return;
+            if(!_userRoleAuthorization.IsAuthroize(accesscode)) return;
+            drawerItems.Add(new DrawerItem {
+                Text = description,
+                Group = group,
+                Icon = icon,
+                Url = url,
+                Target = target
+            });
+        }
     }
 }

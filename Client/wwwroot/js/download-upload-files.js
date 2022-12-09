@@ -16,7 +16,6 @@
     window.savetoMAUI = function (bytesBase64, mimeType, fileName) {
         invokeMAUIAction("Download:" + fileName + ",mimeType:" + mimeType + ",base64:" + bytesBase64);
     }
-
     // provides file content for files selected in JS to C# without saving on the server
     window.getUploadedFile = (inputID) => {
         var inputEl = document.getElementById(inputID);

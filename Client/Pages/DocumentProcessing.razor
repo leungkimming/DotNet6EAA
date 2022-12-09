@@ -70,6 +70,7 @@
     public int MaxFileSize { get; set; } = 4 * 1024 * 1024;
     public async Task UploadHandler(UploadEventArgs e) {
         e.RequestHeaders = new Dictionary<string, object>();
+        e.RequestData = new Dictionary<string, object>();
         await _httpUtil.RefreshToken(e.RequestHeaders);
     }
     public async Task ZipFiles() {

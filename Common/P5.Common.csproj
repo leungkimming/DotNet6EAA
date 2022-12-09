@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
     <Configurations>Debug;Release;SpecFlow</Configurations>
+
   </PropertyGroup>
 
   <ItemGroup>

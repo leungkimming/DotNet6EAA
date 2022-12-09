@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace API;
 
@@ -30,6 +31,24 @@ public class RuntimeInfoController : ControllerBase {
                 accessCodes += claim.Value + "/";
             }
         }
+
+        ///// for testing impersonation ///////
+        //string url = "https://itdcom397/IWATest/Api/Values/";
+        //var user = ((WindowsIdentity)HttpContext.User.Identity);
+        //string result = "";
+        //WindowsIdentity.RunImpersonated(user.AccessToken,
+        //    () => {
+        //        using (var client = new HttpClient(new HttpClientHandler()
+        //              { UseDefaultCredentials = true })) {
+        //            var response = client.GetAsync(url).Result;
+        //            if (response.IsSuccessStatusCode) {
+        //                var responseContent = response.Content;
+        //                result = responseContent.ReadAsStringAsync().Result;
+        //            }
+        //        }
+        //    }
+        //);
+
         return new RuntimeInfo {
             OSArchitecture = RuntimeInformation.OSDescription,
             ProcessArchitecture = RuntimeInformation.RuntimeIdentifier,

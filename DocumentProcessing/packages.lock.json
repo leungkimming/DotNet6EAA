@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETStandard,Version=v2.1": {
+      "Telerik.Documents.CMapUtils": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "pczZA9UzWwmwUMngCr9Q37KDpaOyrAROWf/NwtnAZNMmSTCi1ZRJ+ra1J4XJmKLE1FPJaxn+yZv5eNL2VHzFgQ==",
+        "dependencies": {
+          "Telerik.Documents.Core": "[2022.1.217]",
+          "Telerik.Documents.Fixed": "[2022.1.217]",
+          "Telerik.Zip": "[2022.1.217]"
+        }
+      },
+      "Telerik.Documents.Core": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "SOC2DW7G9Jp475n/JF6PHTmctN6ce0ZbnU+ZBp00ZtSI/F1d+GedSULjg5yOVbTnNMV7ObQchxwMRj56vhc7jw==",
+        "dependencies": {
+          "Telerik.Zip": "[2022.1.217]"
+        }
+      },
+      "Telerik.Documents.Fixed": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "HGskBDkekTUdgSnd8u1N7/aKRiKGn7rV3EQ6P2BpnZOOgS+i0bgKmugFYjQ0lOnEwoLShLSAnC2Yprahdi0j0Q==",
+        "dependencies": {
+          "System.Security.Cryptography.Pkcs": "6.0.0",
+          "Telerik.Documents.Core": "[2022.1.217]",
+          "Telerik.Zip": "[2022.1.217]"
+        }
+      },
+      "Telerik.Documents.Flow": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "Bea0V/+wjNCZWUAB2zWO9fx9E6Ldg01Ec1PqnlUvakQLTLWKNhOwxryzr4HCB/a+QR5rhpJxLXghs/uak+cCJQ==",
+        "dependencies": {
+          "Telerik.Documents.Core": "[2022.1.217]"
+        }
+      },
+      "Telerik.Documents.Spreadsheet": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "2EyJo/f187E6blNeKXhPmStQYP/JWOO+habzOKIf4pXOE4NevIHAZ9tteb9w+DqQtixt0npS5QipQxf1kTrCGw==",
+        "dependencies": {
+          "Telerik.Documents.Core": "[2022.1.217]"
+        }
+      },
+      "Telerik.Documents.Spreadsheet.FormatProviders.OpenXml": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "1dYCF96oIsYQU8STjJi7mh908iqpsvRRrnKPa+5mlWqNwN0wkGaG1XBFKgPqUq5+w23sJRrYaJFGxaDeVFjzRQ==",
+        "dependencies": {
+          "Telerik.Documents.Core": "[2022.1.217]",
+          "Telerik.Documents.Spreadsheet": "[2022.1.217]",
+          "Telerik.Zip": "[2022.1.217]"
+        }
+      },
+      "Telerik.Zip": {
+        "type": "Direct",
+        "requested": "[2022.1.217, )",
+        "resolved": "2022.1.217",
+        "contentHash": "R9oOqgiotn5ecSaK12jRyOp6qrqslBCHrNmpZOLGjzQZOHu++jkHNnW3a/m18L5jHsgUaPNnpgIqjku1dBWNuQ=="
+      },
+      "System.Buffers": {
+        "type": "Transitive",
+        "resolved": "4.5.1",
+        "contentHash": "Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg=="
+      },
+      "System.Formats.Asn1": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "T6fD00dQ3NTbPDy31m4eQUwKW84s03z0N2C8HpOklyeaDgaJPa/TexP4/SkORMSOwc7WhKifnA6Ya33AkzmafA==",
+        "dependencies": {
+          "System.Buffers": "4.5.1",
+          "System.Memory": "4.5.4"
+        }
+      },
+      "System.Memory": {
+        "type": "Transitive",
+        "resolved": "4.5.4",
+        "contentHash": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
+        "dependencies": {
+          "System.Buffers": "4.5.1",
+          "System.Numerics.Vectors": "4.4.0",
+          "System.Runtime.CompilerServices.Unsafe": "4.5.3"
+        }
+      },
+      "System.Numerics.Vectors": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "UiLzLW+Lw6HLed1Hcg+8jSRttrbuXv7DANVj0DkL9g6EnnzbL75EB7EWsw5uRbhxd/4YdG8li5XizGWepmG3PQ=="
+      },
+      "System.Runtime.CompilerServices.Unsafe": {
+        "type": "Transitive",
+        "resolved": "4.5.3",
+        "contentHash": "3TIsJhD1EiiT0w2CcDMN/iSSwnNnsrnbzeVHSKkaEgV85txMprmuO+Yq2AdSbeVGcg28pdNDTPK87tJhX7VFHw=="
+      },
+      "System.Security.Cryptography.Cng": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "jIMXsKn94T9JY7PvPq/tMfqa6GAaHpElRDpmG+SuL+D3+sTw2M8VhnibKnN8Tq+4JqbPJ/f+BwtLeDMEnzAvRg=="
+      },
+      "System.Security.Cryptography.Pkcs": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "elM3x+xSRhzQysiqo85SbidJJ2YbZlnvmh+53TuSZHsD7dNuuEWser+9EFtY+rYupBwkq2avc6ZCO3/6qACgmg==",
+        "dependencies": {
+          "System.Formats.Asn1": "6.0.0",
+          "System.Security.Cryptography.Cng": "5.0.0"
+        }
+      }
+    }
+  }
+}
