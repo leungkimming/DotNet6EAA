@@ -1,4 +1,4 @@
-# A SOLID+DDD+Specflow based .NET 6 framework
+# A SOLID+DDD+Specflow based .NET 6 framework [GitHub link](https://github.com/leungkimming/DotNet6EAA)
 * Fork from EnLabSoftware's HRManagement
 ## Ref: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/
 ## Ref: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/
