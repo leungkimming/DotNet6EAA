@@ -249,13 +249,16 @@ this.ScenarioInitialize(scenarioInfo);
                 table5.AddRow(new string[] {
                             "CoefficientsSalary",
                             "7500"});
+                table5.AddRow(new string[] {
+                            "JsonData",
+                            @"{""userName"": ""Micl"",""firstName"": ""Leung"",""lastName"": ""Michael"",""address"": ""Kwong Chiu Terrace"",""birthDate"": ""2022-12-07T00:00:00"",""departmentName"": ""IT"",""coefficientsSalary"": 7500,""id"": 0,""createBy"": null,""updateBy"": null,""createTime"": null,""updateTime"": null,""rowVersion"": null}"});
 #line 24
- testRunner.Given("I have the following \"Common.AddUserRequest\" DTO save as \"U1\"", ((string)(null)), table5, "Given ");
-#line hidden
-#line 33
- testRunner.When("I post DTO \"U1\" to API \"users\" with status code 200 and response save as \"R1\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("Json with I have the following \"Common.AddUserRequest\" DTO save as \"U1\"", ((string)(null)), table5, "Given ");
 #line hidden
 #line 34
+ testRunner.When("I post DTO \"U1\" to API \"users\" with status code 200 and response save as \"R1\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 35
  testRunner.Then("Response \"R1\" contains the \"Common.AddUserResponse\" DTO save as \"R1DTO\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
@@ -267,7 +270,7 @@ this.ScenarioInitialize(scenarioInfo);
                 table6.AddRow(new string[] {
                             "DepartmentName",
                             "IT"});
-#line 35
+#line 36
  testRunner.And("DTO \"R1DTO\" matches the following table", ((string)(null)), table6, "And ");
 #line hidden
             }
@@ -282,7 +285,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("3_AddPayslip", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 40
+#line 41
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -302,7 +305,7 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 41
+#line 42
  testRunner.When("I get API \"users?Search=Micl\" with status code 200 and response DTO \"Common.UserI" +
                         "nfoDTO[]\" save as \"R9\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
@@ -315,7 +318,7 @@ this.ScenarioInitialize(scenarioInfo);
                 table7.AddRow(new string[] {
                             "DepartmentName",
                             "IT"});
-#line 42
+#line 43
  testRunner.Then("DTO \"R9\" should contain a record save as \"R10\" that matches the following table", ((string)(null)), table7, "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
@@ -336,14 +339,14 @@ this.ScenarioInitialize(scenarioInfo);
                 table8.AddRow(new string[] {
                             "UserDTO",
                             "@{R10}"});
-#line 46
+#line 47
  testRunner.Given("I have the following \"Common.AddPayslipRequest\" DTO save as \"P1\"", ((string)(null)), table8, "Given ");
 #line hidden
-#line 53
+#line 54
  testRunner.When("I post DTO \"P1\" to API \"users/AddPayslip\" with status code 200 and response save " +
                         "as \"R3\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 54
+#line 55
  testRunner.Then("Response \"R3\" contains the \"Common.AddPayslipResponse\" DTO save as \"R3DTO\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
@@ -355,7 +358,7 @@ this.ScenarioInitialize(scenarioInfo);
                 table9.AddRow(new string[] {
                             "LetterSentDate",
                             "CURRENT_DATE+0D"});
-#line 55
+#line 56
  testRunner.And("DTO \"R3DTO\" matches the following table", ((string)(null)), table9, "And ");
 #line hidden
             }

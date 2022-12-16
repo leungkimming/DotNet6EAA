@@ -36,6 +36,7 @@ namespace API {
             builder.RegisterType<GridCommon2Service>().AsSelf();
             builder.RegisterType<UserService>().AsSelf();
             builder.RegisterType<SystemParametersService>().AsSelf();
+            builder.RegisterType<RequestLogService>().AsSelf();
             builder.RegisterType<PaymentQuery>().As<IPaymentQuery>();
             builder.RegisterType<DepartmentQuery>().As<IDepartmentQuery>();
 

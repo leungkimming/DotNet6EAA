@@ -21,7 +21,7 @@ Scenario: 1_Initialize
 		| 41776    | Tommy     | Leung    | KLN     | CURRENT_DATE-25Y | 55.50              | @{D2}      |
 
 Scenario: 2_AddNewUser
-	Given I have the following "Common.AddUserRequest" DTO save as "U1"
+	Given Json with I have the following "Common.AddUserRequest" DTO save as "U1"
 		| Field              | Value                     |
 		| userName           | Micl                      |
 		| firstName          | Leung                     |
@@ -30,6 +30,7 @@ Scenario: 2_AddNewUser
 		| birthDate          | 1961-03-04T00:00:00+08:00 |
 		| departmentName     | IT                        |
 		| CoefficientsSalary | 7500                      |
+		| JsonData           |  {"userName": "Micl","firstName": "Leung","lastName": "Michael","address": "Kwong Chiu Terrace","birthDate": "2022-12-07T00:00:00","departmentName": "IT","coefficientsSalary": 7500,"id": 0,"createBy": null,"updateBy": null,"createTime": null,"updateTime": null,"rowVersion": null}                         |
 	When I post DTO "U1" to API "users" with status code 200 and response save as "R1"
 	Then Response "R1" contains the "Common.AddUserResponse" DTO save as "R1DTO"
 	And DTO "R1DTO" matches the following table

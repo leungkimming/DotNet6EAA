@@ -59,6 +59,15 @@ namespace P6.StoryTest {
             var r = typeof(TestHelper).GetMethod(nameof(TestHelper.SetDTO))
                 .MakeGenericMethod(entity).Invoke(null, new object[] { table, varName });
         }
+        [When(@"Json with I have the following ""([^""]*)"" DTO save as ""([^""]*)""")]
+        [Given(@"Json with I have the following ""([^""]*)"" DTO save as ""([^""]*)""")]
+        public void GivenIHaveTheFollowingDTOSaveAsByJson(string dtoName, string varName, Table table) {
+            Assembly assem = typeof(DTObase).Assembly;
+            Type entity = assem.GetType(dtoName);
+
+            var r = typeof(TestHelper).GetMethod(nameof(TestHelper.SetDTOByJson))
+                .MakeGenericMethod(entity).Invoke(null, new object[] { table, varName });
+        }
 
         [When(@"I post DTO ""([^""]*)"" to API ""([^""]*)"" with status code (.*) and response save as ""([^""]*)""")]
         public async Task WhenIPostDTOToAPIWithStatusCodeAndResponseSaveAs(string vNameDTO, string apiRoute, int statusCode, string vNameResponse) {

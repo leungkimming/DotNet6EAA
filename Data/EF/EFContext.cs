@@ -45,6 +45,9 @@ namespace Data {
             modelBuilder.Entity<SystemParameters>().Property(p => p.Code).HasMaxLength(400);
             modelBuilder.Entity<SystemParameters>().Property(p => p.Description).HasMaxLength(2000);
             modelBuilder.Entity<SystemParameters>().Property(p => p.ParameterTypeCode).HasMaxLength(400);
+            modelBuilder.Entity<RequestLog>().Property(p => p.Method).HasMaxLength(400);
+            modelBuilder.Entity<RequestLog>().Property(p => p.Route).HasMaxLength(400);
+            modelBuilder.Entity<RequestLog>().Property(p => p.RowVersion).IsRowVersion();
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -11,6 +11,7 @@ using Data;
 using Microsoft.AspNetCore.Server.IIS;
 using Telerik.Reporting.Services;
 using Telerik.Reporting.Cache.File;
+using Common;
 
 // Uncomment to enable NServiceBus
 //using NServiceBus;
@@ -73,6 +74,7 @@ builder.Services.AddSwaggerGen(c => {
     c.IgnoreObsoleteActions();
     c.IgnoreObsoleteProperties();
     c.CustomSchemaIds(type => type.FullName);
+    
 });
 
 // Authentication, authorization, Antiforgery Token
@@ -171,6 +173,9 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+if (appSettings.Environment != EnvrionmentConstant.PROD.Code) {
+    app.UseHttpLogger();
+}
 app.Run();
 
 // Define class name 'Program' for Specflow to work

@@ -37,6 +37,12 @@ namespace P6.StoryTest {
                 claims.Add(new Claim(ClaimTypes.Role, r["Value"]));
             }
         }
+        public static T SetDTOByJson<T>(Table table, string varName) where T : class {
+            var jsonData=table.Rows.Where(i => i.Values.Contains("JsonData")).FirstOrDefault().Values.LastOrDefault();
+            T dto = JsonConvert.DeserializeObject<T>(jsonData);
+            context.Set<T>(dto, varName);
+            return dto;
+        }
         public static T SetDTO<T>(Table table, string varName) where T : class {
             T dto = table.CreateInstance<T>();
             context.Set<T>(dto, varName);
