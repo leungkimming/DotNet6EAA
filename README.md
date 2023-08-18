@@ -25,7 +25,6 @@ I have a SOLID+DDD+Specflow based .net framework and would like to migrate to .N
 ## Steps to run
 * First, View, SQL Server Object Explorer and note down your SQL server instance name e.g. <br>(localdb)\\ProjectModels
 * Replace the SQL server instance in API project's appsettings.json file e.g. <br> "DDDConnectionString": "Server=(localdb)\\ProjectModels;Database=DDDSample;Trusted_Connection=True;MultipleActiveResultSets=true"
-* Add package source https://itdtfs397/DefaultCollection/_packaging/PackageSources_dotnet/nuget/v3/index.json
 * Build the project, ensure all 6 success
 * Debug Run Express IIS
 ## How to test API using Swagger UI
